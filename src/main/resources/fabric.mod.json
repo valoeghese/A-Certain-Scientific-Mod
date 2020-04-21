@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "tknm",
+  "version": "1.0.0",
+
+  "name": "A Certain Scientific Mod",
+  "description": "because why not?",
+  "license": "LGPL-3.0",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "tk.valoeghese.tknm.ToaruKagakuNoMod"
+    ]
+  },
+  "mixins": [
+    "tknm.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.4.0"
+  }
+}
