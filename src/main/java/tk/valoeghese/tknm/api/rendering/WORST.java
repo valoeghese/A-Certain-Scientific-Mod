@@ -43,7 +43,7 @@ public interface WORST {
 	 * Flushes the content of the quad buffer into the quad emitter, and prepares for the next quad.
 	 */
 	static void nextQuad() {
-		WORSTImpl.nextQuad();
+		WORSTImpl.nextQuadDouble();
 	}
 
 	/**
@@ -60,10 +60,50 @@ public interface WORST {
 	 * Adds the four vertices that make up a flat square on the ground, with the centre at the centre of the square.
 	 */
 	static void flatSquare() {
-		WORSTImpl.vertex(-0.5f, 0, -0.5f);
-		WORSTImpl.vertex(-0.5f, 0, 0.5f);
-		WORSTImpl.vertex(0.5f, 0, 0.5f);
-		WORSTImpl.vertex(0.5f, 0, -0.5f);
+		vertex(-0.5f, 0, -0.5f);
+		vertex(-0.5f, 0, 0.5f);
+		vertex(0.5f, 0, 0.5f);
+		vertex(0.5f, 0, -0.5f);
+	}
+
+	/**
+	 * Adds the quads for a basic cube. You do not need to call nextQuad() to flush the quad buffer to add on to this.
+	 */
+	static void basicCube() {
+		// bottom
+		vertex(-0.5f, -0.5f, -0.5f);
+		vertex(-0.5f, -0.5f, 0.5f);
+		vertex(0.5f, -0.5f, 0.5f);
+		vertex(0.5f, -0.5f, -0.5f);
+		WORSTImpl.nextQuadSingle();
+		// top
+		vertex(-0.5f, 0.5f, -0.5f);
+		vertex(-0.5f, 0.5f, 0.5f);
+		vertex(0.5f, 0.5f, 0.5f);
+		vertex(0.5f, 0.5f, -0.5f);
+		WORSTImpl.nextQuadSingle();
+		// north
+		vertex(-0.5f, -0.5f, -0.5f);
+		vertex(-0.5f, 0.5f, -0.5f);
+		vertex(0.5f, 0.5f, -0.5f);
+		vertex(0.5f, -0.5f, -0.5f);
+		WORSTImpl.nextQuadSingle();
+		// south
+		vertex(-0.5f, -0.5f, 0.5f);
+		vertex(-0.5f, 0.5f, 0.5f);
+		vertex(0.5f, 0.5f, 0.5f);
+		vertex(0.5f, -0.5f, 0.5f);
+		//WORSTImpl.nextQuadSingle();
+	}
+
+	/**
+	 * Renders all the quads in the currently bound mesh without flushing the quad buffer.
+	 * @param translate the vector translating this mesh.
+	 * @param rotation if null, no rotation is performed. Otherwise, provides the rotation of the mesh.
+	 * @param scale if null, the mesh is not scaled. Otherwise, provides the scale of the mesh.
+	 */
+	static void renderMeshRaw(Vector3f translate, @Nullable Quaternion rotation, @Nullable Vector3f scale) {
+		WORSTImpl.renderMesh(translate, rotation, scale == null ? WORSTImpl.ONE : scale);
 	}
 
 	/**
@@ -73,6 +113,7 @@ public interface WORST {
 	 * @param scale if null, the mesh is not scaled. Otherwise, provides the scale of the mesh.
 	 */
 	static void renderMesh(Vector3f translate, @Nullable Quaternion rotation, @Nullable Vector3f scale) {
+		WORSTImpl.nextQuadDouble();
 		WORSTImpl.renderMesh(translate, rotation, scale == null ? WORSTImpl.ONE : scale);
 	}
 }

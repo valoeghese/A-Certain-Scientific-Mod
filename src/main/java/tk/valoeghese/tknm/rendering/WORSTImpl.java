@@ -66,6 +66,7 @@ public final class WORSTImpl {
 	// current index of vertex
 	private static int index = 0;
 	private static Vector3f[] quadBuffer = new Vector3f[4];
+	private static boolean dqb = false; // whether the quad buffer is "dirty"
 	public static final Vector3f ONE = new Vector3f(1.0f, 1.0f, 1.0f);
 
 	public static void init(MatrixStack stack, Camera cameraIn) throws RuntimeException {
@@ -100,26 +101,42 @@ public final class WORSTImpl {
 		index = 0;
 	}
 
-	public static void nextQuad() {
-		// normal
-		emitter
-		.pos(0, quadBuffer[0])
-		.pos(1, quadBuffer[1])
-		.pos(2, quadBuffer[2])
-		.pos(3, quadBuffer[3]).emit()
-		// reverse
-		.pos(0, quadBuffer[0])
-		.pos(1, quadBuffer[3])
-		.pos(2, quadBuffer[2])
-		.pos(3, quadBuffer[1]).emit();
+	public static void nextQuadDouble() {
+		if (dqb) {
+			// normal
+			emitter
+			.pos(0, quadBuffer[0])
+			.pos(1, quadBuffer[1])
+			.pos(2, quadBuffer[2])
+			.pos(3, quadBuffer[3]).emit()
+			// reverse
+			.pos(0, quadBuffer[0])
+			.pos(1, quadBuffer[3])
+			.pos(2, quadBuffer[2])
+			.pos(3, quadBuffer[1]).emit();
+			dqb = false;
+			index = 0;
+		}
+	}
+
+	public static void nextQuadSingle() {
+		if (dqb) {
+			emitter
+			.pos(0, quadBuffer[0])
+			.pos(1, quadBuffer[1])
+			.pos(2, quadBuffer[2])
+			.pos(3, quadBuffer[3]).emit();
+			dqb = false;
+			index = 0;
+		}
 	}
 
 	public static void vertex(float x, float y, float z) {
+		dqb = true;
 		quadBuffer[index++] = new Vector3f(x, y, z);
 	}
 
 	public static void renderMesh(Vector3f translate, @Nullable Quaternion rotation, Vector3f scale) {
-		nextQuad();
 		// offset position from camera and translate
 		Vec3d pos = camera.getPos();
 
