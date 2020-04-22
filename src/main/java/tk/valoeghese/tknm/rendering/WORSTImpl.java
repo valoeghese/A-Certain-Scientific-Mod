@@ -101,6 +101,10 @@ public final class WORSTImpl {
 		index = 0;
 	}
 
+	public static MatrixStack getCurrentStack() {
+		return currentStack;
+	}
+
 	public static void nextQuadDouble() {
 		if (dqb) {
 			// normal
@@ -136,27 +140,20 @@ public final class WORSTImpl {
 		quadBuffer[index++] = new Vector3f(x, y, z);
 	}
 
-	public static void renderMesh(Vector3f translate, @Nullable Quaternion rotation, Vector3f scale, boolean rotateBeforeTranslate) {
+	public static void renderMesh(Vector3f translate, @Nullable Quaternion rotation, Vector3f scale) {
 		// offset position from camera and translate
 		Vec3d pos = camera.getPos();
 
-		// scale
-		currentStack.scale(scale.getX(), scale.getY(), scale.getZ());
-
-		if (rotateBeforeTranslate) {
-			// translate
-			currentStack.translate(-pos.x + translate.getX(), -pos.y + translate.getY(), -pos.z + translate.getZ());
-		}
+		// translate
+		currentStack.translate(-pos.x + translate.getX(), -pos.y + translate.getY(), -pos.z + translate.getZ());
 
 		// rotate
 		if (rotation != null) {
 			currentStack.multiply(rotation);
 		}
 
-		if (!rotateBeforeTranslate) {
-			// translate
-			currentStack.translate(-pos.x + translate.getX(), -pos.y + translate.getY(), -pos.z + translate.getZ());
-		}
+		// scale
+		currentStack.scale(scale.getX(), scale.getY(), scale.getZ());
 
 		Mesh m = meshBuilder.build();
 		List<BakedQuad>[] quadListArray = ModelHelper.toQuadLists(m);
