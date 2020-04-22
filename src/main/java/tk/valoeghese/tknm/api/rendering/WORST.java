@@ -72,9 +72,9 @@ public interface WORST {
 	static void basicCube() {
 		// bottom
 		vertex(-0.5f, -0.5f, -0.5f);
-		vertex(-0.5f, -0.5f, 0.5f);
-		vertex(0.5f, -0.5f, 0.5f);
 		vertex(0.5f, -0.5f, -0.5f);
+		vertex(0.5f, -0.5f, 0.5f);
+		vertex(-0.5f, -0.5f, 0.5f);
 		WORSTImpl.nextQuadSingle();
 		// top
 		vertex(-0.5f, 0.5f, -0.5f);
@@ -90,10 +90,22 @@ public interface WORST {
 		WORSTImpl.nextQuadSingle();
 		// south
 		vertex(-0.5f, -0.5f, 0.5f);
+		vertex(0.5f, -0.5f, 0.5f);
+		vertex(0.5f, 0.5f, 0.5f);
 		vertex(-0.5f, 0.5f, 0.5f);
+		WORSTImpl.nextQuadSingle();
+		// west
+		vertex(-0.5f, -0.5f, -0.5f);
+		vertex(-0.5f, -0.5f, 0.5f);
+		vertex(-0.5f, 0.5f, 0.5f);
+		vertex(-0.5f, 0.5f, -0.5f);
+		WORSTImpl.nextQuadSingle();
+		// east
+		vertex(0.5f, -0.5f, -0.5f);
+		vertex(0.5f, 0.5f, -0.5f);
 		vertex(0.5f, 0.5f, 0.5f);
 		vertex(0.5f, -0.5f, 0.5f);
-		//WORSTImpl.nextQuadSingle();
+		WORSTImpl.nextQuadSingle();
 	}
 
 	/**

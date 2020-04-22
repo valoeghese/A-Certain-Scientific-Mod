@@ -156,7 +156,7 @@ public final class WORSTImpl {
 
 		for (int i = 0; i < quadListArray.length; ++i) {
 			for (BakedQuad bq : quadListArray[i]) {
-				vc.quad(currentStack.peek(), bq, 0.5f, 0.5f, 0.5f, 15728880, OverlayTexture.DEFAULT_UV);
+				vc.quad(currentStack.peek(), bq, 1.0f, 1.0f, 1.0f, 15728880, OverlayTexture.DEFAULT_UV);
 			}
 		}
 	}
