@@ -25,28 +25,35 @@ import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.render.model.BakedQuad;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.Matrix4f;
+import net.minecraft.util.math.Vec3d;
 
 @Mixin(WorldRenderer.class)
 public class MixinWorldRenderer {
 	@Inject(at = @At("RETURN"), method = "render")
 	private void addRendering(MatrixStack matrices, float tickDelta, long limitTime, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, LightmapTextureManager lightmapTextureManager, Matrix4f matrix4f, CallbackInfo info) {
 		matrices.push();
-		matrices.translate(0, 0, 0);
+		Vec3d pos = camera.getPos();
+		matrices.translate(-pos.x, -pos.y + 64, -pos.z);
 		matrices.scale(1, 1, 1);
 
-		VertexConsumerProvider.Immediate immediate = MinecraftClient.getInstance().getBufferBuilders().getEffectVertexConsumers();
+		VertexConsumerProvider.Immediate immediate = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
 		VertexConsumer vc = immediate.getBuffer(RenderLayer.getSolid());
 
-		Matrix4f matrix = matrices.peek().getModel();
 		Renderer renderer = RendererAccessImpl.INSTANCE.getRenderer();
 		MeshBuilder meshBuilder = renderer.meshBuilder();
 		QuadEmitter emitter = meshBuilder.getEmitter();
 
 		emitter
-		.pos(0, 0, 100, 0)
+		// front side
+		.pos(0, 0, 0, 0)
+		.pos(1, 0, 0, 1)
+		.pos(2, 1, 0, 1)
+		.pos(3, 1, 0, 0).emit()
+		// reverse side
+		.pos(0, 0, 0, 0)
 		.pos(1, 1, 0, 0)
-		.pos(2, 100, 100, 0)
-		.pos(3, 100, 0, 100).emit();
+		.pos(2, 1, 0, 1)
+		.pos(3, 0, 0, 1).emit();
 
 		Mesh m = meshBuilder.build();
 		List<BakedQuad>[] quadListArray = ModelHelper.toQuadLists(m);

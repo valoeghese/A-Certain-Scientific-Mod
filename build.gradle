@@ -29,6 +29,9 @@ repositories {
         name = "Onyx Studios"
         url = "https://maven.onyxstudios.dev"
     }
+	maven {
+	    url 'https://jitpack.io'
+	}
 }
 
 dependencies {
@@ -39,26 +42,8 @@ dependencies {
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 	// cardinal
-	//modImplementation "com.github.NerdHubMC:Cardinal-Components-API:${project.cardinal_version}"
-	modImplementation "com.github.NerdHubMC.Cardinal-Components-API:cardinal-components-base:${project.cardinal_version}"
-	modImplementation "com.github.NerdHubMC.Cardinal-Components-API:cardinal-components-block:${project.cardinal_version}"
-	modImplementation "com.github.NerdHubMC.Cardinal-Components-API:cardinal-components-item:${project.cardinal_version}"
-	modImplementation "com.github.NerdHubMC.Cardinal-Components-API:cardinal-components-entity:${project.cardinal_version}"
-	modImplementation "com.github.NerdHubMC.Cardinal-Components-API:cardinal-components-chunk:${project.cardinal_version}"
-	modImplementation "com.github.NerdHubMC.Cardinal-Components-API:cardinal-components-world:${project.cardinal_version}"
-	modImplementation "com.github.NerdHubMC.Cardinal-Components-API:cardinal-components-level:${project.cardinal_version}"
-	
-	//include "com.github.OnyxStudios.Cardinal-Components-API:cardinal-components-base:${project.cardinal_version}"
-	include "com.github.NerdHubMC.Cardinal-Components-API:cardinal-components-base:${project.cardinal_version}"
-	include "com.github.NerdHubMC.Cardinal-Components-API:cardinal-components-block:${project.cardinal_version}"
-	include "com.github.NerdHubMC.Cardinal-Components-API:cardinal-components-item:${project.cardinal_version}"
-	include "com.github.NerdHubMC.Cardinal-Components-API:cardinal-components-entity:${project.cardinal_version}"
-	include "com.github.NerdHubMC.Cardinal-Components-API:cardinal-components-chunk:${project.cardinal_version}"
-	include "com.github.NerdHubMC.Cardinal-Components-API:cardinal-components-world:${project.cardinal_version}"
-	include "com.github.NerdHubMC.Cardinal-Components-API:cardinal-components-level:${project.cardinal_version}"
-
-
-    include "com.github.NerdHubMC:Cardinal-Components-API:${project.cardinal_version}"
+	modImplementation "com.github.OnyxStudios.Cardinal-Components-API:Cardinal-Components-API:2.4.0-nightly.20w13b"
+	include "com.github.OnyxStudios.Cardinal-Components-API:Cardinal-Components-API:2.4.0-nightly.20w13b"
 	// zoesteria config
 	implementation "tk.valoeghese:ZoesteriaConfig:1.2.0"
 	include "tk.valoeghese:ZoesteriaConfig:1.2.0"
