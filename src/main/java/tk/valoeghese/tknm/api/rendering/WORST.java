@@ -114,8 +114,8 @@ public interface WORST {
 	 * @param rotation if null, no rotation is performed. Otherwise, provides the rotation of the mesh.
 	 * @param scale if null, the mesh is not scaled. Otherwise, provides the scale of the mesh.
 	 */
-	static void renderMeshRaw(Vector3f translate, @Nullable Quaternion rotation, @Nullable Vector3f scale) {
-		WORSTImpl.renderMesh(translate, rotation, scale == null ? WORSTImpl.ONE : scale);
+	static void renderMeshRaw(Vector3f translate, boolean rotateBeforeTranslate, @Nullable Quaternion rotation, @Nullable Vector3f scale) {
+		WORSTImpl.renderMesh(translate, rotation, scale == null ? WORSTImpl.ONE : scale, rotateBeforeTranslate);
 	}
 
 	/**
@@ -124,8 +124,8 @@ public interface WORST {
 	 * @param rotation if null, no rotation is performed. Otherwise, provides the rotation of the mesh.
 	 * @param scale if null, the mesh is not scaled. Otherwise, provides the scale of the mesh.
 	 */
-	static void renderMesh(Vector3f translate, @Nullable Quaternion rotation, @Nullable Vector3f scale) {
+	static void renderMesh(Vector3f translate, boolean rotateBeforeTranslate, @Nullable Quaternion rotation, @Nullable Vector3f scale) {
 		WORSTImpl.nextQuadDouble();
-		WORSTImpl.renderMesh(translate, rotation, scale == null ? WORSTImpl.ONE : scale);
+		WORSTImpl.renderMesh(translate, rotation, scale == null ? WORSTImpl.ONE : scale, rotateBeforeTranslate);
 	}
 }

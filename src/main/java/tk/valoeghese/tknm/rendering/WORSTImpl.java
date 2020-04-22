@@ -136,20 +136,27 @@ public final class WORSTImpl {
 		quadBuffer[index++] = new Vector3f(x, y, z);
 	}
 
-	public static void renderMesh(Vector3f translate, @Nullable Quaternion rotation, Vector3f scale) {
+	public static void renderMesh(Vector3f translate, @Nullable Quaternion rotation, Vector3f scale, boolean rotateBeforeTranslate) {
 		// offset position from camera and translate
 		Vec3d pos = camera.getPos();
 
 		// scale
 		currentStack.scale(scale.getX(), scale.getY(), scale.getZ());
 
+		if (rotateBeforeTranslate) {
+			// translate
+			currentStack.translate(-pos.x + translate.getX(), -pos.y + translate.getY(), -pos.z + translate.getZ());
+		}
+
 		// rotate
 		if (rotation != null) {
 			currentStack.multiply(rotation);
 		}
 
-		// translate
-		currentStack.translate(-pos.x + translate.getX(), -pos.y + translate.getY(), -pos.z + translate.getZ());
+		if (!rotateBeforeTranslate) {
+			// translate
+			currentStack.translate(-pos.x + translate.getX(), -pos.y + translate.getY(), -pos.z + translate.getZ());
+		}
 
 		Mesh m = meshBuilder.build();
 		List<BakedQuad>[] quadListArray = ModelHelper.toQuadLists(m);

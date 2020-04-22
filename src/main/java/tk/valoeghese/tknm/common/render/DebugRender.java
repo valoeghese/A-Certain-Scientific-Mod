@@ -11,6 +11,6 @@ public class DebugRender implements Consumer<ClientWorld> {
 	public void accept(ClientWorld t) {
 		WORST.mesh();
 		WORST.basicCube();
-		WORST.renderMeshRaw(new Vector3f(0.5f, 64, 0.5f), null, null);
+		WORST.renderMeshRaw(new Vector3f(0.5f, 64, 0.5f), false, null, null);
 	}
 }
