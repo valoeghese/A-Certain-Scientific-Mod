@@ -26,7 +26,7 @@ public class MixinWorldRenderer {
 		WORSTImpl.vertex(0, 0, 1);
 		WORSTImpl.vertex(1, 0, 1);
 		WORSTImpl.vertex(1, 0, 0);
-		WORSTImpl.renderMesh(new Vector3f(0, 64, 0));
+		WORSTImpl.renderMesh(new Vector3f(0.5f, 64, 0), null);
 		// end
 		WORSTImpl.end();
 	}

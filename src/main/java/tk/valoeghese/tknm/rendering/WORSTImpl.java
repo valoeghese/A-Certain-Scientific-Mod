@@ -2,6 +2,8 @@ package tk.valoeghese.tknm.rendering;
 
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import net.fabricmc.fabric.api.renderer.v1.Renderer;
 import net.fabricmc.fabric.api.renderer.v1.mesh.Mesh;
 import net.fabricmc.fabric.api.renderer.v1.mesh.MeshBuilder;
@@ -17,9 +19,13 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.model.BakedQuad;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.util.math.Vector3f;
+import net.minecraft.util.math.Quaternion;
 import net.minecraft.util.math.Vec3d;
 
-// World Oriented Render System Translator
+/**
+ * World Oriented Render System Translator Impl.
+ * @author Valoeghese
+ */
 public final class WORSTImpl {
 	private WORSTImpl() {
 		// NO-OP
@@ -66,16 +72,10 @@ public final class WORSTImpl {
 		}
 		// push matrices
 		currentStack.push();
-		// set scale
-		currentStack.scale(1, 1, 1);
 		// start mesh
 		meshBuilder = renderer.meshBuilder();
 		emitter = meshBuilder.getEmitter();
 		index = 0;
-	}
-
-	public static void vertex(float x, float y, float z) {
-		quadStack[index++] = new Vector3f(x, y, z);
 	}
 
 	public static void nextQuad() {
@@ -92,11 +92,20 @@ public final class WORSTImpl {
 		.pos(3, quadStack[1]).emit();
 	}
 
-	public static void renderMesh(Vector3f translate) {
+	public static void vertex(float x, float y, float z) {
+		quadStack[index++] = new Vector3f(x, y, z);
+	}
+
+	public static void renderMesh(Vector3f translate, @Nullable Quaternion rotation) {
 		nextQuad();
 		// offset position from camera and translate
 		Vec3d pos = camera.getPos();
 		currentStack.translate(-pos.x + translate.getX(), -pos.y + translate.getY(), -pos.z + translate.getZ());
+		currentStack.scale(1, 1, 1);
+
+		if (rotation != null) {
+			currentStack.multiply(rotation);
+		}
 
 		Mesh m = meshBuilder.build();
 		List<BakedQuad>[] quadListArray = ModelHelper.toQuadLists(m);
