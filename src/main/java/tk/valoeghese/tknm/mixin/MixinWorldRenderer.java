@@ -64,6 +64,8 @@ public class MixinWorldRenderer {
 			}
 		}
 
+		// flush
+		immediate.draw(RenderLayer.getSolid());
 		matrices.pop();
 	}
 }
