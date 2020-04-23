@@ -9,10 +9,10 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "tk.valoeghese.tknm.common.ToaruKagakuNoMod"
+      "tk.valoeghese.tknm.common.とある科学のモド"
     ],
     "client": [
-      "tk.valoeghese.tknm.client.ToaruKagakuNoModClient"
+      "tk.valoeghese.tknm.client.とある科学のモドClient"
     ]
   },
   "mixins": [

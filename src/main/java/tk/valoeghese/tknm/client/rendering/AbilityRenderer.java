@@ -8,5 +8,6 @@ import net.minecraft.entity.player.PlayerEntity;
 public class AbilityRenderer implements BiConsumer<ClientWorld, PlayerEntity> {
 	@Override
 	public void accept(ClientWorld world, PlayerEntity entity) {
+		
 	}
 }

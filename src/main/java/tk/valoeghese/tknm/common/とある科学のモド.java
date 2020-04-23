@@ -5,7 +5,7 @@ import org.apache.logging.log4j.Logger;
 
 import net.fabricmc.api.ModInitializer;
 
-public class ToaruKagakuNoMod implements ModInitializer {
+public class とある科学のモド implements ModInitializer {
 	public static final Logger LOGGER = LogManager.getLogger("A Certain Scientific Mod");
 
 	@Override
