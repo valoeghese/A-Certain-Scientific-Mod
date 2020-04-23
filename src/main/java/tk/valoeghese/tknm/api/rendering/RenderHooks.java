@@ -23,7 +23,7 @@ public final class RenderHooks {
 		WORLD_RENDER_HOOKS.add(consumer);
 	}
 
-	public static void addWorlPlayerdRenderHook(BiConsumer<ClientWorld, PlayerEntity> consumer) {
+	public static void addWorldPlayerRenderHook(BiConsumer<ClientWorld, PlayerEntity> consumer) {
 		WORLD_PLAYER_RENDER_HOOKS.add(consumer);
 	}
 
@@ -31,6 +31,7 @@ public final class RenderHooks {
 		for (Consumer<ClientWorld> consumer : RenderHooks.WORLD_RENDER_HOOKS) {
 			consumer.accept(world);
 		}
+		renderWorldPlayerRenderHooks(world);
 	}
 
 	public static void renderWorldPlayerRenderHooks(ClientWorld world) {

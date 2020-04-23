@@ -58,13 +58,14 @@ public interface WORST {
 	}
 
 	/**
-	 * Adds the four vertices that make up a flat square on the ground, with the centre at the centre of the square.
+	 * Adds the four vertices that make up a flat square on the ground, with the centre at the centre of the square. You do not need to call nextQuad() to flush the quad buffer to add on to this.
 	 */
 	static void flatSquare() {
 		vertex(-0.5f, 0, -0.5f);
 		vertex(-0.5f, 0, 0.5f);
 		vertex(0.5f, 0, 0.5f);
 		vertex(0.5f, 0, -0.5f);
+		nextQuad();
 	}
 
 	/**

@@ -78,7 +78,6 @@ public final class WORSTImpl {
 		// set variables
 		currentStack = stack;
 		immediate = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
-		vc = immediate.getBuffer(RenderLayer.getSolid());
 		renderer = RendererAccessImpl.INSTANCE.getRenderer();
 		camera = cameraIn;
 	}
@@ -96,6 +95,7 @@ public final class WORSTImpl {
 		// push matrices
 		currentStack.push();
 		// start mesh
+		vc = immediate.getBuffer(RenderLayer.getSolid());
 		meshBuilder = renderer.meshBuilder();
 		emitter = meshBuilder.getEmitter();
 		index = 0;

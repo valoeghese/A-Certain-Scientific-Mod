@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 
 import net.fabricmc.api.ModInitializer;
 import tk.valoeghese.tknm.api.rendering.RenderHooks;
+import tk.valoeghese.tknm.common.render.DebugPlayerRender;
 import tk.valoeghese.tknm.common.render.DebugRender;
 
 public class ToaruKagakuNoMod implements ModInitializer {
@@ -13,5 +14,6 @@ public class ToaruKagakuNoMod implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		RenderHooks.addWorldRenderHook(new DebugRender());
+		RenderHooks.addWorldPlayerRenderHook(new DebugPlayerRender());
 	}
 }
