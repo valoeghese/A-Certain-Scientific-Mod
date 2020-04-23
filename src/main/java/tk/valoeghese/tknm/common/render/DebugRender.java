@@ -12,9 +12,10 @@ public class DebugRender implements Consumer<ClientWorld> {
 	@Override
 	public void accept(ClientWorld world) {
 		WORST.mesh();
+		WORST.bindBlockTexture(new Identifier("block/obsidian"));
 		WORST.basicCube();
 		int t = (int) (world.getTime() % 360);
-		WORST.renderMeshRaw(new Vector3f(0.5f, 64, 0.5f), new Quaternion(0, t, 0, true), new Vector3f(3.0f, 1.0f, 1.0f));
+		WORST.renderMeshRaw(new Vector3f(0.5f, 80, 0.5f), new Quaternion(0, t, 0, true), new Vector3f(3.0f, 1.0f, 1.0f));
 		// second mesh
 		WORST.mesh();
 		WORST.bindBlockTexture(new Identifier("block/white_wool"));
