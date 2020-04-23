@@ -72,6 +72,21 @@ public final class WORSTImpl {
 	public static final Vector3f ONE = new Vector3f(1.0f, 1.0f, 1.0f);
 	// current sprite
 	private static Sprite boundSprite = null;
+	/*
+	// render layer
+	private static RenderLayer LAYER = RenderLayer.of("worst",
+			VertexFormats.POSITION_COLOR_TEXTURE_LIGHT_NORMAL,
+			7,
+			2097152,
+			true,
+			false,
+			RenderLayer.MultiPhaseParameters
+			.builder()
+			.shadeModel(new RenderPhase.ShadeModel(true))
+			.lightmap(new RenderPhase.Lightmap(true))
+			.texture(new RenderPhase.Texture(SpriteAtlasTexture.BLOCK_ATLAS_TEX, false, true))
+			.writeMaskState(new RenderPhase.WriteMaskState(true, true))
+			.build(true)); */
 
 	public static void init(MatrixStack stack, Camera cameraIn) throws RuntimeException {
 		// init notif
@@ -90,7 +105,7 @@ public final class WORSTImpl {
 		// flush if already dirty
 		if (dirty) {
 			// flush
-			immediate.draw(RenderLayer.getSolid());
+			immediate.draw(getLayer());
 			// pop
 			currentStack.pop();
 		} else {
@@ -99,7 +114,7 @@ public final class WORSTImpl {
 		// push matrices
 		currentStack.push();
 		// start mesh
-		vc = immediate.getBuffer(RenderLayer.getSolid());
+		vc = immediate.getBuffer(getLayer());
 		meshBuilder = renderer.meshBuilder();
 		emitter = meshBuilder.getEmitter();
 		index = 0;
@@ -188,13 +203,17 @@ public final class WORSTImpl {
 		}
 	}
 
+	private static RenderLayer getLayer() {
+		return RenderLayer.getSolid();
+	}
+
 	public static void end() {
 		if (started) {
 			started = false;
 			// flush if dirty
 			if (dirty) {
 				// flush
-				immediate.draw(RenderLayer.getSolid());
+				immediate.draw(getLayer());
 				// pop
 				currentStack.pop();
 				// not dirty anymore!
