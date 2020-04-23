@@ -31,10 +31,7 @@ public final class RenderHooks {
 		for (Consumer<ClientWorld> consumer : RenderHooks.WORLD_RENDER_HOOKS) {
 			consumer.accept(world);
 		}
-		renderWorldPlayerRenderHooks(world);
-	}
 
-	public static void renderWorldPlayerRenderHooks(ClientWorld world) {
 		for (PlayerEntity player : world.getPlayers()) {
 			for (BiConsumer<ClientWorld, PlayerEntity> consumer : RenderHooks.WORLD_PLAYER_RENDER_HOOKS) {
 				consumer.accept(world, player);

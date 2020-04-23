@@ -23,8 +23,11 @@ package tk.valoeghese.tknm.api.rendering;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.client.texture.Sprite;
+import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.util.math.Vector3f;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Quaternion;
 import tk.valoeghese.tknm.rendering.WORSTImpl;
 
@@ -69,44 +72,104 @@ public interface WORST {
 	}
 
 	/**
+	 * Binds the specified block texture to WORST. Use before calling methods such as nextQuad.
+	 * @param identifier the texture identifier.
+	 */
+	static void bindBlockTexture(Identifier identifier) {
+		bindSprite(WORSTImpl.getSprite(SpriteAtlasTexture.BLOCK_ATLAS_TEX, new Identifier("block/iron_ore")));
+	}
+
+	/**
+	 * Binds the specified sprite to WORST. 
+	 */
+	static void bindSprite(Sprite sprite) {
+		WORSTImpl.bindSprite(sprite);
+	}
+
+	/**
 	 * Adds the quads for a basic cube. You do not need to call nextQuad() to flush the quad buffer to add on to this.
 	 */
 	static void basicCube() {
+		basicCube(null);
+	}
+
+	/**
+	 * Adds the quads for a basic cube. You do not need to call nextQuad() to flush the quad buffer to add on to this.
+	 * @param sprites If not null, the sprite textures to be bound to each quad in this order:<ul>
+	 * <li>bottom
+	 * <li>top
+	 * <li>north
+	 * <li>south
+	 * <li>west
+	 * <li>east
+	 */
+	static void basicCube(@Nullable Sprite[] sprites) {
+		boolean rs = sprites != null; // render sprites
 		// bottom
-		vertex(-0.5f, -0.5f, -0.5f);
-		vertex(0.5f, -0.5f, -0.5f);
 		vertex(0.5f, -0.5f, 0.5f);
 		vertex(-0.5f, -0.5f, 0.5f);
+		vertex(-0.5f, -0.5f, -0.5f);
+		vertex(0.5f, -0.5f, -0.5f);
+
+		if (rs) {
+			bindSprite(sprites[0]);
+		}
+
 		WORSTImpl.nextQuadSingle();
 		// top
 		vertex(-0.5f, 0.5f, -0.5f);
 		vertex(-0.5f, 0.5f, 0.5f);
 		vertex(0.5f, 0.5f, 0.5f);
 		vertex(0.5f, 0.5f, -0.5f);
+
+		if (rs) {
+			bindSprite(sprites[1]);
+		}
+
 		WORSTImpl.nextQuadSingle();
 		// north
-		vertex(-0.5f, -0.5f, -0.5f);
 		vertex(-0.5f, 0.5f, -0.5f);
 		vertex(0.5f, 0.5f, -0.5f);
 		vertex(0.5f, -0.5f, -0.5f);
+		vertex(-0.5f, -0.5f, -0.5f);
+
+		if (rs) {
+			bindSprite(sprites[2]);
+		}
+
 		WORSTImpl.nextQuadSingle();
 		// south
-		vertex(-0.5f, -0.5f, 0.5f);
-		vertex(0.5f, -0.5f, 0.5f);
 		vertex(0.5f, 0.5f, 0.5f);
 		vertex(-0.5f, 0.5f, 0.5f);
+		vertex(-0.5f, -0.5f, 0.5f);
+		vertex(0.5f, -0.5f, 0.5f);
+
+		if (rs) {
+			bindSprite(sprites[3]);
+		}
+
 		WORSTImpl.nextQuadSingle();
 		// west
-		vertex(-0.5f, -0.5f, -0.5f);
-		vertex(-0.5f, -0.5f, 0.5f);
 		vertex(-0.5f, 0.5f, 0.5f);
 		vertex(-0.5f, 0.5f, -0.5f);
+		vertex(-0.5f, -0.5f, -0.5f);
+		vertex(-0.5f, -0.5f, 0.5f);
+
+		if (rs) {
+			bindSprite(sprites[4]);
+		}
+
 		WORSTImpl.nextQuadSingle();
 		// east
-		vertex(0.5f, -0.5f, -0.5f);
 		vertex(0.5f, 0.5f, -0.5f);
 		vertex(0.5f, 0.5f, 0.5f);
 		vertex(0.5f, -0.5f, 0.5f);
+		vertex(0.5f, -0.5f, -0.5f);
+
+		if (rs) {
+			bindSprite(sprites[5]);
+		}
+
 		WORSTImpl.nextQuadSingle();
 	}
 

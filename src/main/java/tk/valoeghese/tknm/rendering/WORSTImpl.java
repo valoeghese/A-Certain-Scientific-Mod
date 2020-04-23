@@ -38,8 +38,10 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.model.BakedQuad;
+import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.util.math.Vector3f;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Quaternion;
 import net.minecraft.util.math.Vec3d;
 
@@ -68,6 +70,8 @@ public final class WORSTImpl {
 	private static Vector3f[] quadBuffer = new Vector3f[4];
 	private static boolean dqb = false; // whether the quad buffer is "dirty"
 	public static final Vector3f ONE = new Vector3f(1.0f, 1.0f, 1.0f);
+	// current sprite
+	private static Sprite boundSprite = null;
 
 	public static void init(MatrixStack stack, Camera cameraIn) throws RuntimeException {
 		// init notif
@@ -105,19 +109,27 @@ public final class WORSTImpl {
 		return currentStack;
 	}
 
+	public static void bindSprite(Sprite sprite) {
+		boundSprite = sprite;
+	}
+
 	public static void nextQuadDouble() {
 		if (dqb) {
 			// normal
 			emitter
-			.pos(0, quadBuffer[0])
-			.pos(1, quadBuffer[1])
-			.pos(2, quadBuffer[2])
-			.pos(3, quadBuffer[3]).emit()
+			.pos(0, quadBuffer[0]).sprite(0, 0, 0, 0)
+			.pos(1, quadBuffer[1]).sprite(1, 0, 1, 0)
+			.pos(2, quadBuffer[2]).sprite(2, 0, 1, 1)
+			.pos(3, quadBuffer[3]).sprite(3, 0, 0, 1)
+			.spriteColor(0, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF)
+			.emit()
 			// reverse
-			.pos(0, quadBuffer[0])
-			.pos(1, quadBuffer[3])
-			.pos(2, quadBuffer[2])
-			.pos(3, quadBuffer[1]).emit();
+			.pos(0, quadBuffer[0]).sprite(0, 0, 0, 0)
+			.pos(1, quadBuffer[3]).sprite(3, 0, 0, 1)
+			.pos(2, quadBuffer[2]).sprite(2, 0, 1, 1)
+			.pos(3, quadBuffer[1]).sprite(1, 0, 1, 0)
+			.spriteColor(0, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF)
+			.emit();
 			dqb = false;
 			index = 0;
 		}
@@ -126,13 +138,24 @@ public final class WORSTImpl {
 	public static void nextQuadSingle() {
 		if (dqb) {
 			emitter
-			.pos(0, quadBuffer[0])
-			.pos(1, quadBuffer[1])
-			.pos(2, quadBuffer[2])
-			.pos(3, quadBuffer[3]).emit();
+			.pos(0, quadBuffer[0]).sprite(0, 0, 16, 0)
+			.pos(1, quadBuffer[1]).sprite(1, 0, 0, 0)
+			.pos(2, quadBuffer[2]).sprite(2, 0, 0, 16)
+			.pos(3, quadBuffer[3]).sprite(3, 0, 16, 16)
+			.spriteColor(0, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF);
+
+			if (boundSprite != null) {
+				emitter.spriteBake(0, boundSprite, 0);
+			}
+
+			emitter.emit();
 			dqb = false;
 			index = 0;
 		}
+	}
+
+	public static Sprite getSprite(Identifier atlasTexture, Identifier id) {
+		return MinecraftClient.getInstance().getSpriteAtlas(atlasTexture).apply(id);
 	}
 
 	public static void vertex(float x, float y, float z) {
@@ -160,7 +183,7 @@ public final class WORSTImpl {
 
 		for (int i = 0; i < quadListArray.length; ++i) {
 			for (BakedQuad bq : quadListArray[i]) {
-				vc.quad(currentStack.peek(), bq, 1.0f, 1.0f, 1.0f, 15728880, OverlayTexture.DEFAULT_UV);
+				vc.quad(currentStack.peek(), bq, 1.0f, 1.0f, 1.0f, 0xF000F0, OverlayTexture.DEFAULT_UV);
 			}
 		}
 	}
@@ -180,6 +203,8 @@ public final class WORSTImpl {
 			// reset stack and camera variables
 			currentStack = null;
 			camera = null;
+			// and sprite
+			boundSprite = null;
 		}
 	}
 }
