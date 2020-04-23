@@ -1,6 +1,5 @@
 /*
- * Although most of the project is under the LGPL v3
- * The files for WORST are licensed under MIT.
+ * Although most of the project is under the LGPL v3, the files for WORST are licensed under MIT.
  * 
  * Copyright 2020 Valoeghese
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software

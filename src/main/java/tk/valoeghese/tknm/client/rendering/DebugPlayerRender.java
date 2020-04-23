@@ -1,4 +1,4 @@
-package tk.valoeghese.tknm.common.render;
+package tk.valoeghese.tknm.client.rendering;
 
 import java.util.function.BiConsumer;
 

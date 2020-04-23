@@ -9,13 +9,17 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "tk.valoeghese.tknm.ToaruKagakuNoMod"
+      "tk.valoeghese.tknm.common.ToaruKagakuNoMod"
+    ],
+    "client": [
+      "tk.valoeghese.tknm.client.ToaruKagakuNoModClient"
     ]
   },
   "mixins": [
     "tknm.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.4.0"
+    "fabricloader": ">=0.4.0",
+    "fabric": "*"
   }
 }

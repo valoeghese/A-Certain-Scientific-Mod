@@ -1,4 +1,4 @@
-package tk.valoeghese.tknm.common.render;
+package tk.valoeghese.tknm.client.rendering;
 
 import java.util.function.Consumer;
 
@@ -15,6 +15,7 @@ public class DebugRender implements Consumer<ClientWorld> {
 		WORST.bindBlockTexture(new Identifier("block/obsidian"));
 		WORST.basicCube();
 		int t = (int) (world.getTime() % 360);
+
 		WORST.renderMeshRaw(new Vector3f(0.5f, 80, 0.5f), new Quaternion(0, t, 0, true), new Vector3f(3.0f, 1.0f, 1.0f));
 		// second mesh
 		WORST.mesh();

@@ -1,6 +1,5 @@
 /*
- * Although most of the project is under the LGPL v3
- * The files for WORST are licensed under MIT.
+ * Although most of the project is under the LGPL v3, the files for WORST are licensed under MIT.
  * 
  * Copyright 2020 Valoeghese
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
@@ -72,21 +71,6 @@ public final class WORSTImpl {
 	public static final Vector3f ONE = new Vector3f(1.0f, 1.0f, 1.0f);
 	// current sprite
 	private static Sprite boundSprite = null;
-	/*
-	// render layer
-	private static RenderLayer LAYER = RenderLayer.of("worst",
-			VertexFormats.POSITION_COLOR_TEXTURE_LIGHT_NORMAL,
-			7,
-			2097152,
-			true,
-			false,
-			RenderLayer.MultiPhaseParameters
-			.builder()
-			.shadeModel(new RenderPhase.ShadeModel(true))
-			.lightmap(new RenderPhase.Lightmap(true))
-			.texture(new RenderPhase.Texture(SpriteAtlasTexture.BLOCK_ATLAS_TEX, false, true))
-			.writeMaskState(new RenderPhase.WriteMaskState(true, true))
-			.build(true)); */
 
 	public static void init(MatrixStack stack, Camera cameraIn) throws RuntimeException {
 		// init notif
