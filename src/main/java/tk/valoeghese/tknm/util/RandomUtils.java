@@ -2,9 +2,7 @@ package tk.valoeghese.tknm.util;
 
 import java.util.Random;
 
-// yes this is also from my misakabot gpl repo
-// I'm breaking my own licence
-// fite me
+// yes this is also from my misakabot repo
 public final class RandomUtils {
 	public static FloatRandom naturalDistribution(float amplitude, float offset) {
 		final float scale = -(amplitude / MAX_NATURAL);
