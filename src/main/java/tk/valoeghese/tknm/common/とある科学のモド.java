@@ -11,6 +11,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import tk.valoeghese.tknm.api.ACertainComponent;
 import tk.valoeghese.tknm.common.ability.ある能力のカーヂナルの要素;
+import tk.valoeghese.tknm.common.ability.能力;
 
 public class とある科学のモド implements ModInitializer {
 	public static final Logger LOGGER = LogManager.getLogger("A Certain Scientific Mod");
@@ -20,6 +21,7 @@ public class とある科学のモド implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
+		能力.ensureInit();
 	}
 
 	public static Identifier from(String name) {

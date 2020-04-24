@@ -15,6 +15,7 @@ import tk.valoeghese.tknm.util.RandomUtils;
 public final class ある能力のカーヂナルの要素 implements ACertainComponent {
 	public ある能力のカーヂナルの要素(PlayerEntity player) {
 		this.じりき = 0.2f + ABILITY_RANDOM.nextFloat();
+		this.能力 = AbilityRegistry.pickAbility(player.getRandom());
 	}
 
 	// ============ ABILITY ============ //
