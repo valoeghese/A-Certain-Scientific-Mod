@@ -1,7 +1,10 @@
 package tk.valoeghese.tknm.common.ability;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import tk.valoeghese.tknm.api.ACertainComponent;
 import tk.valoeghese.tknm.api.ability.Ability;
@@ -26,12 +29,41 @@ public final class ある能力のカーヂナルの要素 implements ACertainCo
 	private boolean 能力者 = false;
 	private Ability 能力;
 
-	public void レブルわりたす() {
+	private void レブルわりたす() {
 		this.レブル = (int) Math.floor((3 * this.じりき * Math.log10(this.能力けいけんち + 1.0f)) + (2 * this.じりき));
 
 		if (this.レブル > 5) {
 			this.レブル = 5;
 		}
+	}
+
+	@Override
+	public Text stats() {
+		CompoundTag タッグ = new CompoundTag();
+		タッグ.putInt("reburu", this.レブル);
+		return this.toTag(タッグ).toText();
+	}
+
+	@Override
+	public float addXp(float xp) {
+		this.能力けいけんち += xp;
+		this.レブルわりたす();
+		return this.能力けいけんち;
+	}
+
+	@Override
+	@Nullable
+	public Ability getAbility() {
+		if (this.能力者) {
+			return this.能力;
+		} else {
+			return null;
+		}
+	}
+
+	@Override
+	public int getLevel() {
+		return this.レブル;
 	}
 
 	@Override
