@@ -31,8 +31,8 @@ public class とある科学のモドClient implements ClientModInitializer {
 				Ability ability = AbilityRegistry.getAbility(abilityId);
 
 				if (ability != null) {
-					AbilityRenderPrimer.getOrCreate().queue.add(() -> {
-						ability.getRenderer().renderInfo(pos, yaw, pitch, usage, data);
+					AbilityRenderPrimer.getOrCreate().queue.add(world -> {
+						ability.getRenderer().renderInfo(world, pos, yaw, pitch, usage, data);
 					});
 				}
 			});

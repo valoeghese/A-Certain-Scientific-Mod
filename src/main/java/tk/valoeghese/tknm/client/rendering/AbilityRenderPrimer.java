@@ -17,7 +17,7 @@ public class AbilityRenderPrimer implements Consumer<ClientWorld> {
 	@Override
 	public void accept(ClientWorld world) {
 		while (!queue.isEmpty()) {
-			queue.remove().run();
+			queue.remove().accept(world);
 		}
 
 		for (AbilityRenderer renderer : this.renderers) {
@@ -29,7 +29,7 @@ public class AbilityRenderPrimer implements Consumer<ClientWorld> {
 		return instance == null ? new AbilityRenderPrimer() : instance;
 	}
 
-	public final Queue<Runnable> queue = new LinkedList<>();
+	public final Queue<Consumer<ClientWorld>> queue = new LinkedList<>();
 	public final List<AbilityRenderer> renderers = new ArrayList<>();
 	private static AbilityRenderPrimer instance;
 }

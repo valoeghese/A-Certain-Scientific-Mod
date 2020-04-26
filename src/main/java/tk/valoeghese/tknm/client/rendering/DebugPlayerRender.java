@@ -14,6 +14,6 @@ public class DebugPlayerRender implements BiConsumer<ClientWorld, PlayerEntity> 
 		WORST.mesh();
 		WORST.bindBlockTexture(new Identifier("block/stone"));
 		WORST.basicCube();
-		WORST.renderMeshRaw(new Vector3f((float)player.getX(), (float)player.getY() + 2.5f, (float)player.getZ()), null, null);
+		WORST.renderMesh(new Vector3f((float)player.getX(), (float)player.getY() + 2.5f, (float)player.getZ()), null, null);
 	}
 }

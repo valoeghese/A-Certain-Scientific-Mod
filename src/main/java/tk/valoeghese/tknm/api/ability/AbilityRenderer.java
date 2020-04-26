@@ -13,12 +13,14 @@ public interface AbilityRenderer {
 	 */
 	void render(ClientWorld world);
 	/**
-	 * Gives information about (usually) starting to render an ability in the world.
+	 * Gives information about starting to render an ability usage in the world.
+	 * Do not render in this method! Use this to cache information you need in your renderer for usage in {@link AbilityRenderer#render}
+	 * @param world the world in which this will be rendered.
 	 * @param pos the position of the player using the ability.
 	 * @param yaw the yaw of the player using the ability.
 	 * @param pitch the pitch of the player using the ability.
 	 * @param usage int specifying the usage of the ability. Varies depending on the ability.
 	 * @param data additional data on how the ability was used.
 	 */
-	void renderInfo(Vec3d pos, float yaw, float pitch, int usage, int[] data);
+	void renderInfo(ClientWorld world, Vec3d pos, float yaw, float pitch, int usage, int[] data);
 }

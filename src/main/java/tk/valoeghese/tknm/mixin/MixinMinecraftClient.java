@@ -11,6 +11,7 @@ import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.util.Hand;
 import tk.valoeghese.tknm.common.とある科学のモド;
 
 @Mixin(MinecraftClient.class)
@@ -36,7 +37,7 @@ public class MixinMinecraftClient {
 			)
 	private boolean doItemUse(ItemStack stack) {
 		if (this.tknm$ready) {
-			if (stack.isEmpty()) {
+			if (((MinecraftClient) (Object) this).player.getStackInHand(Hand.MAIN_HAND).isEmpty()) {
 				this.tknm$ready = false;
 
 				PacketByteBuf 能力パッケト = new PacketByteBuf(Unpooled.buffer());

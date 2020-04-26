@@ -63,10 +63,20 @@ public interface WORST {
 	 * Adds the four vertices that make up a flat square on the ground, with the centre at the centre of the square. You do not need to call nextQuad() to flush the quad buffer to add on to this.
 	 */
 	static void flatSquare() {
-		vertex(-0.5f, 0, -0.5f);
-		vertex(-0.5f, 0, 0.5f);
-		vertex(0.5f, 0, 0.5f);
-		vertex(0.5f, 0, -0.5f);
+		flatSquare(0, 0, 0);
+	}
+
+	/**
+	 * Adds the four vertices that make up a flat square on the ground, with the centre offset from the centre of the square by the specified offset parameters. You do not need to call nextQuad() to flush the quad buffer to add on to this.
+	 * @param xo the x offset of the plane.
+	 * @param yo the y offset of the plane.
+	 * @param zo the z offset of the plane.
+	 */
+	static void flatSquare(float xo, float yo, float zo) {
+		vertex(-0.5f + xo, 0 + yo, -0.5f + zo);
+		vertex(-0.5f + xo, 0 + yo, 0.5f + zo);
+		vertex(0.5f + xo, 0 + yo, 0.5f + zo);
+		vertex(0.5f + xo, 0 + yo, -0.5f + zo);
 		nextQuad();
 	}
 
@@ -89,7 +99,7 @@ public interface WORST {
 	 * Adds the quads for a basic cube. You do not need to call nextQuad() to flush the quad buffer to add on to this.
 	 */
 	static void basicCube() {
-		basicCube(null);
+		basicCube(null, 0, 0, 0);
 	}
 
 	/**
@@ -101,14 +111,17 @@ public interface WORST {
 	 * <li>south
 	 * <li>west
 	 * <li>east
+	 * @param xo the x offset of the cube vertices.
+	 * @param yo the y offset of the cube vertices.
+	 * @param zo the z offset of the cube vertices.
 	 */
-	static void basicCube(@Nullable Sprite[] sprites) {
+	static void basicCube(@Nullable Sprite[] sprites, float xo, float yo, float zo) {
 		boolean rs = sprites != null; // render sprites
 		// bottom
-		vertex(0.5f, -0.5f, 0.5f);
-		vertex(-0.5f, -0.5f, 0.5f);
-		vertex(-0.5f, -0.5f, -0.5f);
-		vertex(0.5f, -0.5f, -0.5f);
+		vertex(0.5f + xo, -0.5f + yo, 0.5f + zo);
+		vertex(-0.5f + xo, -0.5f + yo, 0.5f + zo);
+		vertex(-0.5f + xo, -0.5f + yo, -0.5f + zo);
+		vertex(0.5f + xo, -0.5f + yo, -0.5f + zo);
 
 		if (rs) {
 			bindSprite(sprites[0]);
@@ -116,10 +129,10 @@ public interface WORST {
 
 		WORSTImpl.nextQuadSingle();
 		// top
-		vertex(-0.5f, 0.5f, -0.5f);
-		vertex(-0.5f, 0.5f, 0.5f);
-		vertex(0.5f, 0.5f, 0.5f);
-		vertex(0.5f, 0.5f, -0.5f);
+		vertex(-0.5f + xo, 0.5f + yo, -0.5f + zo);
+		vertex(-0.5f + xo, 0.5f + yo, 0.5f + zo);
+		vertex(0.5f + xo, 0.5f + yo, 0.5f + zo);
+		vertex(0.5f + xo, 0.5f + yo, -0.5f + zo);
 
 		if (rs) {
 			bindSprite(sprites[1]);
@@ -127,10 +140,10 @@ public interface WORST {
 
 		WORSTImpl.nextQuadSingle();
 		// north
-		vertex(-0.5f, 0.5f, -0.5f);
-		vertex(0.5f, 0.5f, -0.5f);
-		vertex(0.5f, -0.5f, -0.5f);
-		vertex(-0.5f, -0.5f, -0.5f);
+		vertex(-0.5f + xo, 0.5f + yo, -0.5f + zo);
+		vertex(0.5f + xo, 0.5f + yo, -0.5f + zo);
+		vertex(0.5f + xo, -0.5f + yo, -0.5f + zo);
+		vertex(-0.5f + xo, -0.5f + yo, -0.5f + zo);
 
 		if (rs) {
 			bindSprite(sprites[2]);
@@ -138,10 +151,10 @@ public interface WORST {
 
 		WORSTImpl.nextQuadSingle();
 		// south
-		vertex(0.5f, 0.5f, 0.5f);
-		vertex(-0.5f, 0.5f, 0.5f);
-		vertex(-0.5f, -0.5f, 0.5f);
-		vertex(0.5f, -0.5f, 0.5f);
+		vertex(0.5f + xo, 0.5f + yo, 0.5f + zo);
+		vertex(-0.5f + xo, 0.5f + yo, 0.5f + zo);
+		vertex(-0.5f + xo, -0.5f + yo, 0.5f + zo);
+		vertex(0.5f + xo, -0.5f + yo, 0.5f + zo);
 
 		if (rs) {
 			bindSprite(sprites[3]);
@@ -149,10 +162,10 @@ public interface WORST {
 
 		WORSTImpl.nextQuadSingle();
 		// west
-		vertex(-0.5f, 0.5f, 0.5f);
-		vertex(-0.5f, 0.5f, -0.5f);
-		vertex(-0.5f, -0.5f, -0.5f);
-		vertex(-0.5f, -0.5f, 0.5f);
+		vertex(-0.5f + xo, 0.5f + yo, 0.5f + zo);
+		vertex(-0.5f + xo, 0.5f + yo, -0.5f + zo);
+		vertex(-0.5f + xo, -0.5f + yo, -0.5f + zo);
+		vertex(-0.5f + xo, -0.5f + yo, 0.5f + zo);
 
 		if (rs) {
 			bindSprite(sprites[4]);
@@ -160,10 +173,10 @@ public interface WORST {
 
 		WORSTImpl.nextQuadSingle();
 		// east
-		vertex(0.5f, 0.5f, -0.5f);
-		vertex(0.5f, 0.5f, 0.5f);
-		vertex(0.5f, -0.5f, 0.5f);
-		vertex(0.5f, -0.5f, -0.5f);
+		vertex(0.5f + xo, 0.5f + yo, -0.5f + zo);
+		vertex(0.5f + xo, 0.5f + yo, 0.5f + zo);
+		vertex(0.5f + xo, -0.5f + yo, 0.5f + zo);
+		vertex(0.5f + xo, -0.5f + yo, -0.5f + zo);
 
 		if (rs) {
 			bindSprite(sprites[5]);
@@ -185,7 +198,7 @@ public interface WORST {
 	 * @param rotation if null, no rotation is performed. Otherwise, provides the rotation of the mesh.
 	 * @param scale if null, the mesh is not scaled. Otherwise, provides the scale of the mesh.
 	 */
-	static void renderMeshRaw(Vector3f translate, @Nullable Quaternion rotation, @Nullable Vector3f scale) {
+	static void renderMesh(Vector3f translate, @Nullable Quaternion rotation, @Nullable Vector3f scale) {
 		WORSTImpl.renderMesh(translate, rotation, scale == null ? WORSTImpl.ONE : scale);
 	}
 
@@ -195,7 +208,7 @@ public interface WORST {
 	 * @param rotation if null, no rotation is performed. Otherwise, provides the rotation of the mesh.
 	 * @param scale if null, the mesh is not scaled. Otherwise, provides the scale of the mesh.
 	 */
-	static void renderMesh(Vector3f translate, @Nullable Quaternion rotation, @Nullable Vector3f scale) {
+	static void flushAndRenderMesh(Vector3f translate, @Nullable Quaternion rotation, @Nullable Vector3f scale) {
 		WORSTImpl.nextQuadDouble();
 		WORSTImpl.renderMesh(translate, rotation, scale == null ? WORSTImpl.ONE : scale);
 	}
