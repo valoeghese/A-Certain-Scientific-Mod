@@ -7,6 +7,9 @@ import net.minecraft.text.Text;
 import tk.valoeghese.tknm.api.ability.Ability;
 
 public interface ACertainComponent extends Component {
+	/**
+	 * @return the stats of this component as Text.
+	 */
 	Text stats();
 	/**
 	 * @param xp the amount of xp to add.
@@ -18,7 +21,11 @@ public interface ACertainComponent extends Component {
 	 */
 	@Nullable Ability getAbility();
 	/**
-	 * @return the ability level
+	 * @return the ability level.
 	 */
 	int getLevel();
+	/**
+	 * @param abilityUser whether the player is an ability user.
+	 */
+	void setAbilityUser(boolean abilityUser);
 }

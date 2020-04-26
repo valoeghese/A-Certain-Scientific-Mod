@@ -67,6 +67,11 @@ public final class ある能力のカーヂナルの要素 implements ACertainCo
 	}
 
 	@Override
+	public void setAbilityUser(boolean abilityUser) {
+		this.能力者 = abilityUser;
+	}
+
+	@Override
 	public void fromTag(CompoundTag タッグ) {
 		if (タッグ.contains("nouryoku", 10)) {
 			CompoundTag 能力タッグ = タッグ.getCompound("nouryoku");

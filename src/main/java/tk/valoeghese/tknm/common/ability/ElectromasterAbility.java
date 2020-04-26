@@ -4,12 +4,12 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
 import tk.valoeghese.tknm.api.ability.Ability;
 import tk.valoeghese.tknm.api.ability.AbilityRenderer;
+import tk.valoeghese.tknm.common.ability.renderer.ElectromasterAbilityRenderer;
 
 public class ElectromasterAbility extends Ability {
 	@Override
 	public AbilityRenderer createAbilityRenderer() {
-		// TODO Auto-generated method stub
-		return null;
+		return new ElectromasterAbilityRenderer();
 	}
 
 	@Override

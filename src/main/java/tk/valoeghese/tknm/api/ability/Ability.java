@@ -6,6 +6,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
+import tk.valoeghese.tknm.client.rendering.AbilityRenderPrimer;
 
 /**
  * Class representing an ability, usually a psychic/esper ability.
@@ -13,8 +14,11 @@ import net.minecraft.world.World;
 // TODO add passive ability
 public abstract class Ability {
 	public Ability() {
-		this.renderer = FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT
-				? this.createAbilityRenderer() : null;
+		this.renderer = (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT ? 
+				this.createAbilityRenderer() : null);
+		if (this.renderer != null) {
+			AbilityRenderPrimer.getOrCreate().renderers.add(this.renderer);
+		}
 	}
 
 	private final AbilityRenderer renderer;
@@ -39,5 +43,5 @@ public abstract class Ability {
 	/**
 	 * @return the ability renderer for this ability. Is called when this ability is constructed on the client side.
 	 */
-	public abstract AbilityRenderer createAbilityRenderer();
+	protected abstract AbilityRenderer createAbilityRenderer();
 }
