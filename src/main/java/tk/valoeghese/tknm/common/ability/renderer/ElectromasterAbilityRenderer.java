@@ -1,5 +1,6 @@
 package tk.valoeghese.tknm.common.ability.renderer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.client.util.math.Vector3f;
@@ -16,11 +17,11 @@ public class ElectromasterAbilityRenderer implements AbilityRenderer {
 		this.railguns.add(new RailgunEntry(
 				new Vector3f((float)pos.getX(), (float)pos.getY() + 1.25f, (float)pos.getZ()),
 				new Quaternion(0, 270 - yaw, 360 - pitch, true),
-				50.0f,
+				Float.intBitsToFloat(data[0]),
 				world.getTime() + 40));
 	}
 
-	private List<RailgunEntry> railguns;
+	private final List<RailgunEntry> railguns = new ArrayList<>();
 
 	@Override
 	public void render(ClientWorld world) {

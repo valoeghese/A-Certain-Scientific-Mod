@@ -25,6 +25,10 @@ public interface ACertainComponent extends Component {
 	 */
 	int getLevel();
 	/**
+	 * @return the progress towards the next level.
+	 */
+	float getLevelProgress();
+	/**
 	 * @param abilityUser whether the player is an ability user.
 	 */
 	void setAbilityUser(boolean abilityUser);

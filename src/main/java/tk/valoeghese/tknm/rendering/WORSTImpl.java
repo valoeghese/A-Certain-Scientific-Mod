@@ -116,19 +116,27 @@ public final class WORSTImpl {
 		if (dqb) {
 			// normal
 			emitter
-			.pos(0, quadBuffer[0]).sprite(0, 0, 0, 0)
+			.pos(0, quadBuffer[0]).sprite(0, 0, 16, 0)
 			.pos(1, quadBuffer[1]).sprite(1, 0, 1, 0)
-			.pos(2, quadBuffer[2]).sprite(2, 0, 1, 1)
-			.pos(3, quadBuffer[3]).sprite(3, 0, 0, 1)
-			.spriteColor(0, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF)
-			.emit()
+			.pos(2, quadBuffer[2]).sprite(2, 0, 0, 16)
+			.pos(3, quadBuffer[3]).sprite(3, 0, 16, 16);
+
+			if (boundSprite != null) {
+				emitter.spriteBake(0, boundSprite, 0);
+			}
+
+			emitter.emit()
 			// reverse
 			.pos(0, quadBuffer[0]).sprite(0, 0, 0, 0)
-			.pos(1, quadBuffer[3]).sprite(3, 0, 0, 1)
-			.pos(2, quadBuffer[2]).sprite(2, 0, 1, 1)
-			.pos(3, quadBuffer[1]).sprite(1, 0, 1, 0)
-			.spriteColor(0, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF)
-			.emit();
+			.pos(1, quadBuffer[3]).sprite(1, 0, 0, 16)
+			.pos(2, quadBuffer[2]).sprite(2, 0, 16, 16)
+			.pos(3, quadBuffer[1]).sprite(3, 0, 16, 0);
+
+			if (boundSprite != null) {
+				emitter.spriteBake(0, boundSprite, 0);
+			}
+
+			emitter.emit();
 			dqb = false;
 			index = 0;
 		}
@@ -140,8 +148,7 @@ public final class WORSTImpl {
 			.pos(0, quadBuffer[0]).sprite(0, 0, 16, 0)
 			.pos(1, quadBuffer[1]).sprite(1, 0, 0, 0)
 			.pos(2, quadBuffer[2]).sprite(2, 0, 0, 16)
-			.pos(3, quadBuffer[3]).sprite(3, 0, 16, 16)
-			.spriteColor(0, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF);
+			.pos(3, quadBuffer[3]).sprite(3, 0, 16, 16);
 
 			if (boundSprite != null) {
 				emitter.spriteBake(0, boundSprite, 0);
@@ -188,7 +195,7 @@ public final class WORSTImpl {
 	}
 
 	private static RenderLayer getLayer() {
-		return RenderLayer.getSolid();
+		return RenderLayer.getTranslucent();
 	}
 
 	public static void end() {

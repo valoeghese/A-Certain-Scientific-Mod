@@ -96,7 +96,7 @@ public class とある科学のモド implements ModInitializer {
 					Identifier abilityId = AbilityRegistry.getRegistryId(ability);
 
 					// do ability logic here
-					int[] データ = ability.performAbility(player.world, player, component.getLevel(), usage);
+					int[] データ = ability.performAbility(player.world, player, component.getLevel(), component.getLevelProgress(), usage);
 
 					// send packets
 					PacketByteBuf パッキト = new PacketByteBuf(Unpooled.buffer());

@@ -25,16 +25,28 @@ public final class ある能力のカーヂナルの要素 implements ACertainCo
 
 	public float 能力けいけんち = 0.0f; // ability user xp for calculations
 	private int レブル = 0; // from 0 to 5
+	private float プログレス = 0;
 	private float じりき;
 	private boolean 能力者 = false;
 	private Ability 能力;
 
 	private void レブルわりたす() {
-		this.レブル = (int) Math.floor((3 * this.じりき * Math.log10(this.能力けいけんち + 1.0f)) + (2 * this.じりき));
+		float アウトプット = (float) ((3 * this.じりき * Math.log10(this.能力けいけんち + 1.0f)) + (2 * this.じりき));
+		this.レブル = (int) Math.floor(アウトプット);
 
 		if (this.レブル > 5) {
+			this.プログレス = 1.0f;
 			this.レブル = 5;
+		} else {
+			float レブルのアウトプット = (float) Math.pow(10, ((this.レブル ) - (2 * this.じりき)) / 3 * this.じりき);
+			float つぎのレブルのアウトプット = (float) Math.pow(10, ((this.レブル + 1) - (2 * this.じりき)) / 3 * this.じりき);
+			this.プログレス = progressOf(レブルのアウトプット, アウトプット, つぎのレブルのアウトプット);
 		}
+	}
+
+	@Override
+	public float getLevelProgress() {
+		return this.プログレス;
 	}
 
 	@Override
@@ -95,6 +107,10 @@ public final class ある能力のカーヂナルの要素 implements ACertainCo
 		}
 		タッグ.put("nouryoku", 能力タッグ);
 		return タッグ;
+	}
+
+	private static float progressOf(float prev, float current, float next) {
+		return (current - prev) / (next - prev);
 	}
 
 	private static final FloatRandom ABILITY_RANDOM = RandomUtils.naturalDistribution(0.5f, 0.5f);
