@@ -1,4 +1,4 @@
-package tk.valoeghese.tknm.common.ability.renderer;
+package tk.valoeghese.tknm.client.abilityrenderer;
 
 import java.util.ArrayList;
 import java.util.List;

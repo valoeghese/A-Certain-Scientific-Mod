@@ -6,13 +6,12 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Box;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import tk.valoeghese.tknm.api.OrderedList;
 import tk.valoeghese.tknm.api.ability.Ability;
 import tk.valoeghese.tknm.api.ability.AbilityRenderer;
-import tk.valoeghese.tknm.common.ability.renderer.ElectromasterAbilityRenderer;
+import tk.valoeghese.tknm.client.abilityrenderer.ElectromasterAbilityRenderer;
 
 public class ElectromasterAbility extends Ability {
 	@Override
@@ -22,62 +21,68 @@ public class ElectromasterAbility extends Ability {
 
 	@Override
 	public int[] performAbility(World world, PlayerEntity player, int level, float levelProgress, byte usage) {
+		return this.performRailgun(world, player, level, levelProgress);
+	}
+
+	private int[] performRailgun(World world, PlayerEntity player, int level, float levelProgress) {
 		double distance = 50.0;
 		double sqrDistance = distance * distance;
-		double maxDistance = Math.sqrt(sqrDistance * 2);
+		double maxDistance = Math.sqrt(sqrDistance * 2); // pythagoras theorem
 
-		Vec3d pos = player.getPos();
-		double x0 = pos.getX();
-		double y0 = pos.getY();
-		double z0 = pos.getZ();
+		Vec3d sourcePos = player.getPos().add(0, 1.25, 0);
 
-		Object2FloatMap<LivingEntity> distanceCache = new Object2FloatArrayMap<>();
-		OrderedList<LivingEntity> entities = new OrderedList<>(distanceCache::getFloat);
+		// perform trig calculations once per ability use for speed
+		double calcYaw = Math.toRadians(player.yaw - 180);
+		double calcPitch = Math.toRadians(-player.pitch);
+		double sinYaw = Math.sin(calcYaw);
+		double cosYaw = Math.cos(calcYaw);
+		double sinPitch = Math.sin(calcPitch);
+		double cosPitch = Math.cos(calcPitch);
 
+		// order entities by distance in case one blocks the ability (imagine breaker?)
+		Object2FloatMap<LivingEntity> distanceLookup = new Object2FloatArrayMap<>();
+		OrderedList<LivingEntity> entities = new OrderedList<>(distanceLookup::getFloat);
+
+		// iterate over possible targeted entities within the said distance
 		for (LivingEntity le : world.getEntities(
 				LivingEntity.class,
-				new Box(pos, pos.add(1, 1, 1)).expand(maxDistance),
+				new Box(sourcePos, sourcePos.add(1, 1, 1)).expand(maxDistance),
 				le -> le != player
 				)) {
 
-			Vec3d otherPos = le.getPos();
-
-			double sqrDistBetween = otherPos.squaredDistanceTo(pos);
+			Vec3d lePos = le.getBoundingBox().getCenter();
+			double sqrDistBetween = lePos.squaredDistanceTo(sourcePos);
 
 			if (sqrDistBetween < sqrDistance) {
-				// if they're too close to the ability user add them as well
-				// may remove this if I get a better algorithm
-				if (sqrDistBetween < 0.5 * 0.5) {
-					distanceCache.put(le, (float) Math.sqrt(sqrDistBetween));
+				double distBetween = Math.sqrt(sqrDistBetween);
 
+				// calculate point along ray at that distance
+				// using trigonometry
+				double dy = distBetween * sinPitch;
+				double dbHorizontal = distBetween * cosPitch;
+
+				double dx = dbHorizontal * sinYaw;
+				double dz = -(dbHorizontal * cosYaw); // because mojang
+
+				// position of ray at that distance
+				Vec3d rayPos = sourcePos.add(dx, dy, dz);
+
+				// if it's in or near the bounding box
+				if (le.getBoundingBox().expand(0.5).contains(rayPos)) {
+					// add the said entity
+					distanceLookup.put(le, (float) distBetween);
 					entities.add(le);
-				}
-
-				double x1 = otherPos.getX();
-				double z1 = otherPos.getZ();
-				float yaw = MathHelper.wrapDegrees((float) Math.toDegrees(Math.atan2(z1 - z0, x1 - x0)) - 90);
-				float dYaw = MathHelper.abs(yaw - player.yaw);
-
-				// degree accuracy
-				if (dYaw <= 5 || dYaw >= 360 - 5) {
-					double distBetween = Math.sqrt(sqrDistBetween);
-					float pitch = MathHelper.wrapDegrees((float)Math.toDegrees(Math.atan2(otherPos.getY() - y0, distBetween)));
-					float dPitch = MathHelper.abs(pitch + player.pitch);
-					System.out.println(dPitch);
-					// degree accuracy
-					if (dPitch <= 10 || dPitch >= 360 - 10) {
-						distanceCache.put(le, (float) distBetween);
-
-						entities.add(le);
-					}
 				}
 			}
 		}
 
 		for (LivingEntity le : entities) {
-			le.damage(DamageSource.GENERIC, 6);
+			// temporary - soon will activate with metal items
+			// also will add a coin item :wink:
+			le.damage(DamageSource.GENERIC, level > 4 ? 11 + (int) levelProgress : 9);
 		}
 
+		// pass distance (i.e. length of ray) on to the renderer
 		return new int[] {
 				Float.floatToIntBits((float) distance)
 		};
