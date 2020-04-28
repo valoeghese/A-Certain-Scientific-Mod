@@ -75,7 +75,7 @@ public class ElectromasterAbility extends Ability {
 		}
 
 		for (LivingEntity le : entities) {
-			le.damage(DamageSource.MAGIC, 1);
+			le.damage(DamageSource.GENERIC, 6);
 		}
 
 		return new int[] {
