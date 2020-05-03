@@ -106,7 +106,7 @@ public class とある科学のモド implements ModInitializer {
 					パッキト.writeFloatLE(player.yaw);
 					パッキト.writeFloatLE(player.pitch);
 					パッキト.writeIdentifier(abilityId);
-					パッキト.writeByte(usage);
+					パッキト.writeUuid(player.getUuid());
 					パッキト.writeIntArray(データ);
 
 					PlayerStream.around(player.world, player.getPos(), 420.0).forEach(pe -> {

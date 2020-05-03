@@ -1,5 +1,8 @@
 package tk.valoeghese.tknm.common.ability;
 
+import java.util.UUID;
+
+import it.unimi.dsi.fastutil.objects.Object2BooleanArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2FloatArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2FloatMap;
 import net.minecraft.entity.LivingEntity;
@@ -11,6 +14,7 @@ import net.minecraft.world.World;
 import tk.valoeghese.tknm.api.OrderedList;
 import tk.valoeghese.tknm.api.ability.Ability;
 import tk.valoeghese.tknm.api.ability.AbilityRenderer;
+import tk.valoeghese.tknm.api.ability.AbilityUserAttack;
 import tk.valoeghese.tknm.client.abilityrenderer.ElectromasterAbilityRenderer;
 
 public class ElectromasterAbility extends Ability {
@@ -21,8 +25,14 @@ public class ElectromasterAbility extends Ability {
 
 	@Override
 	public int[] performAbility(World world, PlayerEntity player, int level, float levelProgress, byte usage) {
-		return this.performRailgun(world, player, level, levelProgress);
+		if (CHARGED.getBoolean(player.getUuid())) {
+			return this.performRailgun(world, player, level, levelProgress);
+		} else {
+			return performAlterCharge(player, CHARGE_ON);
+		}
 	}
+
+	private static final Object2BooleanArrayMap<UUID> CHARGED = new Object2BooleanArrayMap<>();
 
 	private int[] performRailgun(World world, PlayerEntity player, int level, float levelProgress) {
 		double distance = 50.0;
@@ -79,12 +89,42 @@ public class ElectromasterAbility extends Ability {
 		for (LivingEntity le : entities) {
 			// temporary - soon will activate with metal items
 			// also will add a coin item :wink:
-			le.damage(DamageSource.GENERIC, level > 4 ? 11 + (int) levelProgress : 9);
+			float damage = level > 4 ? 11 + (int) levelProgress : 9;
+
+			if (AbilityUserAttack.post(player, le, damage, DamageSource.GENERIC, null)) {
+				break;
+			}
 		}
+
+		// uses up charge
+		CHARGED.put(player.getUuid(), false);
 
 		// pass distance (i.e. length of ray) on to the renderer
 		return new int[] {
+				(USAGE_RAILGUN << 2) | CHARGE_OFF,
 				Float.floatToIntBits((float) distance)
 		};
 	}
+
+	private static int[] performAlterCharge(PlayerEntity user, int altering) {
+		switch (altering) {
+		case CHARGE_OFF:
+			CHARGED.put(user.getUuid(), false);
+			break;
+		case CHARGE_ON:
+			CHARGED.put(user.getUuid(), true);
+			break;
+		}
+
+		return new int[] {
+				(USAGE_NONE << 2) | altering
+		};
+	}
+
+	public static final int USAGE_NONE = 0;
+	public static final int USAGE_RAILGUN = 1;
+
+	public static final int CHARGE_EQUAL = 0b00;
+	public static final int CHARGE_OFF = 0b01;
+	public static final int CHARGE_ON = 0b10;
 }

@@ -6,6 +6,7 @@
   ],
   "client": [
     "MixinMinecraftClient",
+    "MixinPlayerEntityRenderer",
     "MixinWorldRenderer"
   ],
   "server": [

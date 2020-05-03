@@ -1,5 +1,7 @@
 package tk.valoeghese.tknm.client;
 
+import java.util.UUID;
+
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.minecraft.util.Identifier;
@@ -7,6 +9,7 @@ import net.minecraft.util.math.Vec3d;
 import tk.valoeghese.tknm.api.ability.Ability;
 import tk.valoeghese.tknm.api.ability.AbilityRegistry;
 import tk.valoeghese.tknm.api.rendering.RenderHooks;
+import tk.valoeghese.tknm.client.feature.BiribiriFeature;
 import tk.valoeghese.tknm.client.rendering.AbilityRenderPrimer;
 import tk.valoeghese.tknm.common.とある科学のモド;
 
@@ -24,7 +27,7 @@ public class とある科学のモドClient implements ClientModInitializer {
 			float yaw = dataManager.readFloatLE();
 			float pitch = dataManager.readFloatLE();
 			Identifier abilityId = dataManager.readIdentifier();
-			byte usage = dataManager.readByte();
+			UUID user = dataManager.readUuid();
 			int[] data = dataManager.readIntArray();
 
 			context.getTaskQueue().execute(() -> {
@@ -32,10 +35,12 @@ public class とある科学のモドClient implements ClientModInitializer {
 
 				if (ability != null) {
 					AbilityRenderPrimer.getOrCreate().queue.add(world -> {
-						ability.getRenderer().renderInfo(world, pos, yaw, pitch, usage, data);
+						ability.getRenderer().renderInfo(world, pos, yaw, pitch, user, data);
 					});
 				}
 			});
 		});
+		// feature renderers
+		RenderHooks.addPlayerRenderFeature(BiribiriFeature::new);
 	}
 }

@@ -32,6 +32,14 @@ public abstract class Ability {
 	}
 
 	/**
+	 * @param attack representation of the attack.
+	 * @return whether the result hit.
+	 */
+	public DefenseResult defendAbilityUserAttack(AbilityUserAttack attack) {
+		return DefenseResult.HIT;
+	}
+
+	/**
 	 * Perform the given ability.
 	 * @param world the world in which the ability was used.
 	 * @param player the player using the ability.

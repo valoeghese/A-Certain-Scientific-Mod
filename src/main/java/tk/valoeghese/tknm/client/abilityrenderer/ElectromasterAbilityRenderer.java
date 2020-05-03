@@ -2,26 +2,46 @@ package tk.valoeghese.tknm.client.abilityrenderer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
+import it.unimi.dsi.fastutil.objects.Object2BooleanArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Quaternion;
 import net.minecraft.util.math.Vec3d;
 import tk.valoeghese.tknm.api.ability.AbilityRenderer;
 import tk.valoeghese.tknm.api.rendering.WORST;
+import tk.valoeghese.tknm.common.ability.ElectromasterAbility;
 
 public class ElectromasterAbilityRenderer implements AbilityRenderer {
 	@Override
-	public void renderInfo(ClientWorld world, Vec3d pos, float yaw, float pitch, int usage, int[] data) {
-		this.railguns.add(new RailgunEntry(
-				new Vector3f((float)pos.getX(), (float)pos.getY() + 1.25f, (float)pos.getZ()),
-				new Quaternion(0, 270 - yaw, 360 - pitch, true),
-				Float.intBitsToFloat(data[0]),
-				world.getTime() + 40));
+	public void renderInfo(ClientWorld world, Vec3d pos, float yaw, float pitch, UUID user, int[] data) {
+		final int chargeInfo = data[0] & 0b11;
+		final int mode = data[0] >> 2;
+
+		if (mode == ElectromasterAbility.USAGE_RAILGUN) {
+			this.railguns.add(new RailgunEntry(
+					new Vector3f((float)pos.getX(), (float)pos.getY() + 1.25f, (float)pos.getZ()),
+					new Quaternion(0, 270 - yaw, 360 - pitch, true),
+					Float.intBitsToFloat(data[1]),
+					world.getTime() + 40));
+		}
+
+		switch (chargeInfo) {
+		case ElectromasterAbility.CHARGE_OFF:
+			CHARGED.put(user, false);
+			break;
+		case ElectromasterAbility.CHARGE_ON:
+			CHARGED.put(user, true);
+			break;
+		}
 	}
 
 	private final List<RailgunEntry> railguns = new ArrayList<>();
+	private static final Object2BooleanMap<UUID> CHARGED = new Object2BooleanArrayMap<>();
 
 	@Override
 	public void render(ClientWorld world) {
@@ -35,6 +55,15 @@ public class ElectromasterAbilityRenderer implements AbilityRenderer {
 				}
 			}
 		}
+
+		CHARGED.forEach((uuid, charged) -> {
+			if (charged) {
+				PlayerEntity player = world.getPlayerByUuid(uuid);
+
+				if (player != null) {
+				}
+			}
+		});
 	}
 
 	private static class RailgunEntry {

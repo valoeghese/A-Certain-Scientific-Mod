@@ -46,7 +46,28 @@ public interface WORST {
 	 * Flushes the content of the quad buffer into the quad emitter, and prepares for the next quad.
 	 */
 	static void nextQuad() {
-		WORSTImpl.nextQuadDouble();
+		nextQuad(16, 16);
+	}
+
+	/**
+	 * Flushes the content of the quad buffer into the quad emitter, and prepares for the next quad.
+	 */
+	static void nextQuad(int uSize, int vSize) {
+		WORSTImpl.nextQuadDouble(uSize, vSize);
+	}
+
+	/**
+	 * Flushes the content of the quad buffer into the quad emitter making a one-way quad, and prepares for the next quad.
+	 */
+	static void nextQuadOneWay() {
+		nextQuadOneWay(16, 16);
+	}
+
+	/**
+	 * Flushes the content of the quad buffer into the quad emitter making a one-way quad, and prepares for the next quad.
+	 */
+	static void nextQuadOneWay(int uSize, int vSize) {
+		WORSTImpl.nextQuadSingle(uSize, vSize);
 	}
 
 	/**
@@ -127,7 +148,7 @@ public interface WORST {
 			bindSprite(sprites[0]);
 		}
 
-		WORSTImpl.nextQuadSingle();
+		nextQuadOneWay(); // using nextQuadOneWay as we do not need to see the inside of the quad.
 		// top
 		vertex(-0.5f + xo, 0.5f + yo, -0.5f + zo);
 		vertex(-0.5f + xo, 0.5f + yo, 0.5f + zo);
@@ -138,7 +159,7 @@ public interface WORST {
 			bindSprite(sprites[1]);
 		}
 
-		WORSTImpl.nextQuadSingle();
+		nextQuadOneWay();
 		// north
 		vertex(-0.5f + xo, 0.5f + yo, -0.5f + zo);
 		vertex(0.5f + xo, 0.5f + yo, -0.5f + zo);
@@ -149,7 +170,7 @@ public interface WORST {
 			bindSprite(sprites[2]);
 		}
 
-		WORSTImpl.nextQuadSingle();
+		nextQuadOneWay();
 		// south
 		vertex(0.5f + xo, 0.5f + yo, 0.5f + zo);
 		vertex(-0.5f + xo, 0.5f + yo, 0.5f + zo);
@@ -160,7 +181,7 @@ public interface WORST {
 			bindSprite(sprites[3]);
 		}
 
-		WORSTImpl.nextQuadSingle();
+		nextQuadOneWay();
 		// west
 		vertex(-0.5f + xo, 0.5f + yo, 0.5f + zo);
 		vertex(-0.5f + xo, 0.5f + yo, -0.5f + zo);
@@ -171,7 +192,7 @@ public interface WORST {
 			bindSprite(sprites[4]);
 		}
 
-		WORSTImpl.nextQuadSingle();
+		nextQuadOneWay();
 		// east
 		vertex(0.5f + xo, 0.5f + yo, -0.5f + zo);
 		vertex(0.5f + xo, 0.5f + yo, 0.5f + zo);
@@ -182,7 +203,7 @@ public interface WORST {
 			bindSprite(sprites[5]);
 		}
 
-		WORSTImpl.nextQuadSingle();
+		nextQuadOneWay();
 	}
 
 	/**
@@ -208,8 +229,8 @@ public interface WORST {
 	 * @param rotation if null, no rotation is performed. Otherwise, provides the rotation of the mesh.
 	 * @param scale if null, the mesh is not scaled. Otherwise, provides the scale of the mesh.
 	 */
-	static void flushAndRenderMesh(Vector3f translate, @Nullable Quaternion rotation, @Nullable Vector3f scale) {
-		WORSTImpl.nextQuadDouble();
+	static void flushAndRenderMesh(Vector3f translate, @Nullable Quaternion rotation, @Nullable Vector3f scale, int uSize, int vSize) {
+		nextQuad(uSize, vSize);
 		WORSTImpl.renderMesh(translate, rotation, scale == null ? WORSTImpl.ONE : scale);
 	}
 }

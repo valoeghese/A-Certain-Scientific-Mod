@@ -21,6 +21,7 @@
 package tk.valoeghese.tknm.rendering;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
@@ -31,7 +32,6 @@ import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
 import net.fabricmc.fabric.api.renderer.v1.model.ModelHelper;
 import net.fabricmc.fabric.impl.renderer.RendererAccessImpl;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
@@ -61,7 +61,7 @@ public final class WORSTImpl {
 	private static Renderer renderer;
 	private static MeshBuilder meshBuilder;
 	private static QuadEmitter emitter;
-	private static Camera camera;
+	private static Supplier<Vec3d> offsetPos;
 	// whether we have pushed yet
 	private static boolean dirty = false;
 	// current index of vertex
@@ -72,7 +72,7 @@ public final class WORSTImpl {
 	// current sprite
 	private static Sprite boundSprite = null;
 
-	public static void init(MatrixStack stack, Camera cameraIn) throws RuntimeException {
+	public static void init(MatrixStack stack, Supplier<Vec3d> offsetPositionSupplier) throws RuntimeException {
 		// init notif
 		if (started) {
 			throw new RuntimeException("WORST already initialised! Call end() before re-initialising!");
@@ -82,7 +82,7 @@ public final class WORSTImpl {
 		currentStack = stack;
 		immediate = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
 		renderer = RendererAccessImpl.INSTANCE.getRenderer();
-		camera = cameraIn;
+		offsetPos = offsetPositionSupplier;
 	}
 
 	public static void mesh() {
@@ -112,14 +112,14 @@ public final class WORSTImpl {
 		boundSprite = sprite;
 	}
 
-	public static void nextQuadDouble() {
+	public static void nextQuadDouble(int sizex, int sizez) {
 		if (dqb) {
 			// normal
 			emitter
-			.pos(0, quadBuffer[0]).sprite(0, 0, 16, 0)
-			.pos(1, quadBuffer[1]).sprite(1, 0, 1, 0)
-			.pos(2, quadBuffer[2]).sprite(2, 0, 0, 16)
-			.pos(3, quadBuffer[3]).sprite(3, 0, 16, 16);
+			.pos(0, quadBuffer[0]).sprite(0, 0, sizex, 0)
+			.pos(1, quadBuffer[1]).sprite(1, 0, 0, 0)
+			.pos(2, quadBuffer[2]).sprite(2, 0, 0, sizez)
+			.pos(3, quadBuffer[3]).sprite(3, 0, sizex, sizez);
 
 			if (boundSprite != null) {
 				emitter.spriteBake(0, boundSprite, 0);
@@ -128,9 +128,9 @@ public final class WORSTImpl {
 			emitter.emit()
 			// reverse
 			.pos(0, quadBuffer[0]).sprite(0, 0, 0, 0)
-			.pos(1, quadBuffer[3]).sprite(1, 0, 0, 16)
-			.pos(2, quadBuffer[2]).sprite(2, 0, 16, 16)
-			.pos(3, quadBuffer[1]).sprite(3, 0, 16, 0);
+			.pos(1, quadBuffer[3]).sprite(1, 0, 0, sizez)
+			.pos(2, quadBuffer[2]).sprite(2, 0, sizex, sizez)
+			.pos(3, quadBuffer[1]).sprite(3, 0, sizex, 0);
 
 			if (boundSprite != null) {
 				emitter.spriteBake(0, boundSprite, 0);
@@ -142,13 +142,13 @@ public final class WORSTImpl {
 		}
 	}
 
-	public static void nextQuadSingle() {
+	public static void nextQuadSingle(int sizex, int sizez) {
 		if (dqb) {
 			emitter
-			.pos(0, quadBuffer[0]).sprite(0, 0, 16, 0)
+			.pos(0, quadBuffer[0]).sprite(0, 0, sizex, 0)
 			.pos(1, quadBuffer[1]).sprite(1, 0, 0, 0)
-			.pos(2, quadBuffer[2]).sprite(2, 0, 0, 16)
-			.pos(3, quadBuffer[3]).sprite(3, 0, 16, 16);
+			.pos(2, quadBuffer[2]).sprite(2, 0, 0, sizez)
+			.pos(3, quadBuffer[3]).sprite(3, 0, sizex, sizez);
 
 			if (boundSprite != null) {
 				emitter.spriteBake(0, boundSprite, 0);
@@ -171,7 +171,7 @@ public final class WORSTImpl {
 
 	public static void renderMesh(Vector3f translate, @Nullable Quaternion rotation, Vector3f scale) {
 		// offset position from camera and translate
-		Vec3d pos = camera.getPos();
+		Vec3d pos = offsetPos.get();
 
 		// translate
 		currentStack.translate(-pos.x + translate.getX(), -pos.y + translate.getY(), -pos.z + translate.getZ());
@@ -210,9 +210,9 @@ public final class WORSTImpl {
 				// not dirty anymore!
 				dirty = false;
 			}
-			// reset stack and camera variables
+			// reset stack and offset pos fields
 			currentStack = null;
-			camera = null;
+			offsetPos = null;
 			// and sprite
 			boundSprite = null;
 		}

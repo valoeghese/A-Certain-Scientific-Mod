@@ -21,7 +21,7 @@ public interface ACertainComponent extends Component {
 	 */
 	@Nullable Ability getAbility();
 	/**
-	 * @return the ability level.
+	 * @return the ability level, ignoring whether or not they are an ability user.
 	 */
 	int getLevel();
 	/**
