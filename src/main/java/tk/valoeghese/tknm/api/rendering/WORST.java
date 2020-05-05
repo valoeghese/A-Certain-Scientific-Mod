@@ -36,6 +36,11 @@ import tk.valoeghese.tknm.rendering.WORSTImpl;
  */
 public interface WORST {
 	/**
+	 * Vector3f of value (0, 0, 0).
+	 */
+	Vector3f ZERO = new Vector3f(0, 0, 0);
+
+	/**
 	 * Creates a new mesh object and bind it to WORST. Additionally, starts a quad.
 	 */
 	static void mesh() {
@@ -204,6 +209,96 @@ public interface WORST {
 		}
 
 		nextQuadOneWay();
+	}
+
+	/**
+	 * Adds the quads for a basic cube with two quads for each face (directional). You do not need to call nextQuad() to flush the quad buffer to add on to this.
+	 */
+	static void basicDoubleCube() {
+		basicDoubleCube(null, 0, 0, 0);
+	}
+
+	/**
+	 * Adds the quads for a basic cube with two quads for each face (directional). You do not need to call nextQuad() to flush the quad buffer to add on to this.
+	 * @param sprites If not null, the sprite textures to be bound to each quad in this order:<ul>
+	 * <li>bottom
+	 * <li>top
+	 * <li>north
+	 * <li>south
+	 * <li>west
+	 * <li>east
+	 * @param xo the x offset of the cube vertices.
+	 * @param yo the y offset of the cube vertices.
+	 * @param zo the z offset of the cube vertices.
+	 */
+	static void basicDoubleCube(@Nullable Sprite[] sprites, float xo, float yo, float zo) {
+		boolean rs = sprites != null; // render sprites
+		// bottom
+		vertex(0.5f + xo, -0.5f + yo, 0.5f + zo);
+		vertex(-0.5f + xo, -0.5f + yo, 0.5f + zo);
+		vertex(-0.5f + xo, -0.5f + yo, -0.5f + zo);
+		vertex(0.5f + xo, -0.5f + yo, -0.5f + zo);
+
+		if (rs) {
+			bindSprite(sprites[0]);
+		}
+
+		nextQuad();
+		// top
+		vertex(-0.5f + xo, 0.5f + yo, -0.5f + zo);
+		vertex(-0.5f + xo, 0.5f + yo, 0.5f + zo);
+		vertex(0.5f + xo, 0.5f + yo, 0.5f + zo);
+		vertex(0.5f + xo, 0.5f + yo, -0.5f + zo);
+
+		if (rs) {
+			bindSprite(sprites[1]);
+		}
+
+		nextQuad();
+		// north
+		vertex(-0.5f + xo, 0.5f + yo, -0.5f + zo);
+		vertex(0.5f + xo, 0.5f + yo, -0.5f + zo);
+		vertex(0.5f + xo, -0.5f + yo, -0.5f + zo);
+		vertex(-0.5f + xo, -0.5f + yo, -0.5f + zo);
+
+		if (rs) {
+			bindSprite(sprites[2]);
+		}
+
+		nextQuad();
+		// south
+		vertex(0.5f + xo, 0.5f + yo, 0.5f + zo);
+		vertex(-0.5f + xo, 0.5f + yo, 0.5f + zo);
+		vertex(-0.5f + xo, -0.5f + yo, 0.5f + zo);
+		vertex(0.5f + xo, -0.5f + yo, 0.5f + zo);
+
+		if (rs) {
+			bindSprite(sprites[3]);
+		}
+
+		nextQuad();
+		// west
+		vertex(-0.5f + xo, 0.5f + yo, 0.5f + zo);
+		vertex(-0.5f + xo, 0.5f + yo, -0.5f + zo);
+		vertex(-0.5f + xo, -0.5f + yo, -0.5f + zo);
+		vertex(-0.5f + xo, -0.5f + yo, 0.5f + zo);
+
+		if (rs) {
+			bindSprite(sprites[4]);
+		}
+
+		nextQuad();
+		// east
+		vertex(0.5f + xo, 0.5f + yo, -0.5f + zo);
+		vertex(0.5f + xo, 0.5f + yo, 0.5f + zo);
+		vertex(0.5f + xo, -0.5f + yo, 0.5f + zo);
+		vertex(0.5f + xo, -0.5f + yo, -0.5f + zo);
+
+		if (rs) {
+			bindSprite(sprites[5]);
+		}
+
+		nextQuad();
 	}
 
 	/**

@@ -6,9 +6,11 @@ import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Arm;
+import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.util.math.Vec3d;
+import tk.valoeghese.tknm.api.rendering.WORST;
+import tk.valoeghese.tknm.client.とある科学のモドClient;
+import tk.valoeghese.tknm.client.abilityrenderer.ElectromasterAbilityRenderer;
 import tk.valoeghese.tknm.rendering.WORSTImpl;
 
 public class BiribiriFeature extends FeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> {
@@ -21,21 +23,23 @@ public class BiribiriFeature extends FeatureRenderer<AbstractClientPlayerEntity,
 			AbstractClientPlayerEntity entity, float limbAngle, float limbDistance, float tickDelta,
 			float customAngle, float headYaw, float headPitch) {
 		// stolen from HeldItemFeatureRenderer
-		boolean bl = entity.getMainArm() == Arm.RIGHT;
-		ItemStack itemStack = bl ? entity.getOffHandStack() : entity.getMainHandStack();
-		ItemStack itemStack2 = bl ? entity.getMainHandStack() : entity.getOffHandStack();
-		if (!itemStack.isEmpty() || !itemStack2.isEmpty()) {
-			matrices.push();
-			if (this.getContextModel().child) {
-				float scale = 0.5F;
-				matrices.translate(0.0D, 0.75D, 0.0D);
-				matrices.scale(scale, scale, scale);
-			}
 
-			WORSTImpl.init(matrices, () -> Vec3d.ZERO);
-			WORSTImpl.end();
-			matrices.pop();
+		matrices.push();
+		if (this.getContextModel().child) {
+			float scale = 0.5F;
+			matrices.translate(0.0D, 0.75D, 0.0D);
+			matrices.scale(scale, scale, scale);
 		}
+
+		if (ElectromasterAbilityRenderer.getOverlayStrength(entity.getUuid(), entity.world.getTime()) > 0.0) {
+			WORSTImpl.init(matrices, () -> Vec3d.ZERO);
+			WORST.mesh();
+			WORST.bindBlockTexture(とある科学のモドClient.TEXTURE_BIRIBIRI);
+			WORST.basicDoubleCube();
+			WORST.renderMesh(new Vector3f(0.0f, 0.5f, 0.0f), null, new Vector3f(1.0f, entity.isSneaking() ? 1.5f : 2.0f, 1.0f));
+			WORSTImpl.end();
+		}
+		matrices.pop();
 	}
 
 }

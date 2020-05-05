@@ -1,7 +1,11 @@
 package tk.valoeghese.tknm.client.abilityrenderer;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import it.unimi.dsi.fastutil.objects.Object2BooleanArrayMap;
@@ -10,11 +14,14 @@ import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Pair;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Quaternion;
 import net.minecraft.util.math.Vec3d;
 import tk.valoeghese.tknm.api.ability.AbilityRenderer;
 import tk.valoeghese.tknm.api.rendering.WORST;
 import tk.valoeghese.tknm.common.ability.ElectromasterAbility;
+import tk.valoeghese.tknm.util.MathsUtils;
 
 public class ElectromasterAbilityRenderer implements AbilityRenderer {
 	@Override
@@ -33,18 +40,71 @@ public class ElectromasterAbilityRenderer implements AbilityRenderer {
 		switch (chargeInfo) {
 		case ElectromasterAbility.CHARGE_OFF:
 			CHARGED.put(user, false);
+			TO_DISCHARGE.put(user, new Pair<>(world.getTime(), world.getTime() + (ElectromasterAbility.CHARGE_DELAY / ElectromasterAbility.DISCHARGE_PROPORTION)));
 			break;
 		case ElectromasterAbility.CHARGE_ON:
-			CHARGED.put(user, true);
+			TO_CHARGE.put(user, new Pair<>(world.getTime(), world.getTime() + ElectromasterAbility.CHARGE_DELAY));
 			break;
 		}
 	}
 
 	private final List<RailgunEntry> railguns = new ArrayList<>();
+	private static final Map<UUID, Pair<Long, Long>> TO_CHARGE = new HashMap<>();
+	private static final Map<UUID, Pair<Long, Long>> TO_DISCHARGE = new HashMap<>();
 	private static final Object2BooleanMap<UUID> CHARGED = new Object2BooleanArrayMap<>();
+
+	public static double getOverlayStrength(UUID player, long charge) {
+		// if fully charged
+		if (CHARGED.getOrDefault(player, false)) {
+			return 1.0;
+		}
+
+		Pair<Long, Long> entry = TO_CHARGE.get(player);
+
+		// if not building up charge
+		if (entry == null) {
+			entry = TO_DISCHARGE.get(player);
+
+			// if not discharging
+			if (entry == null) {
+				return 0.0;
+			}
+
+			// swap for discharge
+			entry = new Pair<>(entry.getRight(), entry.getLeft());
+		}
+
+		// inverse lerp with clamp
+		return MathHelper.clamp(MathsUtils.progress(entry.getLeft(), charge, entry.getRight()), 0.0, 1.0);
+	}
 
 	@Override
 	public void render(ClientWorld world) {
+		long time = world.getTime();
+
+		// Charge
+		if (!TO_CHARGE.isEmpty()) {
+			Set<Map.Entry<UUID, Pair<Long, Long>>> currentSet = new HashSet<>(TO_CHARGE.entrySet());
+
+			for (Map.Entry<UUID, Pair<Long, Long>> entry : currentSet) {
+				if (entry.getValue().getRight() < time) {
+					CHARGED.put(entry.getKey(), true);
+					TO_CHARGE.remove(entry.getKey());
+				}
+			}
+		}
+
+		// Discharge
+		if (!TO_DISCHARGE.isEmpty()) {
+			Set<Map.Entry<UUID, Pair<Long, Long>>> currentSet = new HashSet<>(TO_DISCHARGE.entrySet());
+
+			for (Map.Entry<UUID, Pair<Long, Long>> entry : currentSet) {
+				if (entry.getValue().getRight() < time) {
+					TO_DISCHARGE.remove(entry.getKey());
+				}
+			}
+		}
+
 		// for every railgun beam, if they exist
 		if (!this.railguns.isEmpty()) {
 			int i = this.railguns.size();

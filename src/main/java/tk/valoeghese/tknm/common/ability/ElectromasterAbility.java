@@ -44,10 +44,21 @@ public class ElectromasterAbility extends Ability {
 			}
 		}
 
+		// Disharge
+		if (!TO_DISCHARGE.isEmpty()) {
+			Set<Map.Entry<UUID, Long>> currentSet = new HashSet<>(TO_DISCHARGE.entrySet());
+
+			for (Map.Entry<UUID, Long> entry : currentSet) {
+				if (entry.getValue() < time) {
+					TO_DISCHARGE.remove(entry.getKey());
+				}
+			}
+		}
+
 		if (CHARGED.getBoolean(uuid)) {
 			return this.performRailgun(world, player, level, levelProgress);
 		} else {
-			if (!TO_CHARGE.containsKey(uuid)) {
+			if (!TO_CHARGE.containsKey(uuid) && !TO_DISCHARGE.containsKey(uuid)) {
 				return performAlterCharge(time, player, CHARGE_ON);
 			} else {
 				return performAlterCharge(time, player, CHARGE_EQUAL);
@@ -55,8 +66,10 @@ public class ElectromasterAbility extends Ability {
 		}
 	}
 
-	private static final long CHARGE_DELAY = (long) (1.25 * 20); // TODO based on ability level
+	public static final long CHARGE_DELAY = (long) (1.25 * 20); // TODO based on ability level
+	public static final int DISCHARGE_PROPORTION = 2;
 	private static final Map<UUID, Long> TO_CHARGE = new HashMap<>();
+	private static final Map<UUID, Long> TO_DISCHARGE = new HashMap<>();
 	private static final Object2BooleanArrayMap<UUID> CHARGED = new Object2BooleanArrayMap<>();
 
 	private int[] performRailgun(World world, PlayerEntity player, int level, float levelProgress) {
@@ -114,7 +127,7 @@ public class ElectromasterAbility extends Ability {
 		for (LivingEntity le : entities) {
 			// temporary - soon will activate with metal items
 			// also will add a coin item :wink:
-			float damage = level > 4 ? 11 + (int) levelProgress : 9;
+			float damage = level > 4 ? 22 + (int) 2 * levelProgress : 20;
 
 			if (AbilityUserAttack.post(player, le, damage, DamageSource.GENERIC, null)) {
 				break;
@@ -123,6 +136,7 @@ public class ElectromasterAbility extends Ability {
 
 		// uses up charge
 		CHARGED.put(player.getUuid(), false);
+		TO_DISCHARGE.put(player.getUuid(), world.getTime() + (CHARGE_DELAY / 3));
 
 		// pass distance (i.e. length of ray) on to the renderer
 		return new int[] {
@@ -135,6 +149,7 @@ public class ElectromasterAbility extends Ability {
 		switch (altering) {
 		case CHARGE_OFF:
 			CHARGED.put(user.getUuid(), false);
+			TO_DISCHARGE.put(user.getUuid(), time + (CHARGE_DELAY / DISCHARGE_PROPORTION));
 			break;
 		case CHARGE_ON:
 			TO_CHARGE.put(user.getUuid(), time + CHARGE_DELAY);

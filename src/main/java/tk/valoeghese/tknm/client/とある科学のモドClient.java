@@ -3,7 +3,9 @@ package tk.valoeghese.tknm.client;
 import java.util.UUID;
 
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.event.client.ClientSpriteRegistryCallback;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
+import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import tk.valoeghese.tknm.api.ability.Ability;
@@ -14,8 +16,15 @@ import tk.valoeghese.tknm.client.rendering.AbilityRenderPrimer;
 import tk.valoeghese.tknm.common.とある科学のモド;
 
 public class とある科学のモドClient implements ClientModInitializer {
+	public static final Identifier TEXTURE_BIRIBIRI = とある科学のモド.from("effect/biribiri");
+
 	@Override
 	public void onInitializeClient() {
+		// textures
+		ClientSpriteRegistryCallback.event(SpriteAtlasTexture.BLOCK_ATLAS_TEX).register((atlasTexture, registry) -> {
+			registry.register(TEXTURE_BIRIBIRI);
+		});
+
 		// render hooks
 		RenderHooks.addWorldRenderHook(AbilityRenderPrimer.getOrCreate());
 		// other stuff
