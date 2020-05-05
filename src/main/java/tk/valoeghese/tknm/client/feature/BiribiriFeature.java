@@ -7,6 +7,7 @@ import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.util.math.Vector3f;
+import net.minecraft.util.math.Quaternion;
 import net.minecraft.util.math.Vec3d;
 import tk.valoeghese.tknm.api.rendering.WORST;
 import tk.valoeghese.tknm.client.ToaruKagakuNoModClient;
@@ -35,7 +36,7 @@ public class BiribiriFeature extends FeatureRenderer<AbstractClientPlayerEntity,
 			WORST.mesh();
 			WORST.bindBlockTexture(ToaruKagakuNoModClient.TEXTURE_BIRIBIRI);
 			WORST.basicDoubleCube();
-			WORST.renderMesh(new Vector3f(0.0f, 0.5f, 0.0f), null, new Vector3f(1.0f, entity.isSneaking() ? 1.5f : 2.0f, 1.0f));
+			WORST.renderMesh(new Vector3f(0.0f, 0.5f, 0.0f), new Quaternion(0.0f, 0.0f, 180f, true), new Vector3f(1.0f, entity.isSneaking() ? 1.5f : 2.0f, 1.0f));
 			WORST.end();
 		}
 		matrices.pop();
