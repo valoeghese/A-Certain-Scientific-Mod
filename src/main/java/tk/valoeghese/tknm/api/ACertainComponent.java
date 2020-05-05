@@ -2,11 +2,11 @@ package tk.valoeghese.tknm.api;
 
 import javax.annotation.Nullable;
 
-import nerdhub.cardinal.components.api.component.Component;
+import nerdhub.cardinal.components.api.util.sync.EntitySyncedComponent;
 import net.minecraft.text.Text;
 import tk.valoeghese.tknm.api.ability.Ability;
 
-public interface ACertainComponent extends Component {
+public interface ACertainComponent extends EntitySyncedComponent {
 	/**
 	 * @return the stats of this component as Text.
 	 */
