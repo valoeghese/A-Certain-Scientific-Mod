@@ -36,13 +36,12 @@ public class ElectromasterAbility extends Ability {
 		long time = world.getTime();
 		UUID uuid = player.getUuid();
 		ItemStack stackInHand = player.getStackInHand(Hand.MAIN_HAND);
+		updateCharge(time);
 		boolean charged = CHARGED.getBoolean(uuid);
 
 		if (charged && level > 3 && MAGNETISABLE_ITEMS.contains(stackInHand.getItem())) {
-			updateCharge(time);
 			return this.performRailgun(world, player, level, levelProgress);
 		} else if (stackInHand.isEmpty() && !TO_CHARGE.containsKey(uuid) && !TO_DISCHARGE.containsKey(uuid)) {
-			updateCharge(time);
 			return performAlterCharge(time, player, charged ? CHARGE_OFF : CHARGE_ON);
 		}
 
