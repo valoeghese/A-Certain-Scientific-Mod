@@ -1,5 +1,9 @@
 package tk.valoeghese.tknm.common.ability;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import it.unimi.dsi.fastutil.objects.Object2BooleanArrayMap;
@@ -25,13 +29,34 @@ public class ElectromasterAbility extends Ability {
 
 	@Override
 	public int[] performAbility(World world, PlayerEntity player, int level, float levelProgress, byte usage) {
-		if (CHARGED.getBoolean(player.getUuid())) {
+		long time = world.getTime();
+		UUID uuid = player.getUuid();
+
+		// Charge
+		if (!TO_CHARGE.isEmpty()) {
+			Set<Map.Entry<UUID, Long>> currentSet = new HashSet<>(TO_CHARGE.entrySet());
+
+			for (Map.Entry<UUID, Long> entry : currentSet) {
+				if (entry.getValue() < time) {
+					CHARGED.put(entry.getKey(), true);
+					TO_CHARGE.remove(entry.getKey());
+				}
+			}
+		}
+
+		if (CHARGED.getBoolean(uuid)) {
 			return this.performRailgun(world, player, level, levelProgress);
 		} else {
-			return performAlterCharge(player, CHARGE_ON);
+			if (!TO_CHARGE.containsKey(uuid)) {
+				return performAlterCharge(time, player, CHARGE_ON);
+			} else {
+				return performAlterCharge(time, player, CHARGE_EQUAL);
+			}
 		}
 	}
 
+	private static final long CHARGE_DELAY = (long) (1.25 * 20); // TODO based on ability level
+	private static final Map<UUID, Long> TO_CHARGE = new HashMap<>();
 	private static final Object2BooleanArrayMap<UUID> CHARGED = new Object2BooleanArrayMap<>();
 
 	private int[] performRailgun(World world, PlayerEntity player, int level, float levelProgress) {
@@ -106,13 +131,13 @@ public class ElectromasterAbility extends Ability {
 		};
 	}
 
-	private static int[] performAlterCharge(PlayerEntity user, int altering) {
+	private static int[] performAlterCharge(long time, PlayerEntity user, int altering) {
 		switch (altering) {
 		case CHARGE_OFF:
 			CHARGED.put(user.getUuid(), false);
 			break;
 		case CHARGE_ON:
-			CHARGED.put(user.getUuid(), true);
+			TO_CHARGE.put(user.getUuid(), time + CHARGE_DELAY);
 			break;
 		}
 

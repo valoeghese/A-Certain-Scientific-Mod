@@ -74,10 +74,10 @@ public class AbilityUserAttack {
 		return false;
 	}
 
-	@FunctionalInterface
 	/**
 	 * Use to add special effects to an attack, such as setting the target on fire or blinding the target.
 	 */
+	@FunctionalInterface
 	public static interface ExtraAbilityEffectsFunction {
 		/**
 		 * Add special effects to the targets based on the attack results.
