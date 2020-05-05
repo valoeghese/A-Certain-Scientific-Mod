@@ -41,10 +41,8 @@ public class MixinMinecraftClient {
 				this.tknm$ready = false;
 
 				PacketByteBuf 能力パッケト = new PacketByteBuf(Unpooled.buffer());
-				// ability usage type. unused atm
-				// TODO use it for different triggers and document
-				// TODO only run this code once!
-				能力パッケト.writeByte(0);
+				// ability usage type for right click: 1
+				能力パッケト.writeByte(1);
 				ClientSidePacketRegistry.INSTANCE.sendToServer(
 						ToaruKagakuNoMod.USE_ABILITY_PACKET_ID,
 						能力パッケト);
