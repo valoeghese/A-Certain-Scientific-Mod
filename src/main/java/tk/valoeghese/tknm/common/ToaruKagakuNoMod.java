@@ -98,20 +98,22 @@ public class ToaruKagakuNoMod implements ModInitializer {
 					// do ability logic here
 					int[] データ = ability.performAbility(player.world, player, component.getLevel(), component.getLevelProgress(), usage);
 
-					// send packets
-					PacketByteBuf パッキト = new PacketByteBuf(Unpooled.buffer());
-					パッキト.writeDoubleLE(player.getX());
-					パッキト.writeDoubleLE(player.getY());
-					パッキト.writeDoubleLE(player.getZ());
-					パッキト.writeFloatLE(player.yaw);
-					パッキト.writeFloatLE(player.pitch);
-					パッキト.writeIdentifier(abilityId);
-					パッキト.writeUuid(player.getUuid());
-					パッキト.writeIntArray(データ);
+					if (データ != null) {
+						// send packets
+						PacketByteBuf パッキト = new PacketByteBuf(Unpooled.buffer());
+						パッキト.writeDoubleLE(player.getX());
+						パッキト.writeDoubleLE(player.getY());
+						パッキト.writeDoubleLE(player.getZ());
+						パッキト.writeFloatLE(player.yaw);
+						パッキト.writeFloatLE(player.pitch);
+						パッキト.writeIdentifier(abilityId);
+						パッキト.writeUuid(player.getUuid());
+						パッキト.writeIntArray(データ);
 
-					PlayerStream.around(player.world, player.getPos(), 420.0).forEach(pe -> {
-						ServerSidePacketRegistry.INSTANCE.sendToPlayer(pe, RENDER_ABILITY_PACKET_ID, パッキト);
-					});
+						PlayerStream.around(player.world, player.getPos(), 420.0).forEach(pe -> {
+							ServerSidePacketRegistry.INSTANCE.sendToPlayer(pe, RENDER_ABILITY_PACKET_ID, パッキト);
+						});
+					}
 				}
 			});
 		});

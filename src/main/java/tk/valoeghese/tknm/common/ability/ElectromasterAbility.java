@@ -12,6 +12,10 @@ import it.unimi.dsi.fastutil.objects.Object2FloatMap;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -31,39 +35,18 @@ public class ElectromasterAbility extends Ability {
 	public int[] performAbility(World world, PlayerEntity player, int level, float levelProgress, byte usage) {
 		long time = world.getTime();
 		UUID uuid = player.getUuid();
+		ItemStack stackInHand = player.getStackInHand(Hand.MAIN_HAND);
+		boolean charged = CHARGED.getBoolean(uuid);
 
-		// Charge
-		if (!TO_CHARGE.isEmpty()) {
-			Set<Map.Entry<UUID, Long>> currentSet = new HashSet<>(TO_CHARGE.entrySet());
-
-			for (Map.Entry<UUID, Long> entry : currentSet) {
-				if (entry.getValue() < time) {
-					CHARGED.put(entry.getKey(), true);
-					TO_CHARGE.remove(entry.getKey());
-				}
-			}
-		}
-
-		// Disharge
-		if (!TO_DISCHARGE.isEmpty()) {
-			Set<Map.Entry<UUID, Long>> currentSet = new HashSet<>(TO_DISCHARGE.entrySet());
-
-			for (Map.Entry<UUID, Long> entry : currentSet) {
-				if (entry.getValue() < time) {
-					TO_DISCHARGE.remove(entry.getKey());
-				}
-			}
-		}
-
-		if (CHARGED.getBoolean(uuid)) {
+		if (charged && level > 3 && MAGNETISABLE_ITEMS.contains(stackInHand.getItem())) {
+			updateCharge(time);
 			return this.performRailgun(world, player, level, levelProgress);
-		} else {
-			if (!TO_CHARGE.containsKey(uuid) && !TO_DISCHARGE.containsKey(uuid)) {
-				return performAlterCharge(time, player, CHARGE_ON);
-			} else {
-				return performAlterCharge(time, player, CHARGE_EQUAL);
-			}
+		} else if (stackInHand.isEmpty() && !TO_CHARGE.containsKey(uuid) && !TO_DISCHARGE.containsKey(uuid)) {
+			updateCharge(time);
+			return performAlterCharge(time, player, charged ? CHARGE_OFF : CHARGE_ON);
 		}
+
+		return null;
 	}
 
 	public static final long CHARGE_DELAY = (long) (1.25 * 20); // TODO based on ability level
@@ -71,6 +54,7 @@ public class ElectromasterAbility extends Ability {
 	private static final Map<UUID, Long> TO_CHARGE = new HashMap<>();
 	private static final Map<UUID, Long> TO_DISCHARGE = new HashMap<>();
 	private static final Object2BooleanArrayMap<UUID> CHARGED = new Object2BooleanArrayMap<>();
+	public static final Set<Item> MAGNETISABLE_ITEMS = new HashSet<>();
 
 	private int[] performRailgun(World world, PlayerEntity player, int level, float levelProgress) {
 		double distance = 50.0;
@@ -161,10 +145,51 @@ public class ElectromasterAbility extends Ability {
 		};
 	}
 
+	private static void updateCharge(long time) {
+		// Charge
+		if (!TO_CHARGE.isEmpty()) {
+			Set<Map.Entry<UUID, Long>> currentSet = new HashSet<>(TO_CHARGE.entrySet());
+
+			for (Map.Entry<UUID, Long> entry : currentSet) {
+				if (entry.getValue() < time) {
+					CHARGED.put(entry.getKey(), true);
+					TO_CHARGE.remove(entry.getKey());
+				}
+			}
+		}
+
+		// Disharge
+		if (!TO_DISCHARGE.isEmpty()) {
+			Set<Map.Entry<UUID, Long>> currentSet = new HashSet<>(TO_DISCHARGE.entrySet());
+
+			for (Map.Entry<UUID, Long> entry : currentSet) {
+				if (entry.getValue() < time) {
+					TO_DISCHARGE.remove(entry.getKey());
+				}
+			}
+		}
+	}
+
 	public static final int USAGE_NONE = 0;
 	public static final int USAGE_RAILGUN = 1;
 
 	public static final int CHARGE_EQUAL = 0b00;
 	public static final int CHARGE_OFF = 0b01;
 	public static final int CHARGE_ON = 0b10;
+
+	static {
+		MAGNETISABLE_ITEMS.add(Items.IRON_BARS);
+		MAGNETISABLE_ITEMS.add(Items.IRON_BLOCK);
+		MAGNETISABLE_ITEMS.add(Items.IRON_BOOTS);
+		MAGNETISABLE_ITEMS.add(Items.IRON_CHESTPLATE);
+		MAGNETISABLE_ITEMS.add(Items.IRON_DOOR);
+		MAGNETISABLE_ITEMS.add(Items.IRON_HELMET);
+		MAGNETISABLE_ITEMS.add(Items.IRON_HORSE_ARMOR);
+		MAGNETISABLE_ITEMS.add(Items.IRON_INGOT);
+		MAGNETISABLE_ITEMS.add(Items.IRON_LEGGINGS);
+		MAGNETISABLE_ITEMS.add(Items.IRON_NUGGET);
+		MAGNETISABLE_ITEMS.add(Items.IRON_ORE);
+		MAGNETISABLE_ITEMS.add(Items.IRON_TRAPDOOR);
+		MAGNETISABLE_ITEMS.add(Items.LODESTONE);
+	}
 }
