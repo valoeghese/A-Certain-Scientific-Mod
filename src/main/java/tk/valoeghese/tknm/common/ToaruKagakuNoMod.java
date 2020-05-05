@@ -10,6 +10,8 @@ import io.netty.buffer.Unpooled;
 import nerdhub.cardinal.components.api.ComponentRegistry;
 import nerdhub.cardinal.components.api.ComponentType;
 import nerdhub.cardinal.components.api.event.EntityComponentCallback;
+import nerdhub.cardinal.components.api.util.EntityComponents;
+import nerdhub.cardinal.components.api.util.RespawnCopyStrategy;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.fabricmc.fabric.api.registry.CommandRegistry;
@@ -38,6 +40,7 @@ public class ToaruKagakuNoMod implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		能力.ensureInit();
+		EntityComponents.setRespawnCopyStrategy(A_CERTAIN_COMPONENT, RespawnCopyStrategy.INVENTORY);
 
 		CommandRegistry.INSTANCE.register(false, thing -> thing.register(
 				CommandManager.literal("とある")
