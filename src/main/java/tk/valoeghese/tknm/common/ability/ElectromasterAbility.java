@@ -121,6 +121,11 @@ public class ElectromasterAbility extends Ability {
 		CHARGED.put(player.getUuid(), false);
 		TO_DISCHARGE.put(player.getUuid(), world.getTime() + (CHARGE_DELAY / 3));
 
+		// uses up item
+		if (!player.isCreative()) {
+			player.getStackInHand(Hand.MAIN_HAND).decrement(1);
+		}
+
 		// pass distance (i.e. length of ray) on to the renderer
 		return new int[] {
 				(USAGE_RAILGUN << 2) | CHARGE_OFF,
