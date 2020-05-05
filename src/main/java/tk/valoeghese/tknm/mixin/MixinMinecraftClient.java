@@ -11,7 +11,6 @@ import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.util.Hand;
 import tk.valoeghese.tknm.common.ToaruKagakuNoMod;
 
 @Mixin(MinecraftClient.class)
@@ -37,16 +36,14 @@ public class MixinMinecraftClient {
 			)
 	private boolean doItemUse(ItemStack stack) {
 		if (this.tknm$ready) {
-			if (((MinecraftClient) (Object) this).player.getStackInHand(Hand.MAIN_HAND).isEmpty()) {
-				this.tknm$ready = false;
+			this.tknm$ready = false;
 
-				PacketByteBuf 能力パッケト = new PacketByteBuf(Unpooled.buffer());
-				// ability usage type for right click: 1
-				能力パッケト.writeByte(1);
-				ClientSidePacketRegistry.INSTANCE.sendToServer(
-						ToaruKagakuNoMod.USE_ABILITY_PACKET_ID,
-						能力パッケト);
-			}
+			PacketByteBuf 能力パッケト = new PacketByteBuf(Unpooled.buffer());
+			// ability usage type for right click: 1
+			能力パッケト.writeByte(1);
+			ClientSidePacketRegistry.INSTANCE.sendToServer(
+					ToaruKagakuNoMod.USE_ABILITY_PACKET_ID,
+					能力パッケト);
 		}
 		return stack.isEmpty();
 	}
