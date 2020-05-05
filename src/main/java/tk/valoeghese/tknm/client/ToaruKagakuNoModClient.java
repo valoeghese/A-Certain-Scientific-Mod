@@ -13,10 +13,10 @@ import tk.valoeghese.tknm.api.ability.AbilityRegistry;
 import tk.valoeghese.tknm.api.rendering.RenderHooks;
 import tk.valoeghese.tknm.client.feature.BiribiriFeature;
 import tk.valoeghese.tknm.client.rendering.AbilityRenderPrimer;
-import tk.valoeghese.tknm.common.とある科学のモド;
+import tk.valoeghese.tknm.common.ToaruKagakuNoMod;
 
-public class とある科学のモドClient implements ClientModInitializer {
-	public static final Identifier TEXTURE_BIRIBIRI = とある科学のモド.from("effect/biribiri");
+public class ToaruKagakuNoModClient implements ClientModInitializer {
+	public static final Identifier TEXTURE_BIRIBIRI = ToaruKagakuNoMod.from("effect/biribiri");
 
 	@Override
 	public void onInitializeClient() {
@@ -28,7 +28,7 @@ public class とある科学のモドClient implements ClientModInitializer {
 		// render hooks
 		RenderHooks.addWorldRenderHook(AbilityRenderPrimer.getOrCreate());
 		// other stuff
-		ClientSidePacketRegistry.INSTANCE.register(とある科学のモド.RENDER_ABILITY_PACKET_ID, (context, dataManager) -> {
+		ClientSidePacketRegistry.INSTANCE.register(ToaruKagakuNoMod.RENDER_ABILITY_PACKET_ID, (context, dataManager) -> {
 			double x = dataManager.readDoubleLE();
 			double y = dataManager.readDoubleLE();
 			double z = dataManager.readDoubleLE();

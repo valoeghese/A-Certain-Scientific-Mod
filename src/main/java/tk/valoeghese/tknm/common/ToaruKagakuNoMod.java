@@ -27,7 +27,7 @@ import tk.valoeghese.tknm.api.ability.AbilityRegistry;
 import tk.valoeghese.tknm.common.ability.ある能力のカーヂナルの要素;
 import tk.valoeghese.tknm.common.ability.能力;
 
-public class とある科学のモド implements ModInitializer {
+public class ToaruKagakuNoMod implements ModInitializer {
 	public static final Logger LOGGER = LogManager.getLogger("A Certain Scientific Mod");
 	public static final ComponentType<ACertainComponent> A_CERTAIN_COMPONENT =
 			ComponentRegistry.INSTANCE.registerIfAbsent(from("a_certain"), ACertainComponent.class)

@@ -6,7 +6,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import tk.valoeghese.tknm.api.ACertainComponent;
-import tk.valoeghese.tknm.common.とある科学のモド;
+import tk.valoeghese.tknm.common.ToaruKagakuNoMod;
 
 /**
  * Represents an attack from an ability user.
@@ -41,11 +41,11 @@ public class AbilityUserAttack {
 	 * @return whether the attack was "blocked" by the target, and cannot continue (useful for attacks that pierce through one entity to the next). 
 	 */
 	public static boolean post(PlayerEntity user, LivingEntity le, float damage, DamageSource damageType, @Nullable ExtraAbilityEffectsFunction specialEffects) {
-		ACertainComponent component = とある科学のモド.A_CERTAIN_COMPONENT.get(user);
+		ACertainComponent component = ToaruKagakuNoMod.A_CERTAIN_COMPONENT.get(user);
 		AbilityUserAttack attack = new AbilityUserAttack(component, user, damage, damageType);
 
 		if (le instanceof PlayerEntity) {
-			ACertainComponent targetStats = とある科学のモド.A_CERTAIN_COMPONENT.get((PlayerEntity) le);
+			ACertainComponent targetStats = ToaruKagakuNoMod.A_CERTAIN_COMPONENT.get((PlayerEntity) le);
 
 			// special case for ability user defense.
 			if (targetStats.getAbility() != null) {

@@ -12,7 +12,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Hand;
-import tk.valoeghese.tknm.common.とある科学のモド;
+import tk.valoeghese.tknm.common.ToaruKagakuNoMod;
 
 @Mixin(MinecraftClient.class)
 public class MixinMinecraftClient {
@@ -46,7 +46,7 @@ public class MixinMinecraftClient {
 				// TODO only run this code once!
 				能力パッケト.writeByte(0);
 				ClientSidePacketRegistry.INSTANCE.sendToServer(
-						とある科学のモド.USE_ABILITY_PACKET_ID,
+						ToaruKagakuNoMod.USE_ABILITY_PACKET_ID,
 						能力パッケト);
 			}
 		}
