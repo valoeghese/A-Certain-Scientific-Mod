@@ -14,7 +14,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.math.Matrix4f;
 import tk.valoeghese.tknm.api.rendering.RenderHooks;
-import tk.valoeghese.tknm.rendering.WORSTImpl;
+import tk.valoeghese.tknm.api.rendering.WORST;
 
 @Mixin(WorldRenderer.class)
 public class MixinWorldRenderer {
@@ -24,10 +24,10 @@ public class MixinWorldRenderer {
 	@Inject(at = @At("RETURN"), method = "render")
 	private void addRendering(MatrixStack matrices, float tickDelta, long limitTime, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, LightmapTextureManager lightmapTextureManager, Matrix4f matrix4f, CallbackInfo info) {
 		// start
-		WORSTImpl.init(matrices, camera::getPos);
+		WORST.begin(matrices, camera::getPos);
 		// draw
 		RenderHooks.renderWorldRenderHooks(this.world);
 		// end
-		WORSTImpl.end();
+		WORST.end();
 	}
 }

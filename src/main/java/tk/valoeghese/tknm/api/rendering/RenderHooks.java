@@ -26,6 +26,9 @@ public final class RenderHooks {
 	private static final List<BiConsumer<ClientWorld, PlayerEntity>> WORLD_PLAYER_RENDER_HOOKS = new ArrayList<>();
 	private static final List<FeatureRendererFunction<AbstractClientPlayerEntity>> PLAYER_RENDER_FEATURES = new ArrayList<>();
 
+	/**
+	 * Adds a rendering hook for using WORST in the world renderer.
+	 */
 	public static void addWorldRenderHook(Consumer<ClientWorld> consumer) {
 		WORLD_RENDER_HOOKS.add(consumer);
 

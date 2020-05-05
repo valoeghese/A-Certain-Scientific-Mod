@@ -20,15 +20,19 @@
 
 package tk.valoeghese.tknm.api.rendering;
 
+import java.util.function.Supplier;
+
 import javax.annotation.Nullable;
 
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Quaternion;
-import tk.valoeghese.tknm.rendering.WORSTImpl;
+import net.minecraft.util.math.Vec3d;
+import tk.valoeghese.tknm.util.WORSTImpl;
 
 /**
  * The World Oriented Render System Translator. "Translates" (read: provides a wrapper over) abstracted functions to functions on fabric/minecraft's rendering system.
@@ -41,10 +45,27 @@ public interface WORST {
 	Vector3f ZERO = new Vector3f(0, 0, 0);
 
 	/**
-	 * Creates a new mesh object and bind it to WORST. Additionally, starts a quad.
+	 * Begins the current rendering session of WORST. Some places in the API (such as the ability renderers) already have WORST initialised, so you do not need to use this in those situations.
+	 * @param stack the matrix stack for rendering.
+	 * @param the supplier of the offset of the position for rendering.
+	 */
+	static void begin(MatrixStack stack, Supplier<Vec3d> offsetPositionSupplier) throws RuntimeException {
+		WORSTImpl.init(stack, offsetPositionSupplier);
+	}
+
+	/**
+	 * Creates a new mesh object with the specified render layer and binds it to WORST. Additionally, prepares for drawing quads.
+	 */
+	static void mesh(RenderLayer layer) {
+		WORSTImpl.bindRenderLayer(layer);
+		WORSTImpl.mesh();
+	}
+
+	/**
+	 * Creates a new mesh object with render layer cutout and binds it to WORST. Additionally, prepares for drawing quads.
 	 */
 	static void mesh() {
-		WORSTImpl.mesh();
+		mesh(RenderLayer.getCutout());
 	}
 
 	/**
@@ -327,5 +348,12 @@ public interface WORST {
 	static void flushAndRenderMesh(Vector3f translate, @Nullable Quaternion rotation, @Nullable Vector3f scale, int uSize, int vSize) {
 		nextQuad(uSize, vSize);
 		WORSTImpl.renderMesh(translate, rotation, scale == null ? WORSTImpl.ONE : scale);
+	}
+
+	/**
+	 * Ends the current WORST rendering session. In places in the API where WORST start and end are managed for you, such as ability renderers, this does not need to be called.
+	 */
+	static void end() {
+		WORSTImpl.end();
 	}
 }

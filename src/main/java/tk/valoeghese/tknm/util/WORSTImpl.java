@@ -18,7 +18,7 @@
  *   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package tk.valoeghese.tknm.rendering;
+package tk.valoeghese.tknm.util;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -70,7 +70,9 @@ public final class WORSTImpl {
 	private static boolean dqb = false; // whether the quad buffer is "dirty"
 	public static final Vector3f ONE = new Vector3f(1.0f, 1.0f, 1.0f);
 	// current sprite
-	private static Sprite boundSprite = null;
+	private static Sprite boundSprite;
+	private static RenderLayer nextLayer;
+	private static RenderLayer meshLayer;
 
 	public static void init(MatrixStack stack, Supplier<Vec3d> offsetPositionSupplier) throws RuntimeException {
 		// init notif
@@ -83,22 +85,31 @@ public final class WORSTImpl {
 		immediate = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
 		renderer = RendererAccessImpl.INSTANCE.getRenderer();
 		offsetPos = offsetPositionSupplier;
+		meshLayer = RenderLayer.getCutout();
+		nextLayer = RenderLayer.getCutout();
+	}
+
+	public static void bindRenderLayer(RenderLayer layer) {
+		nextLayer = layer;
 	}
 
 	public static void mesh() {
 		// flush if already dirty
 		if (dirty) {
 			// flush
-			immediate.draw(getLayer());
+			immediate.draw(meshLayer);
 			// pop
 			currentStack.pop();
 		} else {
 			dirty = true;
 		}
+
+		// set layer
+		meshLayer = nextLayer;
 		// push matrices
 		currentStack.push();
 		// start mesh
-		vc = immediate.getBuffer(getLayer());
+		vc = immediate.getBuffer(meshLayer);
 		meshBuilder = renderer.meshBuilder();
 		emitter = meshBuilder.getEmitter();
 		index = 0;
@@ -194,17 +205,13 @@ public final class WORSTImpl {
 		}
 	}
 
-	private static RenderLayer getLayer() {
-		return RenderLayer.getTranslucent();
-	}
-
 	public static void end() {
 		if (started) {
 			started = false;
 			// flush if dirty
 			if (dirty) {
 				// flush
-				immediate.draw(getLayer());
+				immediate.draw(meshLayer);
 				// pop
 				currentStack.pop();
 				// not dirty anymore!
