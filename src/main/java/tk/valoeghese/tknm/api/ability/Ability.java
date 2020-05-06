@@ -5,8 +5,9 @@ import javax.annotation.Nullable;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import tk.valoeghese.tknm.client.rendering.AbilityRenderPrimer;
+import tk.valoeghese.tknm.client.rendercore.AbilityRenderPrimer;
 
 /**
  * Class representing an ability, usually a psychic/esper ability.
@@ -33,9 +34,11 @@ public abstract class Ability {
 
 	/**
 	 * @param attack representation of the attack.
+	 * @param target the user of this ability that is being targeted.
+	 * @param sourcePos the position of the source of the attack.
 	 * @return whether the result hit.
 	 */
-	public DefenseResult defendAbilityUserAttack(AbilityUserAttack attack) {
+	public DefenseResult defendAbilityUserAttack(AbilityUserAttack attack, PlayerEntity target, Vec3d sourcePos) {
 		return DefenseResult.HIT;
 	}
 

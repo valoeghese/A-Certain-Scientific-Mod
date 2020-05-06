@@ -17,9 +17,13 @@ public final class AbilityRegistry {
 	private static final BiMap<Identifier, Ability> ABILITY_TYPES = HashBiMap.create();
 	private static final List<Ability> ABILITIES = Lists.newArrayList();
 
-	public static Ability register(Identifier id, Ability ability) {
+	public static Ability register(Identifier id, Ability ability, boolean addToPicker) {
 		ABILITY_TYPES.put(id, ability);
-		ABILITIES.add(ability);
+
+		if (addToPicker) {
+			ABILITIES.add(ability);
+		}
+
 		return ability;
 	}
 

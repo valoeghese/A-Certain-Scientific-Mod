@@ -6,6 +6,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.stat.Stats;
+import net.minecraft.util.math.Vec3d;
 import tk.valoeghese.tknm.api.ACertainComponent;
 import tk.valoeghese.tknm.common.ToaruKagakuNoMod;
 
@@ -37,11 +38,12 @@ public class AbilityUserAttack {
 	 * Posts an ability user attack to the specified target.
 	 * @param user the user of the ability.
 	 * @param le the target.
+	 * @param sourcePos the position of the source of the attack.
 	 * @param damage the amount of damage to deal.
 	 * @param damageType the type of damage to deal (used in death messages and stuff).
 	 * @return whether the attack was "blocked" by the target, and cannot continue (useful for attacks that pierce through one entity to the next). 
 	 */
-	public static boolean post(PlayerEntity user, LivingEntity le, float damage, DamageSource damageType, @Nullable ExtraAbilityEffectsFunction specialEffects) {
+	public static boolean post(PlayerEntity user, LivingEntity le, Vec3d sourcePos, float damage, DamageSource damageType, @Nullable ExtraAbilityEffectsFunction specialEffects) {
 		ACertainComponent component = ToaruKagakuNoMod.A_CERTAIN_COMPONENT.get(user);
 		AbilityUserAttack attack = new AbilityUserAttack(component, user, damage, damageType);
 		float initialHealth = le.getHealth();
@@ -51,7 +53,7 @@ public class AbilityUserAttack {
 
 			// special case for ability user defense.
 			if (targetStats.getAbility() != null) {
-				DefenseResult result = targetStats.getAbility().defendAbilityUserAttack(attack);
+				DefenseResult result = targetStats.getAbility().defendAbilityUserAttack(attack, (PlayerEntity) le, sourcePos);
 
 				boolean runSpecial = result.hit;
 

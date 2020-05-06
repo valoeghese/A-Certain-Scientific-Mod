@@ -1,4 +1,4 @@
-package tk.valoeghese.tknm.client.rendering;
+package tk.valoeghese.tknm.client.rendercore;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

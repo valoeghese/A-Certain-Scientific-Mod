@@ -12,7 +12,7 @@ import tk.valoeghese.tknm.api.ability.Ability;
 import tk.valoeghese.tknm.api.ability.AbilityRegistry;
 import tk.valoeghese.tknm.api.rendering.RenderHooks;
 import tk.valoeghese.tknm.client.feature.BiribiriFeature;
-import tk.valoeghese.tknm.client.rendering.AbilityRenderPrimer;
+import tk.valoeghese.tknm.client.rendercore.AbilityRenderPrimer;
 import tk.valoeghese.tknm.common.ToaruKagakuNoMod;
 
 public class ToaruKagakuNoModClient implements ClientModInitializer {

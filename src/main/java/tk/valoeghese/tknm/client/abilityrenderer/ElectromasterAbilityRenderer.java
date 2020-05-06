@@ -32,7 +32,7 @@ public class ElectromasterAbilityRenderer implements AbilityRenderer {
 		if (mode == ElectromasterAbility.USAGE_RAILGUN) {
 			this.railguns.add(new RailgunEntry(
 					new Vector3f((float)pos.getX(), (float)pos.getY() + 1.25f, (float)pos.getZ()),
-					new Quaternion(0, 270 - yaw, 360 - pitch, true),
+					new Vector3f(0, 270 - yaw, 360 - pitch),
 					Float.intBitsToFloat(data[1]),
 					world.getTime() + 40));
 		}
@@ -127,9 +127,9 @@ public class ElectromasterAbilityRenderer implements AbilityRenderer {
 	}
 
 	private static class RailgunEntry {
-		private RailgunEntry(Vector3f pos, Quaternion rotation, float distance, long tickTarget) {
+		private RailgunEntry(Vector3f pos, Vector3f rotationBase, float distance, long tickTarget) {
 			this.pos = pos;
-			this.rotation = rotation;
+			this.rotation = new Quaternion(rotationBase.getX(), rotationBase.getY(), rotationBase.getZ(), true);
 			this.distance = distance;
 			this.tickTarget = tickTarget;
 		}
@@ -143,6 +143,7 @@ public class ElectromasterAbilityRenderer implements AbilityRenderer {
 			WORST.mesh();
 			WORST.bindBlockTexture(new Identifier("block/orange_concrete"));
 			WORST.basicCube(null, 0.5f, 0, 0);
+			// TODO spin so it looks fancy and cool instead of just a cube
 			WORST.renderMesh(this.pos, this.rotation, new Vector3f(this.distance, 0.12f, 0.12f));
 			return world.getTime() >= this.tickTarget;
 		}

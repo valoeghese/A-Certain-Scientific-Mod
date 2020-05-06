@@ -13,9 +13,12 @@ public final class 能力 {
 		return ELECTROMASTER;
 	}
 
-	private static final Ability register(String name, Ability ability) {
-		return AbilityRegistry.register(ToaruKagakuNoMod.from(name), ability);
+	private static final Ability register(String name, Ability ability, boolean addToPicker) {
+		return AbilityRegistry.register(ToaruKagakuNoMod.from(name), ability, addToPicker);
 	}
 
-	public static final Ability ELECTROMASTER = register("electromaster", new ElectromasterAbility());
+	public static final Ability ELECTROMASTER = register("electromaster", new ElectromasterAbility(), true);
+
+	// Since imagine breaker isn't actually an ability user ability, we distribute it differently.
+	public static final Ability IMAGINE_BREAKER = register("imagine_breaker", new ImagineBreaker(), false);
 }
