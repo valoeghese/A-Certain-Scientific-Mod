@@ -5,6 +5,7 @@ import javax.annotation.Nullable;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.stat.Stats;
 import tk.valoeghese.tknm.api.ACertainComponent;
 import tk.valoeghese.tknm.common.ToaruKagakuNoMod;
 
@@ -43,6 +44,7 @@ public class AbilityUserAttack {
 	public static boolean post(PlayerEntity user, LivingEntity le, float damage, DamageSource damageType, @Nullable ExtraAbilityEffectsFunction specialEffects) {
 		ACertainComponent component = ToaruKagakuNoMod.A_CERTAIN_COMPONENT.get(user);
 		AbilityUserAttack attack = new AbilityUserAttack(component, user, damage, damageType);
+		float initialHealth = le.getHealth();
 
 		if (le instanceof PlayerEntity) {
 			ACertainComponent targetStats = ToaruKagakuNoMod.A_CERTAIN_COMPONENT.get((PlayerEntity) le);
@@ -54,7 +56,13 @@ public class AbilityUserAttack {
 				boolean runSpecial = result.hit;
 
 				if (runSpecial) {
-					runSpecial &= le.damage(damageType, damage);
+					if (le.damage(damageType, damage)) {
+						// stats
+						float n = initialHealth - ((LivingEntity)le).getHealth();
+						user.increaseStat(Stats.DAMAGE_DEALT, Math.round(n * 10.0F));
+					} else {
+						runSpecial = false;
+					}
 				}
 
 				if (runSpecial && specialEffects != null && result != DefenseResult.ABSOLUTE_STOP) {
@@ -67,8 +75,14 @@ public class AbilityUserAttack {
 
 		boolean hit = le.damage(damageType, damage);
 
-		if (hit && specialEffects != null && le.isAlive()) {
-			specialEffects.addSpecialEffects(true, le);
+		if (hit) {
+			// stats
+			float n = initialHealth - ((LivingEntity)le).getHealth();
+			user.increaseStat(Stats.DAMAGE_DEALT, Math.round(n * 10.0F));
+
+			if (specialEffects != null && le.isAlive()) {
+				specialEffects.addSpecialEffects(true, le);
+			}
 		}
 
 		return false;

@@ -1,6 +1,7 @@
 package tk.valoeghese.tknm.client.feature;
 
 import net.minecraft.client.network.AbstractClientPlayerEntity;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
@@ -33,7 +34,7 @@ public class BiribiriFeature extends FeatureRenderer<AbstractClientPlayerEntity,
 
 		if (ElectromasterAbilityRenderer.getOverlayStrength(entity.getUuid(), entity.world.getTime()) > 0.0) {
 			WORST.begin(matrices, () -> Vec3d.ZERO);
-			WORST.mesh();
+			WORST.mesh(RenderLayer.getCutout());
 			WORST.bindBlockTexture(ToaruKagakuNoModClient.TEXTURE_BIRIBIRI);
 			WORST.basicDoubleCube();
 			WORST.renderMesh(new Vector3f(0.0f, 0.5f, 0.0f), new Quaternion(0.0f, 0.0f, 180f, true), new Vector3f(1.0f, entity.isSneaking() ? 1.5f : 2.0f, 1.0f));

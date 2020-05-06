@@ -112,7 +112,7 @@ public class ElectromasterAbility extends Ability {
 			// also will add a coin item :wink:
 			float damage = level > 4 ? 22 + (int) 2 * levelProgress : 20;
 
-			if (AbilityUserAttack.post(player, le, damage, DamageSource.GENERIC, null)) {
+			if (AbilityUserAttack.post(player, le, damage, DamageSource.player(player), null)) {
 				break;
 			}
 		}
