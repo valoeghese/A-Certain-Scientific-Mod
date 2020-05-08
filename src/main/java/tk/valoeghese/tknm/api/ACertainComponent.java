@@ -38,4 +38,8 @@ public interface ACertainComponent extends EntitySyncedComponent {
 	 */
 	@Override
 	PlayerEntity getEntity();
+	/**
+	 * Sets the ability to the specified ability.
+	 */
+	void setAbility(Ability ability);
 }

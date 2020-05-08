@@ -113,6 +113,7 @@ public class ElectromasterAbility extends Ability {
 			float damage = level > 4 ? 22 + (int) 2 * levelProgress : 20;
 
 			if (AbilityUserAttack.post(player, le, sourcePos, damage, DamageSource.player(player), null)) {
+				distance = sourcePos.distanceTo(le.getPos().add(0, 1.25, 0));
 				break;
 			}
 		}

@@ -22,6 +22,7 @@ public final class ある能力のカーヂナルの要素 implements ACertainCo
 		this.じりき = 0.2f + ABILITY_RANDOM.nextFloat();
 		this.能力 = AbilityRegistry.pickAbility(player.getRandom());
 		this.能力者 = player;
+		this.レブルわりたす();
 	}
 
 	// ============ ABILITY ============ //
@@ -121,6 +122,11 @@ public final class ある能力のカーヂナルの要素 implements ACertainCo
 	@Override
 	public PlayerEntity getEntity() {
 		return this.能力者;
+	}
+
+	@Override
+	public void setAbility(Ability ability) {
+		this.能力 = ability;
 	}
 
 	private static float progressOf(float prev, float current, float next) {

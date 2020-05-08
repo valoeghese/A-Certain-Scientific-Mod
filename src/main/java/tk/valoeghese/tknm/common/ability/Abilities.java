@@ -4,8 +4,8 @@ import tk.valoeghese.tknm.api.ability.Ability;
 import tk.valoeghese.tknm.api.ability.AbilityRegistry;
 import tk.valoeghese.tknm.common.ToaruKagakuNoMod;
 
-public final class 能力 {
-	private 能力() {
+public final class Abilities {
+	private Abilities() {
 		// NO-OP
 	}
 

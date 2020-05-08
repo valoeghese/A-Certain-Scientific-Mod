@@ -17,6 +17,7 @@ import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.fabricmc.fabric.api.registry.CommandRegistry;
 import net.fabricmc.fabric.api.server.PlayerStream;
 import net.minecraft.command.arguments.EntityArgumentType;
+import net.minecraft.command.arguments.IdentifierArgumentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
@@ -27,7 +28,7 @@ import tk.valoeghese.tknm.api.ACertainComponent;
 import tk.valoeghese.tknm.api.ability.Ability;
 import tk.valoeghese.tknm.api.ability.AbilityRegistry;
 import tk.valoeghese.tknm.common.ability.ある能力のカーヂナルの要素;
-import tk.valoeghese.tknm.common.ability.能力;
+import tk.valoeghese.tknm.common.ability.Abilities;
 
 public class ToaruKagakuNoMod implements ModInitializer {
 	public static final Logger LOGGER = LogManager.getLogger("A Certain Scientific Mod");
@@ -39,7 +40,7 @@ public class ToaruKagakuNoMod implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		能力.ensureInit();
+		Abilities.ensureInit();
 		EntityComponents.setRespawnCopyStrategy(A_CERTAIN_COMPONENT, RespawnCopyStrategy.INVENTORY);
 
 		CommandRegistry.INSTANCE.register(false, thing -> thing.register(
@@ -55,6 +56,14 @@ public class ToaruKagakuNoMod implements ModInitializer {
 													false);
 											return 1;
 										})))
+						.then(CommandManager.literal("能力")
+								.then(CommandManager.argument("能力者", EntityArgumentType.player())
+										.then(CommandManager.argument("能力", IdentifierArgumentType.identifier())
+												.executes(context -> {
+													PlayerEntity entity = EntityArgumentType.getPlayer(context, "能力者");
+													A_CERTAIN_COMPONENT.get(entity).setAbility(AbilityRegistry.getAbility(IdentifierArgumentType.getIdentifier(context, "能力")));
+													return 1;
+												}))))
 						.then(CommandManager.literal("けいけんち足す")
 								.then(CommandManager.argument("能力者", EntityArgumentType.player())
 										.then(CommandManager.argument("すう", FloatArgumentType.floatArg())
