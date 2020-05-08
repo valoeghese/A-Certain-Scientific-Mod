@@ -16,7 +16,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Quaternion;
 import net.minecraft.util.math.Vec3d;
 import tk.valoeghese.tknm.api.ability.AbilityRenderer;
 import tk.valoeghese.tknm.api.rendering.WORST;
@@ -30,7 +29,7 @@ public class ElectromasterAbilityRenderer implements AbilityRenderer {
 		final int mode = data[0] >> 2;
 
 		if (mode == ElectromasterAbility.USAGE_RAILGUN) {
-			this.railguns.add(new RailgunEntry(
+			this.railguns.add(new RailgunBeam(
 					new Vector3f((float)pos.getX(), (float)pos.getY() + 1.25f, (float)pos.getZ()),
 					new Vector3f(0, 270 - yaw, 360 - pitch),
 					Float.intBitsToFloat(data[1]),
@@ -48,7 +47,7 @@ public class ElectromasterAbilityRenderer implements AbilityRenderer {
 		}
 	}
 
-	private final List<RailgunEntry> railguns = new ArrayList<>();
+	private final List<RailgunBeam> railguns = new ArrayList<>();
 	private static final Map<UUID, Pair<Long, Long>> TO_CHARGE = new HashMap<>();
 	private static final Map<UUID, Pair<Long, Long>> TO_DISCHARGE = new HashMap<>();
 	private static final Object2BooleanMap<UUID> CHARGED = new Object2BooleanArrayMap<>();
@@ -126,26 +125,14 @@ public class ElectromasterAbilityRenderer implements AbilityRenderer {
 		});
 	}
 
-	private static class RailgunEntry {
-		private RailgunEntry(Vector3f pos, Vector3f rotationBase, float distance, long tickTarget) {
-			this.pos = pos;
-			this.rotation = new Quaternion(rotationBase.getX(), rotationBase.getY(), rotationBase.getZ(), true);
-			this.distance = distance;
-			this.tickTarget = tickTarget;
+	private static class RailgunBeam extends Beam {
+		private RailgunBeam(Vector3f pos, Vector3f rotationBase, float distance, long tickTarget) {
+			super(pos, rotationBase, distance, tickTarget, 0.12f);
 		}
 
-		Vector3f pos;
-		Quaternion rotation;
-		final float distance;
-		final long tickTarget;
-
-		private boolean render(ClientWorld world) {
-			WORST.mesh();
+		@Override
+		void bindTexture() {
 			WORST.bindBlockTexture(new Identifier("block/orange_concrete"));
-			WORST.basicCube(null, 0.5f, 0, 0);
-			// TODO spin so it looks fancy and cool instead of just a cube
-			WORST.renderMesh(this.pos, this.rotation, new Vector3f(this.distance, 0.12f, 0.12f));
-			return world.getTime() >= this.tickTarget;
 		}
 	}
 }
