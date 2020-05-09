@@ -18,6 +18,17 @@ public final class Abilities {
 	}
 
 	public static final Ability ELECTROMASTER = register("electromaster", new ElectromasterAbility(), true);
+	public static final Ability MELTDOWNER = register("meltdowner", new MeltdownerAbility(), true);
+
+	//TODO these abilities
+	public static final Ability TELEKINESIS = null;
+	public static final Ability TELEPORT = null;
+	public static final Ability KILL_POINT = null; // funni useless teleport ability
+	public static final Ability RAMPAGE_DRESS = null;
+	public static final Ability AIM_STALKER = null; // make sure to check for aim stalker on server to avoid hacked clients abusing
+	public static final Ability PYROKINESIS = null;
+	public static final Ability DUMMY_CHECK = null;
+	public static final Ability AUTO_REBIRTH = null;
 
 	// Since imagine breaker isn't actually an ability user ability, we distribute it differently.
 	public static final Ability IMAGINE_BREAKER = register("imagine_breaker", new ImagineBreaker(), false);

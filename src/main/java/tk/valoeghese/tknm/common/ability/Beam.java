@@ -16,7 +16,9 @@ class Beam {
 	/**
 	 * @return the distance the beam managed to travel before being blocked.
 	 */
-	static double launch(World world, Vec3d sourcePos, PlayerEntity sender, double distance, FloatSupplier damageSupplier) {
+	static double launch(World world, Vec3d sourcePos, Vec3d posOffset, PlayerEntity sender, double distance, boolean naturalAttack, FloatSupplier damageSupplier) {
+		sourcePos = sourcePos.add(posOffset);
+
 		double sqrDistance = distance * distance;
 		double maxDistance = Math.sqrt(sqrDistance * 2); // pythagoras theorem
 
@@ -68,8 +70,8 @@ class Beam {
 		for (LivingEntity le : entities) {
 			float damage = damageSupplier.getAsFloat();
 
-			if (AbilityUserAttack.post(sender, le, sourcePos, damage, DamageSource.player(sender), null)) {
-				distance = sourcePos.distanceTo(le.getPos().add(0, 1.25, 0));
+			if (AbilityUserAttack.post(sender, le, sourcePos, damage, DamageSource.player(sender), naturalAttack, null)) {
+				distance = sourcePos.distanceTo(le.getPos().add(posOffset));
 				break;
 			}
 		}

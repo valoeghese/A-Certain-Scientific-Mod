@@ -14,17 +14,19 @@ import tk.valoeghese.tknm.common.ToaruKagakuNoMod;
  * Represents an attack from an ability user.
  */
 public class AbilityUserAttack {
-	private AbilityUserAttack(ACertainComponent ability, PlayerEntity user, float damage, DamageSource type) {
+	private AbilityUserAttack(ACertainComponent ability, PlayerEntity user, float damage, DamageSource type, boolean naturalAttack) {
 		this.damage = damage;
 		this.user = user;
 		this.ability = ability;
 		this.damageType = type;
+		this.naturalAttack = naturalAttack;
 	}
 
 	private float damage;
 	public final PlayerEntity user;
 	public final ACertainComponent ability;
 	public final DamageSource damageType;
+	private final boolean naturalAttack;
 
 	public float getDamage() {
 		return this.damage;
@@ -41,11 +43,12 @@ public class AbilityUserAttack {
 	 * @param sourcePos the position of the source of the attack.
 	 * @param damage the amount of damage to deal.
 	 * @param damageType the type of damage to deal (used in death messages and stuff).
+	 * @param naturalAttack whether the attack is "natural," i.e. the ability itself is not the attack. Is usually false.
 	 * @return whether the attack was "blocked" by the target, and cannot continue (useful for attacks that pierce through one entity to the next). 
 	 */
-	public static boolean post(PlayerEntity user, LivingEntity le, Vec3d sourcePos, float damage, DamageSource damageType, @Nullable ExtraAbilityEffectsFunction specialEffects) {
+	public static boolean post(PlayerEntity user, LivingEntity le, Vec3d sourcePos, float damage, DamageSource damageType, boolean naturalAttack, @Nullable ExtraAbilityEffectsFunction specialEffects) {
 		ACertainComponent component = ToaruKagakuNoMod.A_CERTAIN_COMPONENT.get(user);
-		AbilityUserAttack attack = new AbilityUserAttack(component, user, damage, damageType);
+		AbilityUserAttack attack = new AbilityUserAttack(component, user, damage, damageType, naturalAttack);
 		float initialHealth = le.getHealth();
 
 		if (le instanceof PlayerEntity) {
@@ -88,6 +91,13 @@ public class AbilityUserAttack {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Gets whether the attack as a "natural" attack, i.e. the ability itself is not the attack.
+	 */
+	public boolean isNaturalAttack() {
+		return this.naturalAttack;
 	}
 
 	/**

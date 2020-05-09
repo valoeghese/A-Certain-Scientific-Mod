@@ -10,11 +10,6 @@ import net.minecraft.util.math.Vec3d;
  */
 public interface AbilityRenderer {
 	/**
-	 * Runs every tick.
-	 * @param world the world to render in.
-	 */
-	void render(ClientWorld world);
-	/**
 	 * Gives information about starting to render an ability usage in the world.
 	 * Do not render in this method! Use this to cache information you need in your renderer for usage in {@link AbilityRenderer#render}
 	 * @param world the world in which this will be rendered.
@@ -26,4 +21,9 @@ public interface AbilityRenderer {
 	 * @param data additional data on how the ability was used.
 	 */
 	void renderInfo(ClientWorld world, Vec3d pos, float yaw, float pitch, UUID user, int[] data);
+	/**
+	 * Runs every tick.
+	 * @param world the world to render in.
+	 */
+	void render(ClientWorld world);
 }

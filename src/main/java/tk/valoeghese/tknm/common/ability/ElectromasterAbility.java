@@ -50,9 +50,8 @@ public class ElectromasterAbility extends Ability {
 
 	private int[] performRailgun(World world, PlayerEntity player, int level, float levelProgress) {
 		double distance = 50.0;
-		Vec3d sourcePos = player.getPos().add(0, 1.25, 0);
-
-		distance = Beam.launch(world, sourcePos, player, distance, () -> level > 4 ? 22 + (int) 2 * levelProgress : 20);
+		// the object is propelled only at launch, and afterwards its momentum is completely natural. Thus natural attack.
+		distance = Beam.launch(world, player.getPos(), new Vec3d(0, 1.25, 0), player, distance, true, () -> level > 4 ? 22 + (int) 2 * levelProgress : 20);
 
 		// uses up charge
 		CHARGED.put(player.getUuid(), false);

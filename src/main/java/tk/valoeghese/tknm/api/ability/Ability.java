@@ -48,11 +48,12 @@ public abstract class Ability {
 	 * @param player the player using the ability.
 	 * @param level the level of the ability.
 	 * @param abilityProgress the progress of the ability user from the current level to the next, from 0.0-1.0.
-	 * @param usage the int usage identifier of how the ability was triggered.
+	 * @param usage the int usage identifier of how the ability was triggered. Currently, 1 represents a a player right click.
 	 * @return an int array of data which the client can use for ability rendering. If null, does not use the ability.
 	 */
 	@Nullable
 	public abstract int[] performAbility(World world, PlayerEntity player, int level, float abilityProgress, byte usage);
+
 	/**
 	 * @return the ability renderer for this ability. Is called when this ability is constructed on the client side.
 	 */

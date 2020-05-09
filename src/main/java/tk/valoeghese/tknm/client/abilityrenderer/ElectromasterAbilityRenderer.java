@@ -1,9 +1,7 @@
 package tk.valoeghese.tknm.client.abilityrenderer;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -29,11 +27,11 @@ public class ElectromasterAbilityRenderer implements AbilityRenderer {
 		final int mode = data[0] >> 2;
 
 		if (mode == ElectromasterAbility.USAGE_RAILGUN) {
-			this.railguns.add(new RailgunBeam(
+			this.railgunBeamManager.add(new RailgunBeam(
 					new Vector3f((float)pos.getX(), (float)pos.getY() + 1.25f, (float)pos.getZ()),
 					new Vector3f(0, 270 - yaw, 360 - pitch),
 					Float.intBitsToFloat(data[1]),
-					world.getTime() + 40));
+					world.getTime() + 25));
 		}
 
 		switch (chargeInfo) {
@@ -47,7 +45,7 @@ public class ElectromasterAbilityRenderer implements AbilityRenderer {
 		}
 	}
 
-	private final List<RailgunBeam> railguns = new ArrayList<>();
+	private final BeamRenderManager<RailgunBeam> railgunBeamManager = new BeamRenderManager<>();
 	private static final Map<UUID, Pair<Long, Long>> TO_CHARGE = new HashMap<>();
 	private static final Map<UUID, Pair<Long, Long>> TO_DISCHARGE = new HashMap<>();
 	private static final Object2BooleanMap<UUID> CHARGED = new Object2BooleanArrayMap<>();
@@ -104,16 +102,7 @@ public class ElectromasterAbilityRenderer implements AbilityRenderer {
 			}
 		}
 
-		// for every railgun beam, if they exist
-		if (!this.railguns.isEmpty()) {
-			int i = this.railguns.size();
-
-			while (--i >= 0) {
-				if (this.railguns.get(i).render(world)) {
-					this.railguns.remove(i);
-				}
-			}
-		}
+		this.railgunBeamManager.renderUpdate(world);
 
 		CHARGED.forEach((uuid, charged) -> {
 			if (charged) {
@@ -127,7 +116,7 @@ public class ElectromasterAbilityRenderer implements AbilityRenderer {
 
 	private static class RailgunBeam extends Beam {
 		private RailgunBeam(Vector3f pos, Vector3f rotationBase, float distance, long tickTarget) {
-			super(pos, rotationBase, distance, tickTarget, 0.12f);
+			super(pos, rotationBase, distance, tickTarget, 0.09f);
 		}
 
 		@Override

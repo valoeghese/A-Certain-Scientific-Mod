@@ -19,6 +19,10 @@ public class ImagineBreaker extends Ability {
 
 	@Override
 	public DefenseResult defendAbilityUserAttack(AbilityUserAttack attack, PlayerEntity target, Vec3d sourcePos) {
+		if (attack.isNaturalAttack()) {
+			return DefenseResult.HIT;
+		}
+
 		Vec3d selfPos = target.getPos();
 		double distanceBetween = selfPos.distanceTo(sourcePos);
 
@@ -43,7 +47,7 @@ public class ImagineBreaker extends Ability {
 			}
 		}
 
-		return DefenseResult.HIT;
+		return DefenseResult.HIT; // perhaps hit and stop?
 	}
 
 	@Override
