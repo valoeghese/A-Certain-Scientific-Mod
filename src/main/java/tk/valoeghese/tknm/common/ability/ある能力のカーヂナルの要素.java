@@ -1,5 +1,7 @@
 package tk.valoeghese.tknm.common.ability;
 
+import java.util.Random;
+
 import javax.annotation.Nullable;
 
 import nerdhub.cardinal.components.api.ComponentType;
@@ -20,7 +22,7 @@ import tk.valoeghese.tknm.util.RandomUtils;
 public final class ある能力のカーヂナルの要素 implements ACertainComponent {
 	public ある能力のカーヂナルの要素(PlayerEntity player) {
 		this.じりき = 0.2f + ABILITY_RANDOM.nextFloat();
-		this.能力 = AbilityRegistry.pickAbility(player.getRandom());
+		this.能力 = AbilityRegistry.pickAbility(new Random(player.getUuid().getLeastSignificantBits() + 31L * player.getEntityWorld().getSeed()));
 		this.能力者 = player;
 		this.レブルわりたす();
 	}
@@ -35,6 +37,9 @@ public final class ある能力のカーヂナルの要素 implements ACertainCo
 	private Ability 能力;
 	private final PlayerEntity 能力者;
 
+	/**
+	 * Calculates the player's level and level progress.
+	 */
 	private void レブルわりたす() {
 		float アウトプット = (float) ((3 * this.じりき * Math.log10(this.能力けいけんち + 1.0f)) + (2 * this.じりき));
 		this.レブル = (int) Math.floor(アウトプット);

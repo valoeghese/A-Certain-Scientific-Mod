@@ -1,24 +1,55 @@
 package tk.valoeghese.tknm.common.ability;
 
+import java.util.List;
+
+import javax.annotation.Nullable;
+
 import it.unimi.dsi.fastutil.objects.Object2FloatArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2FloatMap;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.RayTraceContext;
+import net.minecraft.world.RayTraceContext.FluidHandling;
 import net.minecraft.world.World;
 import tk.valoeghese.tknm.api.OrderedList;
 import tk.valoeghese.tknm.api.ability.AbilityUserAttack;
+import tk.valoeghese.tknm.api.ability.AbilityUserAttack.ExtraAbilityEffectsFunction;
 import tk.valoeghese.tknm.util.FloatSupplier;
 
-class Beam {
+final class Beam {
 	/**
 	 * @return the distance the beam managed to travel before being blocked.
 	 */
-	static double launch(World world, Vec3d sourcePos, Vec3d posOffset, PlayerEntity sender, double distance, boolean naturalAttack, FloatSupplier damageSupplier) {
+	static double launch(Vec3d sourcePos, Vec3d posOffset, PlayerEntity sender, double distance, boolean naturalAttack, @Nullable DamageSource damageSource, FloatSupplier damageSupplier, @Nullable ExtraAbilityEffectsFunction extraEffects) {
+		World world = sender.getEntityWorld();
+
+		if (damageSource == null) {
+			damageSource = DamageSource.player(sender);
+		}
+
 		sourcePos = sourcePos.add(posOffset);
 
+		System.out.println(rayTraceBlock(world, sourcePos, sender, distance).getPos());
+
+		List<LivingEntity> entities = rayTraceEntities(world, sourcePos, sender, distance);
+
+		for (LivingEntity le : entities) {
+			float damage = damageSupplier.getAsFloat();
+
+			if (AbilityUserAttack.post(sender, le, sourcePos, damage, damageSource, naturalAttack, extraEffects)) {
+				distance = sourcePos.distanceTo(le.getPos().add(posOffset));
+				break;
+			}
+		}
+
+		return distance;
+	}
+
+	static OrderedList<LivingEntity> rayTraceEntities(World world, Vec3d sourcePos, PlayerEntity sender, double distance) {
 		double sqrDistance = distance * distance;
 		double maxDistance = Math.sqrt(sqrDistance * 2); // pythagoras theorem
 
@@ -67,15 +98,12 @@ class Beam {
 			}
 		}
 
-		for (LivingEntity le : entities) {
-			float damage = damageSupplier.getAsFloat();
+		return entities;
+	}
 
-			if (AbilityUserAttack.post(sender, le, sourcePos, damage, DamageSource.player(sender), naturalAttack, null)) {
-				distance = sourcePos.distanceTo(le.getPos().add(posOffset));
-				break;
-			}
-		}
-
-		return distance;
+	private static BlockHitResult rayTraceBlock(World world, Vec3d start, PlayerEntity sender, double distance) {
+		Vec3d vec3d2 = sender.getRotationVec(0.0f);
+		Vec3d vec3d3 = start.add(vec3d2.x * distance, vec3d2.y * distance, vec3d2.z * distance);
+		return world.rayTrace(new RayTraceContext(start, vec3d3, RayTraceContext.ShapeType.OUTLINE, FluidHandling.NONE, sender));
 	}
 }

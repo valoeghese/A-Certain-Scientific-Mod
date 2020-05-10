@@ -22,27 +22,37 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.command.CommandManager;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 import tk.valoeghese.tknm.api.ACertainComponent;
 import tk.valoeghese.tknm.api.ability.Ability;
 import tk.valoeghese.tknm.api.ability.AbilityRegistry;
-import tk.valoeghese.tknm.common.ability.ある能力のカーヂナルの要素;
 import tk.valoeghese.tknm.common.ability.Abilities;
+import tk.valoeghese.tknm.common.ability.ある能力のカーヂナルの要素;
 
 public class ToaruKagakuNoMod implements ModInitializer {
 	public static final Logger LOGGER = LogManager.getLogger("A Certain Scientific Mod");
+	// component
 	public static final ComponentType<ACertainComponent> A_CERTAIN_COMPONENT =
 			ComponentRegistry.INSTANCE.registerIfAbsent(from("a_certain"), ACertainComponent.class)
 			.attach(EntityComponentCallback.event(PlayerEntity.class), ある能力のカーヂナルの要素::new);
-	public static final Identifier USE_ABILITY_PACKET_ID = new Identifier("tknm", "nouryokutsukau");
-	public static final Identifier RENDER_ABILITY_PACKET_ID = new Identifier("tknm", "render");
+	// packets
+	public static final Identifier USE_ABILITY_PACKET_ID = from("nouryokutsukau");
+	public static final Identifier RENDER_ABILITY_PACKET_ID = from("render");
+	// sounds
+	public static final Identifier IMAGINE_BREAKER_SOUND_ID = from("imagine_breaker");
+	public static final SoundEvent IMAGINE_BREAKER_SOUND_EVENT = new SoundEvent(IMAGINE_BREAKER_SOUND_ID);
 
 	@Override
 	public void onInitialize() {
+		// abilities
 		Abilities.ensureInit();
-		EntityComponents.setRespawnCopyStrategy(A_CERTAIN_COMPONENT, RespawnCopyStrategy.INVENTORY);
+		// components
+		EntityComponents.setRespawnCopyStrategy(A_CERTAIN_COMPONENT, RespawnCopyStrategy.ALWAYS_COPY);
 
+		// commands
 		CommandRegistry.INSTANCE.register(false, thing -> thing.register(
 				CommandManager.literal("とある")
 				.then(CommandManager.literal("デバッグ")
@@ -95,6 +105,7 @@ public class ToaruKagakuNoMod implements ModInitializer {
 								))
 				));
 
+		// packets
 		ServerSidePacketRegistry.INSTANCE.register(USE_ABILITY_PACKET_ID, (context, dataManager) -> {
 			byte usage = dataManager.readByte();
 			PlayerEntity player = context.getPlayer();
@@ -129,6 +140,9 @@ public class ToaruKagakuNoMod implements ModInitializer {
 				}
 			});
 		});
+
+		// sounds
+		Registry.register(Registry.SOUND_EVENT, IMAGINE_BREAKER_SOUND_ID, IMAGINE_BREAKER_SOUND_EVENT);
 	}
 
 	public static Identifier from(String name) {

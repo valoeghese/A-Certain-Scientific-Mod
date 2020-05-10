@@ -1,6 +1,7 @@
 package tk.valoeghese.tknm.common.ability;
 
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -9,6 +10,7 @@ import tk.valoeghese.tknm.api.ability.AbilityRenderer;
 import tk.valoeghese.tknm.api.ability.AbilityUserAttack;
 import tk.valoeghese.tknm.api.ability.DefenseResult;
 import tk.valoeghese.tknm.client.abilityrenderer.ImagineBreakerRenderer;
+import tk.valoeghese.tknm.common.ToaruKagakuNoMod;
 
 // TODO user has to raise arm to activate ability.
 public class ImagineBreaker extends Ability {
@@ -43,6 +45,13 @@ public class ImagineBreaker extends Ability {
 			}
 
 			if (angleCanActivate) {
+				target.getEntityWorld().playSound(
+						null,
+						target.getBlockPos().up(),
+						ToaruKagakuNoMod.IMAGINE_BREAKER_SOUND_EVENT,
+						SoundCategory.MASTER,
+						2f,
+						1f);
 				return DefenseResult.ABSOLUTE_STOP;
 			}
 		}

@@ -11,6 +11,7 @@ abstract class Beam {
 		this.rotation = new Quaternion(rotationBase.getX(), rotationBase.getY(), rotationBase.getZ(), true);
 		this.distance = distance;
 		this.tickTarget = tickTarget;
+		this.thickness = thickness;
 	}
 
 	Vector3f pos;
