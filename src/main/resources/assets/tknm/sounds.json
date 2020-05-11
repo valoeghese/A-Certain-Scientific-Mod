@@ -4,5 +4,23 @@
     "sounds": [
       "tknm:imagine_breaker"
     ]
+  },
+  "biribiri_0": {
+    "subtitle": "subtitles.tknm.biribiri",
+    "sounds": [
+      "tknm:biribiri_0"
+    ]
+  },
+  "biribiri_1": {
+    "subtitle": "subtitles.tknm.biribiri",
+    "sounds": [
+      "tknm:biribiri_1"
+    ]
+  },
+  "biribiri_2": {
+    "subtitle": "subtitles.tknm.biribiri",
+    "sounds": [
+      "tknm:biribiri_2"
+    ]
   }
 }

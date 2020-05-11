@@ -15,6 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -41,15 +42,17 @@ public class ElectromasterAbility extends Ability {
 			long lastTime = LAST_BIRI_SOUND_TIME.applyAsLong(uuid);
 
 			if (thisTime - lastTime > biriDelay) {
-				biriDelay = MIN_BIRI_DELAY_MILLIS + 200 * user.getRandom().nextInt(10); // 0ms - 1800ms, in 200ms gaps 
+				biriDelay = 1800 + 200 * user.getRandom().nextInt(10); // 0ms - 1800ms, in 200ms gaps 
 				LAST_BIRI_SOUND_TIME.put(uuid, thisTime);
+
+				SoundEvent event = ToaruKagakuNoMod.biribiriSound(user.getRandom());
 
 				world.playSound(
 						null,
 						user.getBlockPos().up(),
-						ToaruKagakuNoMod.biribiriSound(user.getRandom()),
+						event,
 						SoundCategory.MASTER,
-						1f,
+						0.9f + user.getRandom().nextFloat() * 0.1f + (event == ToaruKagakuNoMod.BIRIBIRI_0_SOUND_EVENT ? -0.5f : 0.0f),
 						user.getRandom().nextFloat() * 0.08f + 1f);
 			}
 		}
@@ -148,8 +151,7 @@ public class ElectromasterAbility extends Ability {
 	public static final int CHARGE_OFF = 0b01;
 	public static final int CHARGE_ON = 0b10;
 
-	private static final long MIN_BIRI_DELAY_MILLIS = 2500;
-	private static long biriDelay = MIN_BIRI_DELAY_MILLIS;
+	private static long biriDelay = 0;
 
 	static {
 		MAGNETISABLE_ITEMS.add(Items.IRON_BARS);
