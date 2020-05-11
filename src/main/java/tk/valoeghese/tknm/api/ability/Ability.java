@@ -5,8 +5,10 @@ import javax.annotation.Nullable;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import tk.valoeghese.tknm.api.ACertainComponent;
 import tk.valoeghese.tknm.client.rendercore.AbilityRenderPrimer;
 
 /**
@@ -40,6 +42,15 @@ public abstract class Ability {
 	 */
 	public DefenseResult defendAbilityUserAttack(AbilityUserAttack attack, PlayerEntity target, Vec3d sourcePos) {
 		return DefenseResult.HIT;
+	}
+
+	/**
+	 * Ticks the ability on the server for a specific user. Default implementation does nothing.
+	 * @param server the server instance.
+	 * @param user the user of this ability.
+	 * @param component the component containing information about this user's instance of the ability.
+	 */
+	public void tick(MinecraftServer server, PlayerEntity user, ACertainComponent component) {
 	}
 
 	/**

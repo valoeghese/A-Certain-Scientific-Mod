@@ -7,16 +7,22 @@ import java.util.Set;
 import java.util.UUID;
 
 import it.unimi.dsi.fastutil.objects.Object2BooleanArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2LongArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import tk.valoeghese.tknm.api.ACertainComponent;
 import tk.valoeghese.tknm.api.ability.Ability;
 import tk.valoeghese.tknm.api.ability.AbilityRenderer;
 import tk.valoeghese.tknm.client.abilityrenderer.ElectromasterAbilityRenderer;
+import tk.valoeghese.tknm.common.ToaruKagakuNoMod;
 
 public class ElectromasterAbility extends Ability {
 	@Override
@@ -25,11 +31,35 @@ public class ElectromasterAbility extends Ability {
 	}
 
 	@Override
+	public void tick(MinecraftServer server, PlayerEntity user, ACertainComponent component) {
+		UUID uuid = user.getUuid();
+		World world = user.getEntityWorld();
+		updateCharge(world.getTime());
+
+		if (CHARGED.getBoolean(uuid)) {
+			long thisTime = System.currentTimeMillis();
+			long lastTime = LAST_BIRI_SOUND_TIME.applyAsLong(uuid);
+
+			if (thisTime - lastTime > biriDelay) {
+				biriDelay = MIN_BIRI_DELAY_MILLIS + 200 * user.getRandom().nextInt(10); // 0ms - 1800ms, in 200ms gaps 
+				LAST_BIRI_SOUND_TIME.put(uuid, thisTime);
+
+				world.playSound(
+						null,
+						user.getBlockPos().up(),
+						ToaruKagakuNoMod.biribiriSound(user.getRandom()),
+						SoundCategory.MASTER,
+						1f,
+						user.getRandom().nextFloat() * 0.08f + 1f);
+			}
+		}
+	}
+
+	@Override
 	public int[] performAbility(World world, PlayerEntity player, int level, float levelProgress, byte usage) {
 		long time = world.getTime();
 		UUID uuid = player.getUuid();
 		ItemStack stackInHand = player.getStackInHand(Hand.MAIN_HAND);
-		updateCharge(time);
 		boolean charged = CHARGED.getBoolean(uuid);
 
 		if (charged && level > 3 && MAGNETISABLE_ITEMS.contains(stackInHand.getItem())) {
@@ -46,6 +76,7 @@ public class ElectromasterAbility extends Ability {
 	private static final Map<UUID, Long> TO_CHARGE = new HashMap<>();
 	private static final Map<UUID, Long> TO_DISCHARGE = new HashMap<>();
 	private static final Object2BooleanArrayMap<UUID> CHARGED = new Object2BooleanArrayMap<>();
+	private static final Object2LongMap<UUID> LAST_BIRI_SOUND_TIME = new Object2LongArrayMap<>();
 	public static final Set<Item> MAGNETISABLE_ITEMS = new HashSet<>();
 
 	private int[] performRailgun(World world, PlayerEntity player, int level, float levelProgress) {
@@ -116,6 +147,9 @@ public class ElectromasterAbility extends Ability {
 	public static final int CHARGE_EQUAL = 0b00;
 	public static final int CHARGE_OFF = 0b01;
 	public static final int CHARGE_ON = 0b10;
+
+	private static final long MIN_BIRI_DELAY_MILLIS = 2500;
+	private static long biriDelay = MIN_BIRI_DELAY_MILLIS;
 
 	static {
 		MAGNETISABLE_ITEMS.add(Items.IRON_BARS);

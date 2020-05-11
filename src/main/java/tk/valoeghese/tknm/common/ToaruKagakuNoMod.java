@@ -1,5 +1,7 @@
 package tk.valoeghese.tknm.common;
 
+import java.util.Random;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -13,6 +15,7 @@ import nerdhub.cardinal.components.api.event.EntityComponentCallback;
 import nerdhub.cardinal.components.api.util.EntityComponents;
 import nerdhub.cardinal.components.api.util.RespawnCopyStrategy;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.server.ServerTickCallback;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.fabricmc.fabric.api.registry.CommandRegistry;
 import net.fabricmc.fabric.api.server.PlayerStream;
@@ -38,12 +41,20 @@ public class ToaruKagakuNoMod implements ModInitializer {
 	public static final ComponentType<ACertainComponent> A_CERTAIN_COMPONENT =
 			ComponentRegistry.INSTANCE.registerIfAbsent(from("a_certain"), ACertainComponent.class)
 			.attach(EntityComponentCallback.event(PlayerEntity.class), ある能力のカーヂナルの要素::new);
+
 	// packets
 	public static final Identifier USE_ABILITY_PACKET_ID = from("nouryokutsukau");
 	public static final Identifier RENDER_ABILITY_PACKET_ID = from("render");
+
 	// sounds
 	public static final Identifier IMAGINE_BREAKER_SOUND_ID = from("imagine_breaker");
+	public static final Identifier BIRIBIRI_0_SOUND_ID = from("biribiri_0");
+	public static final Identifier BIRIBIRI_1_SOUND_ID = from("biribiri_1");
+	public static final Identifier BIRIBIRI_2_SOUND_ID = from("biribiri_2");
 	public static final SoundEvent IMAGINE_BREAKER_SOUND_EVENT = new SoundEvent(IMAGINE_BREAKER_SOUND_ID);
+	public static final SoundEvent BIRIBIRI_0_SOUND_EVENT = new SoundEvent(BIRIBIRI_0_SOUND_ID);
+	public static final SoundEvent BIRIBIRI_1_SOUND_EVENT = new SoundEvent(BIRIBIRI_1_SOUND_ID);
+	public static final SoundEvent BIRIBIRI_2_SOUND_EVENT = new SoundEvent(BIRIBIRI_2_SOUND_ID);
 
 	@Override
 	public void onInitialize() {
@@ -143,9 +154,32 @@ public class ToaruKagakuNoMod implements ModInitializer {
 
 		// sounds
 		Registry.register(Registry.SOUND_EVENT, IMAGINE_BREAKER_SOUND_ID, IMAGINE_BREAKER_SOUND_EVENT);
+
+		// tick event
+		ServerTickCallback.EVENT.register(server -> {
+			for (PlayerEntity player : server.getPlayerManager().getPlayerList()) {
+				ACertainComponent component = A_CERTAIN_COMPONENT.get(player);
+				Ability ability = component.getAbility();
+
+				if (ability != null) {
+					ability.tick(server, player, component);
+				}
+			}
+		});
 	}
 
 	public static Identifier from(String name) {
 		return new Identifier("tknm", name);
+	}
+
+	public static SoundEvent biribiriSound(Random rand) {
+		switch (rand.nextInt(2)) {
+		case 0:
+			return BIRIBIRI_0_SOUND_EVENT;
+		case 1:
+			return BIRIBIRI_1_SOUND_EVENT;
+		case 2: default:
+			return BIRIBIRI_2_SOUND_EVENT;
+		}
 	}
 }
