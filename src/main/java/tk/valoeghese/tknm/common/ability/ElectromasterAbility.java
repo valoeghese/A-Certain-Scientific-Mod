@@ -85,6 +85,10 @@ public class ElectromasterAbility extends Ability {
 	private static final Object2LongMap<UUID> LAST_BIRI_SOUND_TIME = new Object2LongArrayMap<>();
 	public static final Object2FloatMap<Item> MAGNETISABLE_ITEMS = new Object2FloatArrayMap<>();
 
+	private int[] performShockBeam(World world, PlayerEntity player, int level, float levelProgress) {
+		return null;
+	}
+
 	private int[] performRailgun(World world, PlayerEntity player, int level, float levelProgress, float strength) {
 		double distance = 50.0;
 		// the object is propelled only at launch, and afterwards its momentum is completely natural. Thus natural attack.

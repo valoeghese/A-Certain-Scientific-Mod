@@ -25,6 +25,13 @@ final class Beam {
 	 * @return the distance the beam managed to travel before being blocked.
 	 */
 	static double launch(Vec3d sourcePos, Vec3d posOffset, PlayerEntity sender, double distance, boolean naturalAttack, @Nullable DamageSource damageSource, FloatSupplier damageSupplier, @Nullable ExtraAbilityEffectsFunction extraEffects) {
+		return launch(sourcePos, posOffset, 0.5, sender, distance, naturalAttack, damageSource, damageSupplier, extraEffects);
+	}
+
+	/**
+	 * @return the distance the beam managed to travel before being blocked.
+	 */
+	static double launch(Vec3d sourcePos, Vec3d posOffset, double widthExpansion, PlayerEntity sender, double distance, boolean naturalAttack, @Nullable DamageSource damageSource, FloatSupplier damageSupplier, @Nullable ExtraAbilityEffectsFunction extraEffects) {
 		World world = sender.getEntityWorld();
 
 		if (damageSource == null) {
@@ -35,7 +42,7 @@ final class Beam {
 
 		System.out.println(rayTraceBlock(world, sourcePos, sender, distance).getPos());
 
-		List<LivingEntity> entities = rayTraceEntities(world, sourcePos, sender, distance);
+		List<LivingEntity> entities = rayTraceEntities(world, sourcePos, widthExpansion, sender, distance);
 
 		for (LivingEntity le : entities) {
 			float damage = damageSupplier.getAsFloat();
@@ -49,7 +56,7 @@ final class Beam {
 		return distance;
 	}
 
-	static OrderedList<LivingEntity> rayTraceEntities(World world, Vec3d sourcePos, PlayerEntity sender, double distance) {
+	static OrderedList<LivingEntity> rayTraceEntities(World world, Vec3d sourcePos, double widthExpansion, PlayerEntity sender, double distance) {
 		double sqrDistance = distance * distance;
 		double maxDistance = Math.sqrt(sqrDistance * 2); // pythagoras theorem
 
@@ -90,7 +97,7 @@ final class Beam {
 				Vec3d rayPos = sourcePos.add(dx, dy, dz);
 
 				// if it's in or near the bounding box
-				if (le.getBoundingBox().expand(0.5).contains(rayPos)) {
+				if (le.getBoundingBox().expand(widthExpansion).contains(rayPos)) {
 					// add the said entity
 					distanceLookup.put(le, (float) distBetween);
 					entities.add(le);
