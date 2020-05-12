@@ -7,6 +7,8 @@ import java.util.Set;
 import java.util.UUID;
 
 import it.unimi.dsi.fastutil.objects.Object2BooleanArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2FloatArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2FloatMap;
 import it.unimi.dsi.fastutil.objects.Object2LongArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import net.minecraft.entity.player.PlayerEntity;
@@ -41,7 +43,7 @@ public class ElectromasterAbility extends Ability {
 			long thisTime = System.currentTimeMillis();
 			long lastTime = LAST_BIRI_SOUND_TIME.applyAsLong(uuid);
 
-			if (thisTime - lastTime > biriDelay) {
+			if (thisTime - lastTime > biriDelay) { // I need better biribiri sound effects. Like, not ripped from clips of the anime.
 				biriDelay = 1800 + 200 * user.getRandom().nextInt(10); // 0ms - 1800ms, in 200ms gaps 
 				LAST_BIRI_SOUND_TIME.put(uuid, thisTime);
 
@@ -52,7 +54,7 @@ public class ElectromasterAbility extends Ability {
 						user.getBlockPos().up(),
 						event,
 						SoundCategory.MASTER,
-						0.9f + user.getRandom().nextFloat() * 0.1f + (event == ToaruKagakuNoMod.BIRIBIRI_0_SOUND_EVENT ? -0.5f : 0.0f),
+						0.9f + user.getRandom().nextFloat() * 0.1f + (event == ToaruKagakuNoMod.BIRIBIRI_0_SOUND_EVENT ? -0.5f : 0.0f), // the first sound is too loud. Yes I know I should fix the audio file instead.
 						user.getRandom().nextFloat() * 0.08f + 1f);
 			}
 		}
@@ -64,9 +66,10 @@ public class ElectromasterAbility extends Ability {
 		UUID uuid = player.getUuid();
 		ItemStack stackInHand = player.getStackInHand(Hand.MAIN_HAND);
 		boolean charged = CHARGED.getBoolean(uuid);
+		Item itemInHand = stackInHand.getItem();
 
-		if (charged && level > 3 && MAGNETISABLE_ITEMS.contains(stackInHand.getItem())) {
-			return this.performRailgun(world, player, level, levelProgress);
+		if (charged && level > 3 && MAGNETISABLE_ITEMS.containsKey(itemInHand)) {
+			return this.performRailgun(world, player, level, levelProgress, MAGNETISABLE_ITEMS.getFloat(itemInHand));
 		} else if (stackInHand.isEmpty() && !TO_CHARGE.containsKey(uuid) && !TO_DISCHARGE.containsKey(uuid)) {
 			return performAlterCharge(time, player, charged ? CHARGE_OFF : CHARGE_ON);
 		}
@@ -80,12 +83,12 @@ public class ElectromasterAbility extends Ability {
 	private static final Map<UUID, Long> TO_DISCHARGE = new HashMap<>();
 	private static final Object2BooleanArrayMap<UUID> CHARGED = new Object2BooleanArrayMap<>();
 	private static final Object2LongMap<UUID> LAST_BIRI_SOUND_TIME = new Object2LongArrayMap<>();
-	public static final Set<Item> MAGNETISABLE_ITEMS = new HashSet<>();
+	public static final Object2FloatMap<Item> MAGNETISABLE_ITEMS = new Object2FloatArrayMap<>();
 
-	private int[] performRailgun(World world, PlayerEntity player, int level, float levelProgress) {
+	private int[] performRailgun(World world, PlayerEntity player, int level, float levelProgress, float strength) {
 		double distance = 50.0;
 		// the object is propelled only at launch, and afterwards its momentum is completely natural. Thus natural attack.
-		distance = Beam.launch(player.getPos(), new Vec3d(0, 1.25, 0), player, distance, true, null, () -> level > 4 ? 22 + (int) 2 * levelProgress : 20, null);
+		distance = Beam.launch(player.getPos(), new Vec3d(0, 1.25, 0), player, distance, true, null, () -> strength * (level > 4 ? 22 + (int) 2 * levelProgress : 20), null);
 
 		// uses up charge
 		CHARGED.put(player.getUuid(), false);
@@ -154,18 +157,18 @@ public class ElectromasterAbility extends Ability {
 	private static long biriDelay = 0;
 
 	static {
-		MAGNETISABLE_ITEMS.add(Items.IRON_BARS);
-		MAGNETISABLE_ITEMS.add(Items.IRON_BLOCK);
-		MAGNETISABLE_ITEMS.add(Items.IRON_BOOTS);
-		MAGNETISABLE_ITEMS.add(Items.IRON_CHESTPLATE);
-		MAGNETISABLE_ITEMS.add(Items.IRON_DOOR);
-		MAGNETISABLE_ITEMS.add(Items.IRON_HELMET);
-		MAGNETISABLE_ITEMS.add(Items.IRON_HORSE_ARMOR);
-		MAGNETISABLE_ITEMS.add(Items.IRON_INGOT);
-		MAGNETISABLE_ITEMS.add(Items.IRON_LEGGINGS);
-		MAGNETISABLE_ITEMS.add(Items.IRON_NUGGET);
-		MAGNETISABLE_ITEMS.add(Items.IRON_ORE);
-		MAGNETISABLE_ITEMS.add(Items.IRON_TRAPDOOR);
-		MAGNETISABLE_ITEMS.add(Items.LODESTONE);
+		MAGNETISABLE_ITEMS.put(Items.IRON_BARS, 1.0f);
+		MAGNETISABLE_ITEMS.put(Items.IRON_BLOCK, 1.0f);
+		MAGNETISABLE_ITEMS.put(Items.IRON_BOOTS, 1.0f);
+		MAGNETISABLE_ITEMS.put(Items.IRON_CHESTPLATE, 1.0f);
+		MAGNETISABLE_ITEMS.put(Items.IRON_DOOR, 1.0f);
+		MAGNETISABLE_ITEMS.put(Items.IRON_HELMET, 1.0f);
+		MAGNETISABLE_ITEMS.put(Items.IRON_HORSE_ARMOR, 1.0f);
+		MAGNETISABLE_ITEMS.put(Items.IRON_INGOT, 1.0f);
+		MAGNETISABLE_ITEMS.put(Items.IRON_LEGGINGS, 1.0f);
+		MAGNETISABLE_ITEMS.put(Items.IRON_NUGGET, 1.0f);
+		MAGNETISABLE_ITEMS.put(Items.IRON_ORE, 1.0f);
+		MAGNETISABLE_ITEMS.put(Items.IRON_TRAPDOOR, 1.0f);
+		MAGNETISABLE_ITEMS.put(Items.LODESTONE, 1.0f);
 	}
 }
