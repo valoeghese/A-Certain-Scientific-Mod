@@ -11,6 +11,7 @@ import it.unimi.dsi.fastutil.objects.Object2FloatArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2FloatMap;
 import it.unimi.dsi.fastutil.objects.Object2LongArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -19,9 +20,11 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Hand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraft.world.explosion.Explosion.DestructionType;
 import tk.valoeghese.tknm.api.ACertainComponent;
 import tk.valoeghese.tknm.api.ability.Ability;
 import tk.valoeghese.tknm.api.ability.AbilityRenderer;
@@ -95,7 +98,7 @@ public class ElectromasterAbility extends Ability {
 	private int[] performShockBeam(World world, PlayerEntity player, int level, float levelProgress, boolean strong) {
 		double distance = 20.0;
 		distance = Beam.launch(player.getPos(), new Vec3d(0, 1.25, 0), player, distance, false, null, () -> (strong ? 1.5f : 1f) * (float) MathHelper.lerp(levelProgress, level * 4, (level + 1) * 4), (hit, target) -> {
-			if (hit || target.isWet()) {
+			if (!(target.fallDistance > 10) && (hit || target.isWet())) {
 				target.setVelocity(0, 0, 0);
 			}
 		});
@@ -122,8 +125,54 @@ public class ElectromasterAbility extends Ability {
 
 	private int[] performRailgun(World world, PlayerEntity player, int level, float levelProgress, float strength) {
 		double distance = 50.0;
+		Vec3d addPos = new Vec3d(0, 1.25, 0);
+		Vec3d playerPos = player.getPos();
+
+		int peneration = 10;
+
+		Vec3d beamPos = Beam.rayTraceBlock(world, playerPos.add(addPos), player, distance).getPos();
+		Vec3d playerLookPos = player.getRotationVec(0.0f);
+
+		double beamDist = distance;
+
+		while (peneration --> 0) {
+			BlockPos pos = new BlockPos(beamPos);
+
+			if (World.isHeightInvalid(pos)) {
+				break;
+			}
+
+			BlockState state = world.getBlockState(pos);
+			beamDist = beamPos.distanceTo(playerPos);
+
+			if (beamDist > distance) {
+				break;
+			}
+
+			if (state.getBlock().getBlastResistance() > 1000F) { // catches obsidian and similar
+				distance = beamDist;
+				break;
+			}
+
+			if (state.isAir()) {
+				beamPos = Beam.rayTraceBlock(world, beamPos, player, distance).getPos();
+			} else {
+				beamPos = beamPos.add(playerLookPos);
+			}
+		}
+
+		if (peneration == 0) {
+			distance = beamDist;
+		}
+
+		Vec3d landPos = Beam.rayTraceBlock(world, playerPos.add(addPos), player, distance).getPos();
+
+		if (!World.isHeightInvalid((int) landPos.y)) {
+			world.createExplosion(null, landPos.getX(), landPos.getY(), landPos.getZ(), strength * 4.0f, DestructionType.DESTROY);
+		}
+
 		// the object is propelled only at launch, and afterwards its momentum is completely natural. Thus natural attack.
-		distance = Beam.launch(player.getPos(), new Vec3d(0, 1.25, 0), player, distance, true, null, () -> strength * (level > 4 ? 22 + (int) 2 * levelProgress : 20), null);
+		distance = Beam.launch(playerPos, addPos, player, distance, true, null, () -> strength * (level > 4 ? 22 + (int) 2 * levelProgress : 20), null);
 
 		// uses up charge
 		CHARGED.put(player.getUuid(), false);
@@ -193,16 +242,16 @@ public class ElectromasterAbility extends Ability {
 	private static long biriDelay = 0;
 
 	static {
-		MAGNETISABLE_ITEMS.put(Items.IRON_BARS, 1.0f);
-		MAGNETISABLE_ITEMS.put(Items.IRON_BLOCK, 1.0f);
+		MAGNETISABLE_ITEMS.put(Items.IRON_BARS, 0.9f);
+		MAGNETISABLE_ITEMS.put(Items.IRON_BLOCK, 1.25f);
 		MAGNETISABLE_ITEMS.put(Items.IRON_BOOTS, 1.0f);
 		MAGNETISABLE_ITEMS.put(Items.IRON_CHESTPLATE, 1.0f);
 		MAGNETISABLE_ITEMS.put(Items.IRON_DOOR, 1.0f);
 		MAGNETISABLE_ITEMS.put(Items.IRON_HELMET, 1.0f);
 		MAGNETISABLE_ITEMS.put(Items.IRON_HORSE_ARMOR, 1.0f);
-		MAGNETISABLE_ITEMS.put(Items.IRON_INGOT, 1.0f);
+		MAGNETISABLE_ITEMS.put(Items.IRON_INGOT, 0.67f);
 		MAGNETISABLE_ITEMS.put(Items.IRON_LEGGINGS, 1.0f);
-		MAGNETISABLE_ITEMS.put(Items.IRON_NUGGET, 1.0f);
+		MAGNETISABLE_ITEMS.put(Items.IRON_NUGGET, 0.33f);
 		MAGNETISABLE_ITEMS.put(Items.IRON_ORE, 1.0f);
 		MAGNETISABLE_ITEMS.put(Items.IRON_TRAPDOOR, 1.0f);
 		MAGNETISABLE_ITEMS.put(Items.LODESTONE, 1.0f);

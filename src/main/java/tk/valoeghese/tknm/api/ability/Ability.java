@@ -10,11 +10,11 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import tk.valoeghese.tknm.api.ACertainComponent;
 import tk.valoeghese.tknm.client.rendercore.AbilityRenderPrimer;
+import tk.valoeghese.tknm.common.ToaruKagakuNoMod;
 
 /**
  * Class representing an ability, usually a psychic/esper ability.
  */
-// TODO add passive ability
 public abstract class Ability {
 	public Ability() {
 		this.renderer = (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT ? 
@@ -22,6 +22,16 @@ public abstract class Ability {
 		if (this.renderer != null) {
 			AbilityRenderPrimer.getOrCreate().renderers.add(this.renderer);
 		}
+	}
+
+	/**
+	 * Grants the given xp to the ability user.
+	 * @param user the ability user to whom to grant xp.
+	 * @param xp the amount of xp to grant, typically a small float like 0.05f.
+	 * @see <a href="https://www.desmos.com/calculator/amkiawswds">this desmos graph</a>, which is a representation of the {@code (potential, xp) -> level} function.
+	 */
+	protected static void grantXP(PlayerEntity user, float xp) {
+		ToaruKagakuNoMod.A_CERTAIN_COMPONENT.get(user).addXp(xp);
 	}
 
 	private final AbilityRenderer renderer;

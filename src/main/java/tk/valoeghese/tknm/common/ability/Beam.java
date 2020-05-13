@@ -39,9 +39,6 @@ final class Beam {
 		}
 
 		sourcePos = sourcePos.add(posOffset);
-
-		System.out.println(rayTraceBlock(world, sourcePos, sender, distance).getPos());
-
 		List<LivingEntity> entities = rayTraceEntities(world, sourcePos, widthExpansion, sender, distance);
 
 		for (LivingEntity le : entities) {
@@ -108,7 +105,7 @@ final class Beam {
 		return entities;
 	}
 
-	private static BlockHitResult rayTraceBlock(World world, Vec3d start, PlayerEntity sender, double distance) {
+	public static BlockHitResult rayTraceBlock(World world, Vec3d start, PlayerEntity sender, double distance) {
 		Vec3d vec3d2 = sender.getRotationVec(0.0f);
 		Vec3d vec3d3 = start.add(vec3d2.x * distance, vec3d2.y * distance, vec3d2.z * distance);
 		return world.rayTrace(new RayTraceContext(start, vec3d3, RayTraceContext.ShapeType.OUTLINE, FluidHandling.NONE, sender));
