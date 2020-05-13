@@ -173,7 +173,7 @@ public class ToaruKagakuNoMod implements ModInitializer {
 	}
 
 	public static SoundEvent biribiriSound(Random rand) {
-		switch (rand.nextInt(14)) {
+		switch (rand.nextInt(12)) {
 		case 0:
 			return BIRIBIRI_2_SOUND_EVENT;
 		default:

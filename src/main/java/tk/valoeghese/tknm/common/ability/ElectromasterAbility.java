@@ -56,7 +56,7 @@ public class ElectromasterAbility extends Ability {
 						event,
 						SoundCategory.MASTER,
 						0.9f + user.getRandom().nextFloat() * 0.1f,
-						user.getRandom().nextFloat() * 0.08f + 1f);
+						user.getRandom().nextFloat() * 0.16f + 1f - 0.08f);
 			}
 		}
 	}
@@ -94,12 +94,17 @@ public class ElectromasterAbility extends Ability {
 
 	private int[] performShockBeam(World world, PlayerEntity player, int level, float levelProgress, boolean strong) {
 		double distance = 20.0;
-		distance = Beam.launch(player.getPos(), new Vec3d(0, 1.25, 0), player, distance, false, null, () -> (strong ? 1.5f : 1f) * (float) MathHelper.lerp(levelProgress, level * 4, (level + 1) * 4), null);
+		distance = Beam.launch(player.getPos(), new Vec3d(0, 1.25, 0), player, distance, false, null, () -> (strong ? 1.5f : 1f) * (float) MathHelper.lerp(levelProgress, level * 4, (level + 1) * 4), (hit, target) -> {
+			if (hit || target.isWet()) {
+				target.setVelocity(0, 0, 0);
+			}
+		});
 
 		if (strong) {
 			CHARGED.put(player.getUuid(), false);
-			TO_DISCHARGE.put(player.getUuid(), world.getTime() + (CHARGE_DELAY / 3));
 		}
+
+		TO_DISCHARGE.put(player.getUuid(), world.getTime() + (long) (CHARGE_DELAY / 2.5));
 
 		world.playSound(
 				null,
