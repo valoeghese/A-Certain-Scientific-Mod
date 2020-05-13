@@ -322,6 +322,102 @@ public interface WORST {
 		nextQuad();
 	}
 
+	static int AXIS_X = 1, AXIS_Y = 2, AXIS_Z = 3;
+
+	/**
+	 * Adds the quads for a basic cube with two quads for each face (directional) and no ends. You do not need to call nextQuad() to flush the quad buffer to add on to this.
+	 * @param sprites If not null, an array of the 4 sprite textures to be bound to each quad in this order, with the relevant faces omitted:<ul>
+	 * <li>bottom
+	 * <li>top
+	 * <li>north
+	 * <li>south
+	 * <li>west
+	 * <li>east
+	 * @param xo the x offset of the cube vertices.
+	 * @param yo the y offset of the cube vertices.
+	 * @param zo the z offset of the cube vertices.
+	 * @param axis the axis to skip on cube creation. Can be any of {@link AXIS_X}, {@link AXIS_Y}, {@link AXIS_Z}
+	 */
+	static void noEndsDoubleCube(@Nullable Sprite[] sprites, float xo, float yo, float zo, int axis) {
+		boolean rs = sprites != null; // render sprites
+		int sprite = 0;
+
+		if (axis != AXIS_Y) {
+			// bottom
+			vertex(0.5f + xo, -0.5f + yo, 0.5f + zo);
+			vertex(-0.5f + xo, -0.5f + yo, 0.5f + zo);
+			vertex(-0.5f + xo, -0.5f + yo, -0.5f + zo);
+			vertex(0.5f + xo, -0.5f + yo, -0.5f + zo);
+
+			if (rs) {
+				bindSprite(sprites[sprite++]);
+			}
+
+			nextQuad();
+			// top
+			vertex(-0.5f + xo, 0.5f + yo, -0.5f + zo);
+			vertex(-0.5f + xo, 0.5f + yo, 0.5f + zo);
+			vertex(0.5f + xo, 0.5f + yo, 0.5f + zo);
+			vertex(0.5f + xo, 0.5f + yo, -0.5f + zo);
+
+			if (rs) {
+				bindSprite(sprites[sprite++]);
+			}
+
+			nextQuad();
+		}
+
+		if (axis != AXIS_Z) {
+			// north
+			vertex(-0.5f + xo, 0.5f + yo, -0.5f + zo);
+			vertex(0.5f + xo, 0.5f + yo, -0.5f + zo);
+			vertex(0.5f + xo, -0.5f + yo, -0.5f + zo);
+			vertex(-0.5f + xo, -0.5f + yo, -0.5f + zo);
+
+			if (rs) {
+				bindSprite(sprites[sprite++]);
+			}
+
+			nextQuad();
+			// south
+			vertex(0.5f + xo, 0.5f + yo, 0.5f + zo);
+			vertex(-0.5f + xo, 0.5f + yo, 0.5f + zo);
+			vertex(-0.5f + xo, -0.5f + yo, 0.5f + zo);
+			vertex(0.5f + xo, -0.5f + yo, 0.5f + zo);
+
+			if (rs) {
+				bindSprite(sprites[sprite++]);
+			}
+
+			nextQuad();
+		}
+
+		if (axis != AXIS_X) {
+			// west
+			vertex(-0.5f + xo, 0.5f + yo, 0.5f + zo);
+			vertex(-0.5f + xo, 0.5f + yo, -0.5f + zo);
+			vertex(-0.5f + xo, -0.5f + yo, -0.5f + zo);
+			vertex(-0.5f + xo, -0.5f + yo, 0.5f + zo);
+
+			if (rs) {
+				bindSprite(sprites[sprite++]);
+			}
+
+			nextQuad();
+			// east
+			vertex(0.5f + xo, 0.5f + yo, -0.5f + zo);
+			vertex(0.5f + xo, 0.5f + yo, 0.5f + zo);
+			vertex(0.5f + xo, -0.5f + yo, 0.5f + zo);
+			vertex(0.5f + xo, -0.5f + yo, -0.5f + zo);
+
+			if (rs) {
+				bindSprite(sprites[sprite++]);
+			}
+
+			nextQuad();
+		}
+	}
+
 	/**
 	 * @return a matrix stack for performing matrix calculations.
 	 */

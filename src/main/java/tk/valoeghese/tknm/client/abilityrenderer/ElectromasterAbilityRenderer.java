@@ -17,6 +17,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import tk.valoeghese.tknm.api.ability.AbilityRenderer;
 import tk.valoeghese.tknm.api.rendering.WORST;
+import tk.valoeghese.tknm.client.ToaruKagakuNoModClient;
 import tk.valoeghese.tknm.common.ability.ElectromasterAbility;
 import tk.valoeghese.tknm.util.MathsUtils;
 
@@ -26,12 +27,22 @@ public class ElectromasterAbilityRenderer implements AbilityRenderer {
 		final int chargeInfo = data[0] & 0b11;
 		final int mode = data[0] >> 2;
 
-		if (mode == ElectromasterAbility.USAGE_RAILGUN) {
+		switch (mode) {
+		case ElectromasterAbility.USAGE_RAILGUN:
 			this.railgunBeamManager.add(new RailgunBeam(
 					new Vector3f((float)pos.getX(), (float)pos.getY() + 1.25f, (float)pos.getZ()),
 					new Vector3f(0, 270 - yaw, 360 - pitch),
 					Float.intBitsToFloat(data[1]),
 					world.getTime() + 25));
+			break;
+		case ElectromasterAbility.USAGE_SHOCK:
+			this.shockBeamManager.add(new ShockBeam(
+					new Vector3f((float)pos.getX(), (float)pos.getY() + 1.25f, (float)pos.getZ()),
+					new Vector3f(0, 270 - yaw, 360 - pitch),
+					Float.intBitsToFloat(data[1]),
+					world.getTime() + 10
+					));
+			break;
 		}
 
 		switch (chargeInfo) {
@@ -46,6 +57,7 @@ public class ElectromasterAbilityRenderer implements AbilityRenderer {
 	}
 
 	private final BeamRenderManager<RailgunBeam> railgunBeamManager = new BeamRenderManager<>();
+	private final BeamRenderManager<ShockBeam> shockBeamManager = new BeamRenderManager<>();
 	private static final Map<UUID, Pair<Long, Long>> TO_CHARGE = new HashMap<>();
 	private static final Map<UUID, Pair<Long, Long>> TO_DISCHARGE = new HashMap<>();
 	private static final Object2BooleanMap<UUID> CHARGED = new Object2BooleanArrayMap<>();
@@ -103,6 +115,7 @@ public class ElectromasterAbilityRenderer implements AbilityRenderer {
 		}
 
 		this.railgunBeamManager.renderUpdate(world);
+		this.shockBeamManager.renderUpdate(world);
 
 		CHARGED.forEach((uuid, charged) -> {
 			if (charged) {
@@ -122,6 +135,34 @@ public class ElectromasterAbilityRenderer implements AbilityRenderer {
 		@Override
 		void bindTexture() {
 			WORST.bindBlockTexture(new Identifier("block/orange_concrete"));
+		}
+	}
+
+	private static class ShockBeam extends Beam {
+		ShockBeam(Vector3f pos, Vector3f rotationBase, float distance, long tickTarget) {
+			super(pos, rotationBase, distance, tickTarget, 1.0f);
+			this.count = MathHelper.ceil(this.distance / this.thickness);
+		}
+
+		private int count;
+
+		@Override
+		void bindTexture() {
+			WORST.bindBlockTexture(ToaruKagakuNoModClient.TEXTURE_BIRIBIRI_BEAM);
+		}
+
+		@Override
+		boolean render(ClientWorld world) {
+			WORST.mesh();
+			this.bindTexture();
+
+			for (int i = 0; i < this.count; ++i) {
+				WORST.noEndsDoubleCube(null, 0.5f + i, 0.0f, 0.0f, WORST.AXIS_X);
+			}
+
+			WORST.renderMesh(this.pos, this.rotation, null);
+
+			return world.getTime() >= this.tickTarget;
 		}
 	}
 }

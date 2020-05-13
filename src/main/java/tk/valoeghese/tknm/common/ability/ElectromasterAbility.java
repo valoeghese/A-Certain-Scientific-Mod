@@ -19,6 +19,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Hand;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import tk.valoeghese.tknm.api.ACertainComponent;
@@ -71,7 +72,13 @@ public class ElectromasterAbility extends Ability {
 		if (charged && level > 3 && MAGNETISABLE_ITEMS.containsKey(itemInHand)) {
 			return this.performRailgun(world, player, level, levelProgress, MAGNETISABLE_ITEMS.getFloat(itemInHand));
 		} else if (stackInHand.isEmpty() && !TO_CHARGE.containsKey(uuid) && !TO_DISCHARGE.containsKey(uuid)) {
-			return performAlterCharge(time, player, charged ? CHARGE_OFF : CHARGE_ON);
+			if (player.isSneaking()) {
+				if (level > 1) {
+					return this.performShockBeam(world, player, level, levelProgress, charged);
+				}
+			} else {
+				return performAlterCharge(time, player, charged ? CHARGE_OFF : CHARGE_ON);
+			}
 		}
 
 		return null;
@@ -85,8 +92,19 @@ public class ElectromasterAbility extends Ability {
 	private static final Object2LongMap<UUID> LAST_BIRI_SOUND_TIME = new Object2LongArrayMap<>();
 	public static final Object2FloatMap<Item> MAGNETISABLE_ITEMS = new Object2FloatArrayMap<>();
 
-	private int[] performShockBeam(World world, PlayerEntity player, int level, float levelProgress) {
-		return null;
+	private int[] performShockBeam(World world, PlayerEntity player, int level, float levelProgress, boolean strong) {
+		double distance = 20.0;
+		distance = Beam.launch(player.getPos(), new Vec3d(0, 1.25, 0), player, distance, false, null, () -> (strong ? 1.5f : 1f) * (float) MathHelper.lerp(levelProgress, level * 4, (level + 1) * 4), null);
+
+		if (strong) {
+			CHARGED.put(player.getUuid(), false);
+			TO_DISCHARGE.put(player.getUuid(), world.getTime() + (CHARGE_DELAY / 3));
+		}
+
+		return new int[] {
+				(USAGE_SHOCK << 2) | (strong ? CHARGE_OFF : CHARGE_EQUAL),
+				Float.floatToIntBits((float) distance)
+		};
 	}
 
 	private int[] performRailgun(World world, PlayerEntity player, int level, float levelProgress, float strength) {
@@ -153,6 +171,7 @@ public class ElectromasterAbility extends Ability {
 
 	public static final int USAGE_NONE = 0;
 	public static final int USAGE_RAILGUN = 1;
+	public static final int USAGE_SHOCK = 2;
 
 	public static final int CHARGE_EQUAL = 0b00;
 	public static final int CHARGE_OFF = 0b01;

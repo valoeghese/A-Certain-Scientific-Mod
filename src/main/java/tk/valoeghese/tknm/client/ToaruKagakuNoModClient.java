@@ -18,6 +18,7 @@ import tk.valoeghese.tknm.common.ToaruKagakuNoMod;
 public class ToaruKagakuNoModClient implements ClientModInitializer {
 	public static final Identifier TEXTURE_BIRIBIRI = ToaruKagakuNoMod.from("effect/biribiri");
 	public static final Identifier TEXTURE_MELTDOWNER_BEAM = ToaruKagakuNoMod.from("effect/meltdowner_beam");
+	public static final Identifier TEXTURE_BIRIBIRI_BEAM = ToaruKagakuNoMod.from("effect/shock");
 
 	@Override
 	public void onInitializeClient() {
@@ -25,6 +26,7 @@ public class ToaruKagakuNoModClient implements ClientModInitializer {
 		ClientSpriteRegistryCallback.event(SpriteAtlasTexture.BLOCK_ATLAS_TEX).register((atlasTexture, registry) -> {
 			registry.register(TEXTURE_BIRIBIRI);
 			registry.register(TEXTURE_MELTDOWNER_BEAM);
+			registry.register(TEXTURE_BIRIBIRI_BEAM);
 		});
 
 		// render hooks
