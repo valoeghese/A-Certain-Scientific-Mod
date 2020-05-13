@@ -55,7 +55,7 @@ public class ElectromasterAbility extends Ability {
 						user.getBlockPos().up(),
 						event,
 						SoundCategory.MASTER,
-						0.9f + user.getRandom().nextFloat() * 0.1f + (event == ToaruKagakuNoMod.BIRIBIRI_0_SOUND_EVENT ? -0.5f : 0.0f), // the first sound is too loud. Yes I know I should fix the audio file instead.
+						0.9f + user.getRandom().nextFloat() * 0.1f,
 						user.getRandom().nextFloat() * 0.08f + 1f);
 			}
 		}
@@ -100,6 +100,14 @@ public class ElectromasterAbility extends Ability {
 			CHARGED.put(player.getUuid(), false);
 			TO_DISCHARGE.put(player.getUuid(), world.getTime() + (CHARGE_DELAY / 3));
 		}
+
+		world.playSound(
+				null,
+				player.getBlockPos().up(),
+				ToaruKagakuNoMod.BIRIBIRI_0_SOUND_EVENT,
+				SoundCategory.MASTER,
+				0.9f + player.getRandom().nextFloat() * 0.1f,
+				player.getRandom().nextFloat() * 0.08f + 1f);
 
 		return new int[] {
 				(USAGE_SHOCK << 2) | (strong ? CHARGE_OFF : CHARGE_EQUAL),
