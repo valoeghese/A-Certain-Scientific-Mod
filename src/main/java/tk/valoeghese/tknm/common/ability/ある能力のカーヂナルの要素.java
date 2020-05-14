@@ -7,8 +7,10 @@ import javax.annotation.Nullable;
 import nerdhub.cardinal.components.api.ComponentType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.world.World;
 import tk.valoeghese.tknm.api.ACertainComponent;
 import tk.valoeghese.tknm.api.ability.Ability;
 import tk.valoeghese.tknm.api.ability.AbilityRegistry;
@@ -22,7 +24,8 @@ import tk.valoeghese.tknm.util.RandomUtils;
 public final class ある能力のカーヂナルの要素 implements ACertainComponent {
 	public ある能力のカーヂナルの要素(PlayerEntity player) {
 		this.じりき = 0.2f + ABILITY_RANDOM.nextFloat();
-		this.能力 = AbilityRegistry.pickAbility(new Random(player.getUuid().getLeastSignificantBits() + 31L * player.getEntityWorld().getSeed()));
+		World world = player.getEntityWorld();
+		this.能力 = world.isClient ? null : AbilityRegistry.pickAbility(new Random(player.getUuid().getLeastSignificantBits() + 31L * ((ServerWorld) world).getSeed()));
 		this.能力者 = player;
 		this.レブルわりたす();
 	}
