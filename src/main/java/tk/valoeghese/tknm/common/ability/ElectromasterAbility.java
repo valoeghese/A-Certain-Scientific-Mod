@@ -12,6 +12,7 @@ import it.unimi.dsi.fastutil.objects.Object2FloatMap;
 import it.unimi.dsi.fastutil.objects.Object2LongArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.mob.CreeperEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -30,6 +31,8 @@ import tk.valoeghese.tknm.api.ability.Ability;
 import tk.valoeghese.tknm.api.ability.AbilityRenderer;
 import tk.valoeghese.tknm.client.abilityrenderer.ElectromasterAbilityRenderer;
 import tk.valoeghese.tknm.common.ToaruKagakuNoMod;
+import tk.valoeghese.tknm.mixin.AccessorCreeperEntity;
+import tk.valoeghese.tknm.mixin.AccessorEntity;
 
 public class ElectromasterAbility extends Ability {
 	@Override
@@ -97,9 +100,13 @@ public class ElectromasterAbility extends Ability {
 
 	private int[] performShockBeam(World world, PlayerEntity player, int level, float levelProgress, boolean strong) {
 		double distance = 20.0;
-		distance = Beam.launch(player.getPos(), new Vec3d(0, 1.25, 0), player, distance, false, null, () -> (strong ? 1.5f : 1f) * (float) MathHelper.lerp(levelProgress, level * 4, (level + 1) * 4), (hit, target) -> {
+		distance = Beam.launch(player.getPos(), new Vec3d(0, 1.25, 0), player, distance, false, null, le -> le instanceof CreeperEntity ? 3f : (strong ? 1.5f : 1f) * (float) MathHelper.lerp(levelProgress, level * 4, (level + 1) * 4), (hit, target) -> {
 			if (!(target.fallDistance > 10) && (hit || target.isWet())) {
 				target.setVelocity(0, 0, 0);
+			}
+
+			if (target instanceof CreeperEntity) {
+				((AccessorEntity) target).getDataTracker().set(AccessorCreeperEntity.getCharged(), true);
 			}
 		});
 
@@ -172,7 +179,7 @@ public class ElectromasterAbility extends Ability {
 		}
 
 		// the object is propelled only at launch, and afterwards its momentum is completely natural. Thus natural attack.
-		distance = Beam.launch(playerPos, addPos, player, distance, true, null, () -> strength * (level > 4 ? 27 : 24) + (int) 3 * levelProgress, null);
+		distance = Beam.launch(playerPos, addPos, player, distance, true, null, target -> strength * (level > 4 ? 27 : 24) + (int) 3 * levelProgress, null);
 
 		// uses up charge
 		CHARGED.put(player.getUuid(), false);

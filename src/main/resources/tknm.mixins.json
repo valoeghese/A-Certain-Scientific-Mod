@@ -3,6 +3,8 @@
   "package": "tk.valoeghese.tknm.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "AccessorCreeperEntity",
+    "AccessorEntity"
   ],
   "client": [
     "MixinMinecraftClient",

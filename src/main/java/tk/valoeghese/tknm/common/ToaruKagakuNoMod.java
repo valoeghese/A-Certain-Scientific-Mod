@@ -35,6 +35,7 @@ import tk.valoeghese.tknm.api.ability.AbilityRegistry;
 import tk.valoeghese.tknm.common.ability.Abilities;
 import tk.valoeghese.tknm.common.ability.ある能力のカーヂナルの要素;
 
+@SuppressWarnings("deprecation")
 public class ToaruKagakuNoMod implements ModInitializer {
 	public static final Logger LOGGER = LogManager.getLogger("A Certain Scientific Mod");
 	// component

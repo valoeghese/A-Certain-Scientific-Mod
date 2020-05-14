@@ -18,20 +18,20 @@ import net.minecraft.world.World;
 import tk.valoeghese.tknm.api.OrderedList;
 import tk.valoeghese.tknm.api.ability.AbilityUserAttack;
 import tk.valoeghese.tknm.api.ability.AbilityUserAttack.ExtraAbilityEffectsFunction;
-import tk.valoeghese.tknm.util.FloatSupplier;
+import tk.valoeghese.tknm.util.FloatFunction;
 
 final class Beam {
 	/**
 	 * @return the distance the beam managed to travel before being blocked.
 	 */
-	static double launch(Vec3d sourcePos, Vec3d posOffset, PlayerEntity sender, double distance, boolean naturalAttack, @Nullable DamageSource damageSource, FloatSupplier damageSupplier, @Nullable ExtraAbilityEffectsFunction extraEffects) {
+	static double launch(Vec3d sourcePos, Vec3d posOffset, PlayerEntity sender, double distance, boolean naturalAttack, @Nullable DamageSource damageSource, FloatFunction<LivingEntity> damageSupplier, @Nullable ExtraAbilityEffectsFunction extraEffects) {
 		return launch(sourcePos, posOffset, 0.5, sender, distance, naturalAttack, damageSource, damageSupplier, extraEffects);
 	}
 
 	/**
 	 * @return the distance the beam managed to travel before being blocked.
 	 */
-	static double launch(Vec3d sourcePos, Vec3d posOffset, double widthExpansion, PlayerEntity sender, double distance, boolean naturalAttack, @Nullable DamageSource damageSource, FloatSupplier damageSupplier, @Nullable ExtraAbilityEffectsFunction extraEffects) {
+	static double launch(Vec3d sourcePos, Vec3d posOffset, double widthExpansion, PlayerEntity sender, double distance, boolean naturalAttack, @Nullable DamageSource damageSource, FloatFunction<LivingEntity> damageSupplier, @Nullable ExtraAbilityEffectsFunction extraEffects) {
 		World world = sender.getEntityWorld();
 
 		if (damageSource == null) {
@@ -42,7 +42,7 @@ final class Beam {
 		List<LivingEntity> entities = rayTraceEntities(world, sourcePos, widthExpansion, sender, distance);
 
 		for (LivingEntity le : entities) {
-			float damage = damageSupplier.getAsFloat();
+			float damage = damageSupplier.applyAsFloat(le);
 
 			if (AbilityUserAttack.post(sender, le, sourcePos, damage, damageSource, naturalAttack, extraEffects)) {
 				distance = sourcePos.distanceTo(le.getPos().add(posOffset));

@@ -17,7 +17,7 @@ public class MeltdownerAbility extends Ability {
 			if (player.getStackInHand(Hand.MAIN_HAND).isEmpty()) {
 				double distance = 30.0f;
 				// 10 points of on fire, 10 points of generic
-				distance = Beam.launch(player.getPos(), new Vec3d(0, 2.15, 0), player, distance, false, null, () -> 8, (hit, target) -> {
+				distance = Beam.launch(player.getPos(), new Vec3d(0, 2.15, 0), player, distance, false, null, le -> 8, (hit, target) -> {
 					if (hit) {
 						target.damage(DamageSource.ON_FIRE, 12.0f);
 					}
