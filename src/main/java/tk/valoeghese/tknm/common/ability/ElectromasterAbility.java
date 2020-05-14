@@ -121,6 +121,7 @@ public class ElectromasterAbility extends Ability {
 		}
 
 		Ability.grantXP(player, 0.002f);
+		Ability.exhaust(player, level, 1.0f);
 
 		TO_DISCHARGE.put(player.getUuid(), world.getTime() + (long) (CHARGE_DELAY_CONSTANT / 2.5));
 
@@ -190,6 +191,7 @@ public class ElectromasterAbility extends Ability {
 		}
 
 		Ability.grantXP(player, strength * 0.025f);
+		Ability.exhaust(player, level, 1.5f);
 
 		// the object is propelled only at launch, and afterwards its momentum is completely natural. Thus natural attack.
 		distance = Beam.launch(playerPos, addPos, player, distance, true, null, target -> strength * (level > 4 ? 27 : 24) + (int) 3 * levelProgress, null);
