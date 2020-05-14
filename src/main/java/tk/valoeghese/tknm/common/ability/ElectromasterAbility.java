@@ -90,7 +90,7 @@ public class ElectromasterAbility extends Ability {
 		return null;
 	}
 
-	public static final long CHARGE_DELAY = (long) (1.25 * 20); // TODO based on ability level
+	public static final long CHARGE_DELAY_CONSTANT = (long) (1.25 * 20); // TODO based on ability level
 	public static final int DISCHARGE_PROPORTION = 2;
 	private static final Map<UUID, Long> TO_CHARGE = new HashMap<>();
 	private static final Map<UUID, Long> TO_DISCHARGE = new HashMap<>();
@@ -114,7 +114,7 @@ public class ElectromasterAbility extends Ability {
 			CHARGED.put(player.getUuid(), false);
 		}
 
-		TO_DISCHARGE.put(player.getUuid(), world.getTime() + (long) (CHARGE_DELAY / 2.5));
+		TO_DISCHARGE.put(player.getUuid(), world.getTime() + (long) (CHARGE_DELAY_CONSTANT / 2.5));
 
 		world.playSound(
 				null,
@@ -175,7 +175,9 @@ public class ElectromasterAbility extends Ability {
 		Vec3d landPos = Beam.rayTraceBlock(world, playerPos.add(addPos), player, distance).getPos();
 
 		if (!World.isHeightInvalid((int) landPos.y)) {
-			world.createExplosion(null, landPos.getX(), landPos.getY(), landPos.getZ(), strength * 4.0f, DestructionType.DESTROY);
+			if (!world.getBlockState(new BlockPos(landPos)).isAir()) {
+				world.createExplosion(null, landPos.getX(), landPos.getY(), landPos.getZ(), strength * 4.0f, DestructionType.DESTROY);
+			}
 		}
 
 		// the object is propelled only at launch, and afterwards its momentum is completely natural. Thus natural attack.
@@ -183,7 +185,7 @@ public class ElectromasterAbility extends Ability {
 
 		// uses up charge
 		CHARGED.put(player.getUuid(), false);
-		TO_DISCHARGE.put(player.getUuid(), world.getTime() + (CHARGE_DELAY / 3));
+		TO_DISCHARGE.put(player.getUuid(), world.getTime() + (long) (CHARGE_DELAY_CONSTANT / 1.5));
 
 		// uses up item
 		if (!player.isCreative()) {
@@ -201,10 +203,10 @@ public class ElectromasterAbility extends Ability {
 		switch (altering) {
 		case CHARGE_OFF:
 			CHARGED.put(user.getUuid(), false);
-			TO_DISCHARGE.put(user.getUuid(), time + (CHARGE_DELAY / DISCHARGE_PROPORTION));
+			TO_DISCHARGE.put(user.getUuid(), time + (CHARGE_DELAY_CONSTANT / DISCHARGE_PROPORTION));
 			break;
 		case CHARGE_ON:
-			TO_CHARGE.put(user.getUuid(), time + CHARGE_DELAY);
+			TO_CHARGE.put(user.getUuid(), time + CHARGE_DELAY_CONSTANT);
 			break;
 		}
 

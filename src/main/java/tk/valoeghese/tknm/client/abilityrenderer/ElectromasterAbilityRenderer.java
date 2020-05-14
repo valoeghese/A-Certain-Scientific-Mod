@@ -48,10 +48,10 @@ public class ElectromasterAbilityRenderer implements AbilityRenderer {
 		switch (chargeInfo) {
 		case ElectromasterAbility.CHARGE_OFF:
 			CHARGED.put(user, false);
-			TO_DISCHARGE.put(user, new Pair<>(world.getTime(), world.getTime() + (ElectromasterAbility.CHARGE_DELAY / ElectromasterAbility.DISCHARGE_PROPORTION)));
+			TO_DISCHARGE.put(user, new Pair<>(world.getTime(), world.getTime() + (ElectromasterAbility.CHARGE_DELAY_CONSTANT / ElectromasterAbility.DISCHARGE_PROPORTION)));
 			break;
 		case ElectromasterAbility.CHARGE_ON:
-			TO_CHARGE.put(user, new Pair<>(world.getTime(), world.getTime() + ElectromasterAbility.CHARGE_DELAY));
+			TO_CHARGE.put(user, new Pair<>(world.getTime(), world.getTime() + ElectromasterAbility.CHARGE_DELAY_CONSTANT));
 			break;
 		}
 	}
