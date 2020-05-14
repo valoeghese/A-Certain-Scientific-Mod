@@ -108,11 +108,19 @@ public class ElectromasterAbility extends Ability {
 			if (target instanceof CreeperEntity) {
 				((AccessorEntity) target).getDataTracker().set(AccessorCreeperEntity.getCharged(), true);
 			}
+
+			if (hit) {
+				Ability.grantXP(player, 0.01f);
+			} else {
+				Ability.grantXP(player, 0.001f);
+			}
 		});
 
 		if (strong) {
 			CHARGED.put(player.getUuid(), false);
 		}
+
+		Ability.grantXP(player, 0.002f);
 
 		TO_DISCHARGE.put(player.getUuid(), world.getTime() + (long) (CHARGE_DELAY_CONSTANT / 2.5));
 
@@ -176,9 +184,12 @@ public class ElectromasterAbility extends Ability {
 
 		if (!World.isHeightInvalid((int) landPos.y)) {
 			if (!world.getBlockState(new BlockPos(landPos)).isAir()) {
+				Ability.grantXP(player, 0.01f);
 				world.createExplosion(null, landPos.getX(), landPos.getY(), landPos.getZ(), strength * 4.0f, DestructionType.DESTROY);
 			}
 		}
+
+		Ability.grantXP(player, strength * 0.025f);
 
 		// the object is propelled only at launch, and afterwards its momentum is completely natural. Thus natural attack.
 		distance = Beam.launch(playerPos, addPos, player, distance, true, null, target -> strength * (level > 4 ? 27 : 24) + (int) 3 * levelProgress, null);
@@ -206,6 +217,7 @@ public class ElectromasterAbility extends Ability {
 			TO_DISCHARGE.put(user.getUuid(), time + (CHARGE_DELAY_CONSTANT / DISCHARGE_PROPORTION));
 			break;
 		case CHARGE_ON:
+			Ability.grantXP(user, 0.0005f);
 			TO_CHARGE.put(user.getUuid(), time + CHARGE_DELAY_CONSTANT);
 			break;
 		}

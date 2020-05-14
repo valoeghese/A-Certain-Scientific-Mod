@@ -20,6 +20,9 @@ public class MeltdownerAbility extends Ability {
 				distance = Beam.launch(player.getPos(), new Vec3d(0, 2.15, 0), player, distance, false, null, le -> 8, (hit, target) -> {
 					if (hit) {
 						target.damage(DamageSource.ON_FIRE, 12.0f);
+						Ability.grantXP(player, 0.01f);
+					} else {
+						Ability.grantXP(player, 0.001f);
 					}
 				});
 				return new int[] {
