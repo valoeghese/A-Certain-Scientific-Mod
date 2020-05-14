@@ -34,6 +34,25 @@ public abstract class Ability {
 		ToaruKagakuNoMod.A_CERTAIN_COMPONENT.get(user).addXp(xp);
 	}
 
+	/**
+	 * Adds to the ability user's exhaustion.
+	 * @param user the ability user.
+	 * @param multiplier the multiplier of the default exhaust.
+	 */
+	protected static void exhaust(PlayerEntity user, float multiplier) {
+		exhaust(user, ToaruKagakuNoMod.A_CERTAIN_COMPONENT.get(user).getLevel(), multiplier);
+	}
+
+	/**
+	 * Adds to the ability user's exhaustion.
+	 * @param user the ability user.
+	 * @param level the user's ability level.
+	 * @param multiplier the multiplier of the default exhaust.
+	 */
+	protected static void exhaust(PlayerEntity user, int level, float multiplier) {
+		user.getHungerManager().addExhaustion(0.5f * multiplier * (6 - level));
+	}
+
 	private final AbilityRenderer renderer;
 
 	/**

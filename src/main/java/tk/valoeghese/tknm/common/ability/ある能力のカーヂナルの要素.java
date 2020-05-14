@@ -73,6 +73,7 @@ public final class ある能力のカーヂナルの要素 implements ACertainCo
 	public float addXp(float xp) {
 		this.能力けいけんち += xp;
 		this.レブルわりたす();
+		this.sync();
 		return this.能力けいけんち;
 	}
 

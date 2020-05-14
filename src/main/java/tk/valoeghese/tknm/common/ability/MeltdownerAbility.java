@@ -2,6 +2,7 @@ package tk.valoeghese.tknm.common.ability;
 
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -19,6 +20,7 @@ public class MeltdownerAbility extends Ability {
 				// 10 points of on fire, 10 points of generic
 				distance = Beam.launch(player.getPos(), new Vec3d(0, 2.15, 0), player, distance, false, null, le -> 8, (hit, target) -> {
 					if (hit) {
+						System.out.println("Hit!");
 						target.damage(DamageSource.ON_FIRE, 12.0f);
 						Ability.grantXP(player, 0.01f);
 					} else {
