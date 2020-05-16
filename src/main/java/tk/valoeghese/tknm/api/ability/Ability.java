@@ -27,7 +27,7 @@ public abstract class Ability {
 	/**
 	 * Grants the given xp to the ability user.
 	 * @param user the ability user to whom to grant xp.
-	 * @param xp the amount of xp to grant, typically a small float like 0.05f.
+	 * @param xp the amount of xp to grant, typically a small float like 0.01f.
 	 * @see <a style="color: lightblue;" href="https://www.desmos.com/calculator/amkiawswds">this desmos graph</a>, which is a representation of the {@code (potential, xp) -> level} function.
 	 */
 	protected static void grantXP(PlayerEntity user, float xp) {

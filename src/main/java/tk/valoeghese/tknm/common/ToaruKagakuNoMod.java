@@ -130,6 +130,11 @@ public class ToaruKagakuNoMod implements ModInitializer {
 				if (ability != null) {
 					Identifier abilityId = AbilityRegistry.getRegistryId(ability);
 
+					// slight xp by default for level 0s. Perhaps one day they'll level up.
+					if (component.getLevel() == 0) {
+						component.addXp(0.002f);
+					}
+
 					// do ability logic here
 					int[] データ = ability.performAbility(player.world, player, component.getLevel(), component.getLevelProgress(), usage);
 

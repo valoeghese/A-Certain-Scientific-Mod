@@ -19,10 +19,10 @@ public final class Abilities {
 
 	public static final Ability ELECTROMASTER = register("electromaster", new ElectromasterAbility(), true);
 	public static final Ability MELTDOWNER = register("meltdowner", new MeltdownerAbility(), true);
+	public static final Ability TELEPORT = register("teleporter", new TeleporterAbility(), true);
 
 	//TODO these abilities
 	public static final Ability TELEKINESIS = null;
-	public static final Ability TELEPORT = null;
 	public static final Ability KILL_POINT = null; // funni useless teleport ability
 	public static final Ability RAMPAGE_DRESS = null;
 	public static final Ability AIM_STALKER = null; // make sure to check for aim stalker on server to avoid hacked clients abusing
