@@ -6,6 +6,7 @@ import nerdhub.cardinal.components.api.util.sync.EntitySyncedComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 import tk.valoeghese.tknm.api.ability.Ability;
+import tk.valoeghese.tknm.api.ability.AbilityUserData;
 
 public interface ACertainComponent extends EntitySyncedComponent {
 	/**
@@ -20,7 +21,11 @@ public interface ACertainComponent extends EntitySyncedComponent {
 	/**
 	 * @return the ability of this user, if they are an ability user.
 	 */
-	@Nullable Ability getAbility();
+	@Nullable Ability<?> getAbility();
+	/**
+	 * @return the ability-specific data associated with this abilities' user.
+	 */
+	AbilityUserData getData();
 	/**
 	 * @return the ability level, ignoring whether or not they are an ability user.
 	 */
@@ -41,5 +46,5 @@ public interface ACertainComponent extends EntitySyncedComponent {
 	/**
 	 * Sets the ability to the specified ability.
 	 */
-	void setAbility(Ability ability);
+	void setAbility(Ability<?> ability);
 }

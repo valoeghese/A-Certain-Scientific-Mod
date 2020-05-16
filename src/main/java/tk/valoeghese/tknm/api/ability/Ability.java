@@ -15,7 +15,7 @@ import tk.valoeghese.tknm.common.ToaruKagakuNoMod;
 /**
  * Class representing an ability, usually a psychic/esper ability.
  */
-public abstract class Ability {
+public abstract class Ability<T extends AbilityUserData> {
 	public Ability() {
 		this.renderer = (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT ? 
 				this.createAbilityRenderer() : null);
@@ -89,13 +89,19 @@ public abstract class Ability {
 	 * @param level the level of the ability.
 	 * @param abilityProgress the progress of the ability user from the current level to the next, from 0.0-1.0.
 	 * @param usage the int usage identifier of how the ability was triggered. Currently, 1 represents a a player right click.
+	 * @param data the ability specific data associated with the player.
 	 * @return an int array of data which the client can use for ability rendering. If null, does not use the ability.
 	 */
 	@Nullable
-	public abstract int[] performAbility(World world, PlayerEntity player, int level, float abilityProgress, byte usage);
+	public  abstract int[] performAbility(World world, PlayerEntity player, int level, float abilityProgress, byte usage, T data);
 
 	/**
 	 * @return the ability renderer for this ability. Is called when this ability is constructed on the client side.
 	 */
 	protected abstract AbilityRenderer createAbilityRenderer();
+	/**
+	 * @param user the ability user.
+	 * @return a new ability user data for this user.
+	 */
+	public abstract T createUserData(PlayerEntity user);
 }

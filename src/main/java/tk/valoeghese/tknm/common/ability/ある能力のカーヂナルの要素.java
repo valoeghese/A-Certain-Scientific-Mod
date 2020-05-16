@@ -14,6 +14,7 @@ import net.minecraft.world.World;
 import tk.valoeghese.tknm.api.ACertainComponent;
 import tk.valoeghese.tknm.api.ability.Ability;
 import tk.valoeghese.tknm.api.ability.AbilityRegistry;
+import tk.valoeghese.tknm.api.ability.AbilityUserData;
 import tk.valoeghese.tknm.common.ToaruKagakuNoMod;
 import tk.valoeghese.tknm.util.FloatRandom;
 import tk.valoeghese.tknm.util.RandomUtils;
@@ -24,9 +25,9 @@ import tk.valoeghese.tknm.util.RandomUtils;
 public final class ある能力のカーヂナルの要素 implements ACertainComponent {
 	public ある能力のカーヂナルの要素(PlayerEntity player) {
 		this.じりき = 0.2f + ABILITY_RANDOM.nextFloat();
-		World world = player.getEntityWorld();
-		this.能力 = world.isClient ? null : AbilityRegistry.pickAbility(new Random(player.getUuid().getLeastSignificantBits() + 31L * ((ServerWorld) world).getSeed()));
 		this.能力者 = player;
+		World world = player.getEntityWorld();
+		this.setAbility(world.isClient ? null : AbilityRegistry.pickAbility(new Random(player.getUuid().getLeastSignificantBits() + 31L * ((ServerWorld) world).getSeed())));
 		this.レブルわりたす();
 	}
 
@@ -37,8 +38,10 @@ public final class ある能力のカーヂナルの要素 implements ACertainCo
 	private float プログレス = 0;
 	private float じりき;
 	private boolean 能力者です = false;
-	private Ability 能力;
+	private Ability<?> 能力;
 	private final PlayerEntity 能力者;
+	private AbilityUserData データ;
+	private CompoundTag dataTagCache = null;
 
 	/**
 	 * Calculates the player's level and level progress.
@@ -79,7 +82,7 @@ public final class ある能力のカーヂナルの要素 implements ACertainCo
 
 	@Override
 	@Nullable
-	public Ability getAbility() {
+	public Ability<?> getAbility() {
 		if (this.能力者です) {
 			return this.能力;
 		} else {
@@ -105,6 +108,8 @@ public final class ある能力のカーヂナルの要素 implements ACertainCo
 			this.能力けいけんち = 能力タッグ.getFloat("keikenchi");
 			this.じりき = 能力タッグ.getFloat("jiriki");
 			this.能力者です = 能力タッグ.getBoolean("nouryokusha");
+			this.dataTagCache = 能力タッグ.getCompound("data");
+			this.データ.fromTag(this.dataTagCache);
 		}
 
 		this.レブルわりたす();
@@ -118,6 +123,9 @@ public final class ある能力のカーヂナルの要素 implements ACertainCo
 			能力タッグ.putFloat("keikenchi", this.能力けいけんち);
 			能力タッグ.putFloat("jiriki", this.じりき);
 			能力タッグ.putBoolean("nouryokusha", this.能力者です);
+
+			this.dataTagCache = this.データ.toTag();
+			能力タッグ.put("data", this.dataTagCache);
 		}
 		タッグ.put("nouryoku", 能力タッグ);
 		return タッグ;
@@ -134,8 +142,20 @@ public final class ある能力のカーヂナルの要素 implements ACertainCo
 	}
 
 	@Override
-	public void setAbility(Ability ability) {
+	public void setAbility(Ability<?> ability) {
 		this.能力 = ability;
+
+		if (ability != null) {
+			this.データ = ability.createUserData(this.能力者);
+			this.データ.fromTag(this.dataTagCache);
+		} else {
+			this.データ = null;
+		}
+	}
+
+	@Override
+	public AbilityUserData getData() {
+		return this.データ;
 	}
 
 	private static float progressOf(float prev, float current, float next) {

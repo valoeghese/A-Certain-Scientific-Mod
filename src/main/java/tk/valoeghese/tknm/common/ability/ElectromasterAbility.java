@@ -17,6 +17,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
@@ -29,12 +30,13 @@ import net.minecraft.world.explosion.Explosion.DestructionType;
 import tk.valoeghese.tknm.api.ACertainComponent;
 import tk.valoeghese.tknm.api.ability.Ability;
 import tk.valoeghese.tknm.api.ability.AbilityRenderer;
+import tk.valoeghese.tknm.api.ability.AbilityUserData;
 import tk.valoeghese.tknm.client.abilityrenderer.ElectromasterAbilityRenderer;
 import tk.valoeghese.tknm.common.ToaruKagakuNoMod;
 import tk.valoeghese.tknm.mixin.AccessorCreeperEntity;
 import tk.valoeghese.tknm.mixin.AccessorEntity;
 
-public class ElectromasterAbility extends Ability {
+public class ElectromasterAbility extends Ability<ElectromasterAbility.Data> {
 	@Override
 	public AbilityRenderer createAbilityRenderer() {
 		return new ElectromasterAbilityRenderer();
@@ -68,7 +70,7 @@ public class ElectromasterAbility extends Ability {
 	}
 
 	@Override
-	public int[] performAbility(World world, PlayerEntity player, int level, float levelProgress, byte usage) {
+	public int[] performAbility(World world, PlayerEntity player, int level, float levelProgress, byte usage, Data data) {
 		long time = world.getTime();
 		UUID uuid = player.getUuid();
 		ItemStack stackInHand = player.getStackInHand(Hand.MAIN_HAND);
@@ -90,13 +92,10 @@ public class ElectromasterAbility extends Ability {
 		return null;
 	}
 
-	public static final long CHARGE_DELAY_CONSTANT = (long) (1.25 * 20); // TODO based on ability level
-	public static final int DISCHARGE_PROPORTION = 2;
-	private static final Map<UUID, Long> TO_CHARGE = new HashMap<>();
-	private static final Map<UUID, Long> TO_DISCHARGE = new HashMap<>();
-	private static final Object2BooleanArrayMap<UUID> CHARGED = new Object2BooleanArrayMap<>();
-	private static final Object2LongMap<UUID> LAST_BIRI_SOUND_TIME = new Object2LongArrayMap<>();
-	public static final Object2FloatMap<Item> MAGNETISABLE_ITEMS = new Object2FloatArrayMap<>();
+	@Override
+	public Data createUserData(PlayerEntity user) {
+		return new Data(user);
+	}
 
 	private int[] performShockBeam(World world, PlayerEntity player, int level, float levelProgress, boolean strong) {
 		double distance = 20.0;
@@ -254,6 +253,14 @@ public class ElectromasterAbility extends Ability {
 		}
 	}
 
+	public static final long CHARGE_DELAY_CONSTANT = (long) (1.25 * 20); // TODO based on ability level
+	public static final int DISCHARGE_PROPORTION = 2;
+	private static final Map<UUID, Long> TO_CHARGE = new HashMap<>();
+	private static final Map<UUID, Long> TO_DISCHARGE = new HashMap<>();
+	private static final Object2BooleanArrayMap<UUID> CHARGED = new Object2BooleanArrayMap<>();
+	private static final Object2LongMap<UUID> LAST_BIRI_SOUND_TIME = new Object2LongArrayMap<>();
+	public static final Object2FloatMap<Item> MAGNETISABLE_ITEMS = new Object2FloatArrayMap<>();
+
 	public static final int USAGE_NONE = 0;
 	public static final int USAGE_RAILGUN = 1;
 	public static final int USAGE_SHOCK = 2;
@@ -275,8 +282,32 @@ public class ElectromasterAbility extends Ability {
 		MAGNETISABLE_ITEMS.put(Items.IRON_INGOT, 0.67f);
 		MAGNETISABLE_ITEMS.put(Items.IRON_LEGGINGS, 1.0f);
 		MAGNETISABLE_ITEMS.put(Items.IRON_NUGGET, 0.33f);
+
+
 		MAGNETISABLE_ITEMS.put(Items.IRON_ORE, 1.0f);
 		MAGNETISABLE_ITEMS.put(Items.IRON_TRAPDOOR, 1.0f);
-		MAGNETISABLE_ITEMS.put(Items.LODESTONE, 1.0f);
+		MAGNETISABLE_ITEMS.put(Items.LODESTONE, 1.3f);
+	}
+
+	static class Data implements AbilityUserData {
+		public Data(PlayerEntity user) {
+			this.uuid = user.getUuid();
+		}
+
+		private final UUID uuid;
+
+		@Override
+		public CompoundTag toTag() {
+			CompoundTag result = new CompoundTag();
+			result.putBoolean("charged", CHARGED.getBoolean(this.uuid));
+			return result;
+		}
+
+		@Override
+		public void fromTag(CompoundTag tag) {
+			if (tag != null) {
+				CHARGED.put(this.uuid, tag.getBoolean("charged"));
+			}
+		}
 	}
 }

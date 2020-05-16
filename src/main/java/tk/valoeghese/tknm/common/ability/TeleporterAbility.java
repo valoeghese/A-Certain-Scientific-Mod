@@ -20,10 +20,11 @@ import net.minecraft.world.World;
 import tk.valoeghese.tknm.api.OrderedList;
 import tk.valoeghese.tknm.api.ability.Ability;
 import tk.valoeghese.tknm.api.ability.AbilityRenderer;
+import tk.valoeghese.tknm.api.ability.BasicAbility;
 import tk.valoeghese.tknm.client.abilityrenderer.TeleporterAbilityRenderer;
 
 // TODO should I add a limit to teleporter distance off ground?
-public class TeleporterAbility extends Ability {
+public class TeleporterAbility extends BasicAbility {
 	@Override
 	public int[] performAbility(World world, PlayerEntity player, int level, float abilityProgress, byte usage) {
 		if (level == 0 || !player.getStackInHand(Hand.MAIN_HAND).isEmpty() || player.getHungerManager().getFoodLevel() < 1) {

@@ -7,9 +7,10 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import tk.valoeghese.tknm.api.ability.Ability;
 import tk.valoeghese.tknm.api.ability.AbilityRenderer;
+import tk.valoeghese.tknm.api.ability.BasicAbility;
 import tk.valoeghese.tknm.client.abilityrenderer.MeltdownerAbilityRenderer;
 
-public class MeltdownerAbility extends Ability {
+public class MeltdownerAbility extends BasicAbility {
 	@Override
 	public int[] performAbility(World world, PlayerEntity player, int level, float abilityProgress, byte usage) {
 		if (level < 1) {

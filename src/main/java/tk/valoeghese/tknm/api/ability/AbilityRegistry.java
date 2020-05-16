@@ -14,10 +14,10 @@ public final class AbilityRegistry {
 		// NO-OP
 	}
 
-	private static final BiMap<Identifier, Ability> ABILITY_TYPES = HashBiMap.create();
-	private static final List<Ability> ABILITIES = Lists.newArrayList();
+	private static final BiMap<Identifier, Ability<?>> ABILITY_TYPES = HashBiMap.create();
+	private static final List<Ability<?>> ABILITIES = Lists.newArrayList();
 
-	public static Ability register(Identifier id, Ability ability, boolean addToPicker) {
+	public static <T extends AbilityUserData> Ability<T> register(Identifier id, Ability<T> ability, boolean addToPicker) {
 		ABILITY_TYPES.put(id, ability);
 
 		if (addToPicker) {
@@ -27,15 +27,15 @@ public final class AbilityRegistry {
 		return ability;
 	}
 
-	public static Ability getAbility(Identifier id) {
+	public static Ability<?> getAbility(Identifier id) {
 		return ABILITY_TYPES.get(id);
 	}
 
-	public static Identifier getRegistryId(Ability ability) {
+	public static Identifier getRegistryId(Ability<?> ability) {
 		return ABILITY_TYPES.inverse().get(ability);
 	}
 
-	public static Ability pickAbility(Random rand) {
+	public static Ability<?> pickAbility(Random rand) {
 		return ABILITIES.get(rand.nextInt(ABILITIES.size()));
 	}
 }

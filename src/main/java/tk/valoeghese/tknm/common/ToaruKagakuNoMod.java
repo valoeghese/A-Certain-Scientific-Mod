@@ -125,6 +125,7 @@ public class ToaruKagakuNoMod implements ModInitializer {
 			// main thread task queue
 			context.getTaskQueue().execute(() -> {
 				ACertainComponent component = A_CERTAIN_COMPONENT.get(player);
+				@SuppressWarnings("rawtypes")
 				Ability ability = component.getAbility();
 
 				if (ability != null) {
@@ -136,7 +137,8 @@ public class ToaruKagakuNoMod implements ModInitializer {
 					}
 
 					// do ability logic here
-					int[] データ = ability.performAbility(player.world, player, component.getLevel(), component.getLevelProgress(), usage);
+					@SuppressWarnings("unchecked")
+					int[] データ = ability.performAbility(player.world, player, component.getLevel(), component.getLevelProgress(), usage, component.getData());
 
 					if (データ != null) {
 						// send packets
@@ -165,7 +167,7 @@ public class ToaruKagakuNoMod implements ModInitializer {
 		ServerTickCallback.EVENT.register(server -> {
 			for (PlayerEntity player : server.getPlayerManager().getPlayerList()) {
 				ACertainComponent component = A_CERTAIN_COMPONENT.get(player);
-				Ability ability = component.getAbility();
+				Ability<?> ability = component.getAbility();
 
 				if (ability != null) {
 					ability.tick(server, player, component);

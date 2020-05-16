@@ -12,16 +12,16 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import tk.valoeghese.tknm.api.ACertainComponent;
-import tk.valoeghese.tknm.api.ability.Ability;
 import tk.valoeghese.tknm.api.ability.AbilityRenderer;
 import tk.valoeghese.tknm.api.ability.AbilityUserAttack;
+import tk.valoeghese.tknm.api.ability.BasicAbility;
 import tk.valoeghese.tknm.api.ability.DefenseResult;
 import tk.valoeghese.tknm.client.abilityrenderer.ImagineBreakerRenderer;
 import tk.valoeghese.tknm.common.ToaruKagakuNoMod;
 import tk.valoeghese.tknm.mixin.AccessorLivingEntity;
 
 // TODO user has to raise arm to activate ability.
-public class ImagineBreaker extends Ability {
+public class ImagineBreaker extends BasicAbility {
 	@Override
 	public int[] performAbility(World world, PlayerEntity player, int level, float abilityProgress, byte usage) {
 		return null;
