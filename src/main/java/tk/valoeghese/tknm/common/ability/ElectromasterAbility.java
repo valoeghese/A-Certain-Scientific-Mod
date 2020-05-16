@@ -289,6 +289,7 @@ public class ElectromasterAbility extends Ability<ElectromasterAbility.Data> {
 		MAGNETISABLE_ITEMS.put(Items.LODESTONE, 1.3f);
 	}
 
+	// TODO do charge related stuff in data instead of maps
 	static class Data implements AbilityUserData {
 		public Data(PlayerEntity user) {
 			this.uuid = user.getUuid();
