@@ -109,6 +109,7 @@ public final class ある能力のカーヂナルの要素 implements ACertainCo
 			this.じりき = 能力タッグ.getFloat("jiriki");
 			this.能力者です = 能力タッグ.getBoolean("nouryokusha");
 			this.dataTagCache = 能力タッグ.getCompound("data");
+			this.データ = this.能力.createUserData(this.能力者);
 			this.データ.fromTag(this.dataTagCache);
 		}
 
@@ -125,7 +126,10 @@ public final class ある能力のカーヂナルの要素 implements ACertainCo
 			能力タッグ.putBoolean("nouryokusha", this.能力者です);
 
 			this.dataTagCache = this.データ.toTag();
-			能力タッグ.put("data", this.dataTagCache);
+
+			if (this.dataTagCache != null) {
+				能力タッグ.put("data", this.dataTagCache);
+			}
 		}
 		タッグ.put("nouryoku", 能力タッグ);
 		return タッグ;

@@ -306,7 +306,9 @@ public class ElectromasterAbility extends Ability<ElectromasterAbility.Data> {
 		@Override
 		public void fromTag(CompoundTag tag) {
 			if (tag != null) {
-				CHARGED.put(this.uuid, tag.getBoolean("charged"));
+				if (tag.getBoolean("charged")) {
+					TO_CHARGE.put(this.uuid, 0L);
+				}
 			}
 		}
 	}
