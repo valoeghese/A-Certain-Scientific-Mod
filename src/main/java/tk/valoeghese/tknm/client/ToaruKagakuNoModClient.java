@@ -44,7 +44,7 @@ public class ToaruKagakuNoModClient implements ClientModInitializer {
 			int[] data = dataManager.readIntArray();
 
 			context.getTaskQueue().execute(() -> {
-				Ability ability = AbilityRegistry.getAbility(abilityId);
+				Ability<?> ability = AbilityRegistry.getAbility(abilityId);
 
 				if (ability != null) {
 					AbilityRenderPrimer.getOrCreate().queue.add(world -> {
