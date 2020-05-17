@@ -265,9 +265,9 @@ public class ElectromasterAbility extends Ability<ElectromasterAbility.Data> {
 	public static final int USAGE_RAILGUN = 1;
 	public static final int USAGE_SHOCK = 2;
 
-	static final int CHARGE_EQUAL = 0b00;
-	static final int CHARGE_OFF = 0b01;
-	static final int CHARGE_ON = 0b10;
+	public static final int CHARGE_EQUAL = 0b00;
+	public static final int CHARGE_OFF = 0b01;
+	public static final int CHARGE_ON = 0b10;
 
 	// TODO per player
 	private static long biriDelay = 0;
