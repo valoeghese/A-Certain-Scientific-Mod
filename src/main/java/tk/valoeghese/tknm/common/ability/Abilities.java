@@ -22,12 +22,12 @@ public final class Abilities {
 	public static final Ability<?> MELTDOWNER = register("meltdowner", new MeltdownerAbility(), true);
 	public static final Ability<?> TELEPORT = register("teleporter", new TeleporterAbility(), true);
 	public static final Ability<?> KILL_POINT = register("kill_point", new KillPointAbility(), true); // funni useless teleport ability
+	public static final Ability<?> RAMPAGE_DRESS = register("rampage_dress", new RampageDressAbility(), true); // subset of electromaster that lets you draw more strength out of your body
 
 	//TODO these abilities
 	public static final Ability<?> TELEKINESIS = null; // ability to manipulate motion
 	public static final Ability<?> PSYCHOKINESIS = null; // general psychokinesis. Combination of telekinesis, aero hand, pyrokinesis, "pressure point", electrokinesis.
 	public static final Ability<?> PRESSURE_POINT = null; // Not from the series. Concentrated pressure to rip and destroy. Modeling off of yobou banka's ability to rip a truck in half, and crush someone's head by swiping his fingers.
-	public static final Ability<?> RAMPAGE_DRESS = null; // subset of electromaster that lets you draw more strength out of your body
 	public static final Ability<?> AERO_HAND = null; // air jets
 	public static final Ability<?> AIM_STALKER = null; // Ability to memorise and manipulate user's AIM fields. Can track memorised AIM fields no matter where they go. Make sure to check for aim stalker on server to avoid hacked clients abusing
 	public static final Ability<?> PYROKINESIS = null; // fire manipulation
