@@ -211,7 +211,7 @@ public class ElectromasterAbility extends Ability<ElectromasterAbility.Data> {
 		};
 	}
 
-	private static int[] performAlterCharge(long time, PlayerEntity user, int altering) {
+	static int[] performAlterCharge(long time, PlayerEntity user, int altering) {
 		switch (altering) {
 		case CHARGE_OFF:
 			CHARGED.put(user.getUuid(), false);
@@ -257,7 +257,7 @@ public class ElectromasterAbility extends Ability<ElectromasterAbility.Data> {
 	public static final int DISCHARGE_PROPORTION = 2;
 	private static final Map<UUID, Long> TO_CHARGE = new HashMap<>();
 	private static final Map<UUID, Long> TO_DISCHARGE = new HashMap<>();
-	private static final Object2BooleanArrayMap<UUID> CHARGED = new Object2BooleanArrayMap<>();
+	static final Object2BooleanArrayMap<UUID> CHARGED = new Object2BooleanArrayMap<>();
 	private static final Object2LongMap<UUID> LAST_BIRI_SOUND_TIME = new Object2LongArrayMap<>();
 	public static final Object2FloatMap<Item> MAGNETISABLE_ITEMS = new Object2FloatArrayMap<>();
 
@@ -265,10 +265,11 @@ public class ElectromasterAbility extends Ability<ElectromasterAbility.Data> {
 	public static final int USAGE_RAILGUN = 1;
 	public static final int USAGE_SHOCK = 2;
 
-	public static final int CHARGE_EQUAL = 0b00;
-	public static final int CHARGE_OFF = 0b01;
-	public static final int CHARGE_ON = 0b10;
+	static final int CHARGE_EQUAL = 0b00;
+	static final int CHARGE_OFF = 0b01;
+	static final int CHARGE_ON = 0b10;
 
+	// TODO per player
 	private static long biriDelay = 0;
 
 	static {
