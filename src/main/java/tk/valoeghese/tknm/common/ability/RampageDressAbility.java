@@ -11,11 +11,7 @@ public class RampageDressAbility extends ElectromasterAbility {
 			if (player.getStackInHand(Hand.MAIN_HAND).isEmpty()) {
 				boolean charged = ElectromasterAbility.CHARGED.getBoolean(player.getUuid());
 
-				if (charged) {
-					player.setMovementSpeed(player.getMovementSpeed() / 3);
-				} else {
-					player.setMovementSpeed(player.getMovementSpeed() * 3);
-				}
+				// add extra abilities here: strength, speed, etc
 
 				return ElectromasterAbility.performAlterCharge(world.getTime(), player, charged ? CHARGE_OFF : CHARGE_ON);
 			}
