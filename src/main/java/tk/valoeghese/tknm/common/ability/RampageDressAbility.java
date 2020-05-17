@@ -15,7 +15,15 @@ public class RampageDressAbility extends BasicAbility {
 	protected int[] performAbility(World world, PlayerEntity player, int level, float abilityProgress, byte usage) {
 		if (level > 0) {
 			if (player.getStackInHand(Hand.MAIN_HAND).isEmpty()) {
-				return ElectromasterAbility.performAlterCharge(world.getTime(), player, ElectromasterAbility.CHARGED.getBoolean(player.getUuid()) ? CHARGE_OFF : CHARGE_ON);
+				boolean charged = ElectromasterAbility.CHARGED.getBoolean(player.getUuid());
+
+				if (charged) {
+					player.setMovementSpeed(player.getMovementSpeed() / 2);
+				} else {
+					player.setMovementSpeed(player.getMovementSpeed() * 2);
+				}
+
+				return ElectromasterAbility.performAlterCharge(world.getTime(), player, charged ? CHARGE_OFF : CHARGE_ON);
 			}
 		}
 
