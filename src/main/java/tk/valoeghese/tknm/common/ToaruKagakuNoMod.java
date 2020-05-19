@@ -22,6 +22,8 @@ import net.fabricmc.fabric.api.server.PlayerStream;
 import net.minecraft.command.arguments.EntityArgumentType;
 import net.minecraft.command.arguments.IdentifierArgumentType;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.command.CommandManager;
@@ -172,6 +174,35 @@ public class ToaruKagakuNoMod implements ModInitializer {
 		ServerTickCallback.EVENT.register(server -> {
 			for (PlayerEntity player : server.getPlayerManager().getPlayerList()) {
 				ACertainComponent component = A_CERTAIN_COMPONENT.get(player);
+
+				if (player.inventory.getArmorStack(3).getItem() == CertainItems.ABILITY_THING) {
+					// firstly, u gonna be slow in such clunky tech
+					// I would manually change movement speed
+					// but this is good enough for now
+					boolean add = !player.hasStatusEffect(StatusEffects.SLOWNESS);
+
+					if (!add) {
+						if (player.getStatusEffect(StatusEffects.SLOWNESS).getAmplifier() < 1) {
+							player.removeStatusEffect(StatusEffects.SLOWNESS);
+							add = true;
+						}
+					}
+
+					if (add) {
+						player.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 2, 2, false, false));
+					}
+
+					// or sitting for long enough, if I can figure that out. probably a property or sth.
+					if (player.isSleeping()) {
+						// basically, from what I know, it takes time to make an ability user in the toaru universe,
+						// and it involves a bunch of drug injects and alterations to their brain and stuff.
+						// thus I picked sleeping is required. See note above if statement for alternatives I have thought about (and actually thought about before this version).
+						if (!component.isAbilityUser()) {
+							component.setAbilityUser(true);
+						}
+					}
+				}
+
 				Ability<?> ability = component.getAbility();
 
 				if (ability != null) {

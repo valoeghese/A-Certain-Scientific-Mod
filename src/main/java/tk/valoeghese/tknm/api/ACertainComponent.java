@@ -47,4 +47,8 @@ public interface ACertainComponent extends EntitySyncedComponent {
 	 * Sets the ability to the specified ability.
 	 */
 	void setAbility(Ability<?> ability);
+	/**
+	 * @return whether the player is an ability user. All levels, including zero, return true as long as the player has activated ability user status.
+	 */
+	boolean isAbilityUser();
 }

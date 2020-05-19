@@ -98,6 +98,7 @@ public final class ある能力のカーヂナルの要素 implements ACertainCo
 	@Override
 	public void setAbilityUser(boolean abilityUser) {
 		this.能力者です = abilityUser;
+		this.sync();
 	}
 
 	@Override
@@ -164,6 +165,11 @@ public final class ある能力のカーヂナルの要素 implements ACertainCo
 
 	private static float progressOf(float prev, float current, float next) {
 		return (current - prev) / (next - prev);
+	}
+
+	@Override
+	public boolean isAbilityUser() {
+		return this.能力者です;
 	}
 
 	private static final FloatRandom ABILITY_RANDOM = RandomUtils.naturalDistribution(0.5f, 0.5f);
