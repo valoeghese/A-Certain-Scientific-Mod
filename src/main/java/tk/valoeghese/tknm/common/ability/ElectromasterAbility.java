@@ -71,6 +71,10 @@ public class ElectromasterAbility extends Ability<ElectromasterAbility.Data> {
 
 	@Override
 	public int[] performAbility(World world, PlayerEntity player, int level, float levelProgress, byte usage, Data data) {
+		if (level == 0) {
+			return null;
+		}
+
 		long time = world.getTime();
 		UUID uuid = player.getUuid();
 		ItemStack stackInHand = player.getStackInHand(Hand.MAIN_HAND);
