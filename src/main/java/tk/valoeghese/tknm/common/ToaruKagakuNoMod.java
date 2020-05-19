@@ -189,7 +189,7 @@ public class ToaruKagakuNoMod implements ModInitializer {
 					}
 
 					if (add) {
-						player.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 2, 2, false, false));
+						player.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 5, 2, false, false));
 					}
 
 					// or sitting for long enough, if I can figure that out. probably a property or sth.
