@@ -34,6 +34,7 @@ import tk.valoeghese.tknm.api.ability.Ability;
 import tk.valoeghese.tknm.api.ability.AbilityRegistry;
 import tk.valoeghese.tknm.common.ability.Abilities;
 import tk.valoeghese.tknm.common.ability.ある能力のカーヂナルの要素;
+import tk.valoeghese.tknm.common.tech.CertainItems;
 
 @SuppressWarnings("deprecation")
 public class ToaruKagakuNoMod implements ModInitializer {
@@ -116,6 +117,10 @@ public class ToaruKagakuNoMod implements ModInitializer {
 										}))
 								))
 				));
+
+		// items
+		// force it to initialise
+		CertainItems.ABILITY_THING.hashCode();
 
 		// packets
 		ServerSidePacketRegistry.INSTANCE.register(USE_ABILITY_PACKET_ID, (context, dataManager) -> {

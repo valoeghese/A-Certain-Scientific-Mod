@@ -20,26 +20,36 @@ public class RampageDressAbility extends ElectromasterAbility {
 		int level = component.getLevel();
 
 		if (level > 0) {
-			if (CHARGED.getBoolean(user)) {
+			//System.out.println("Ticking Rampage Dress!");
+			if (CHARGED.getBoolean(user.getUuid())) {
+				//System.out.println("Charged!");
 				Iterator<StatusEffectInstance> iterator = user.getActiveStatusEffects().values().iterator();
 
-				byte toAdd = 0;
+				byte toAdd = 0b001;
+
+				if (level > 2) {
+					toAdd = 0b111;
+				} else if (level > 1) {
+					toAdd = 0b011;
+				}
 
 				while(iterator.hasNext()) {
 					StatusEffectInstance effect = iterator.next();
 					StatusEffect type = effect.getEffectType();
 
 					if (type == StatusEffects.SPEED) {
-						if (effect.getDuration() < 80 && effect.getAmplifier() <= ((level - 1) / 2)) {
-							toAdd |= 0b001;
+						if (effect.getDuration() >= 80 || effect.getAmplifier() > ((level - 1) / 2)) {
+							toAdd &= 0b110;
 						}
-					} else if (level > 1 && type == StatusEffects.STRENGTH) {
-						if (effect.getDuration() < 80 && effect.getAmplifier() <= ((level - 2) / 2)) {
-							toAdd |= 0b010;
-						}
-					} else if (level > 2 && type == StatusEffects.CONDUIT_POWER) {
-						if (effect.getDuration() < 80 && effect.getAmplifier() < 1) {
-							toAdd |= 0b100;
+					} else if (level > 1) {
+						if (type == StatusEffects.STRENGTH) {
+							if (effect.getDuration() >= 80 || effect.getAmplifier() > ((level - 2) / 2)) {
+								toAdd &= 0b101;
+							}
+						} else if (level > 2 && type == StatusEffects.CONDUIT_POWER) {
+							if (effect.getDuration() >= 80 || effect.getAmplifier() >= 1) {
+								toAdd &= 0b011;
+							}
 						}
 					}
 				}
@@ -60,7 +70,7 @@ public class RampageDressAbility extends ElectromasterAbility {
 					Ability.grantXP(user, 0.001f);
 				}
 
-				Ability.exhaust(user, 0.07f);
+				Ability.exhaust(user, 0.02f);
 			}
 		}
 	}
