@@ -16,6 +16,8 @@ import nerdhub.cardinal.components.api.util.EntityComponents;
 import nerdhub.cardinal.components.api.util.RespawnCopyStrategy;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.server.ServerTickCallback;
+import net.fabricmc.fabric.api.loot.v1.FabricLootPoolBuilder;
+import net.fabricmc.fabric.api.loot.v1.event.LootTableLoadingCallback;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.fabricmc.fabric.api.registry.CommandRegistry;
 import net.fabricmc.fabric.api.server.PlayerStream;
@@ -25,6 +27,10 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Items;
+import net.minecraft.loot.ConstantLootTableRange;
+import net.minecraft.loot.LootTables;
+import net.minecraft.loot.entry.ItemEntry;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.sound.SoundEvent;
@@ -124,6 +130,23 @@ public class ToaruKagakuNoMod implements ModInitializer {
 		// force it to initialise
 		CertainItems.ABILITY_THING.hashCode();
 
+		// loot
+		final int abilityThingChance = 12;
+
+		LootTableLoadingCallback.EVENT.register((resources, loot, id, table, setter) -> {
+			if (LootTables.STRONGHOLD_CROSSING_CHEST.equals(id)) {
+				FabricLootPoolBuilder custom = FabricLootPoolBuilder.builder()
+						.rolls(ConstantLootTableRange.create(1))
+						.withEntry(ItemEntry.builder(Items.AIR)
+								.weight(100 - abilityThingChance)
+								.build())
+						.withEntry(ItemEntry.builder(CertainItems.ABILITY_THING)
+								.weight(abilityThingChance)
+								.build());
+
+				table.withPool(custom.build());
+			}
+		});
 		// packets
 		ServerSidePacketRegistry.INSTANCE.register(USE_ABILITY_PACKET_ID, (context, dataManager) -> {
 			byte usage = dataManager.readByte();
