@@ -42,8 +42,8 @@ dependencies {
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 	// cardinal
-	modImplementation "com.github.OnyxStudios.Cardinal-Components-API:Cardinal-Components-API:2.4.0-nightly.20w13b"
-	include "com.github.OnyxStudios.Cardinal-Components-API:Cardinal-Components-API:2.4.0-nightly.20w13b"
+	modImplementation "com.github.OnyxStudios.Cardinal-Components-API:Cardinal-Components-API:${project.cardinal_version}"
+	include "com.github.OnyxStudios.Cardinal-Components-API:Cardinal-Components-API:${project.cardinal_version}"
 	// zoesteria config
 	implementation "tk.valoeghese:ZoesteriaConfig:1.2.0"
 	include "tk.valoeghese:ZoesteriaConfig:1.2.0"

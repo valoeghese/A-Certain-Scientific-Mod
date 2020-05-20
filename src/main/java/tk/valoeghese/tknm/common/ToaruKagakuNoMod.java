@@ -27,9 +27,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Items;
 import net.minecraft.loot.ConstantLootTableRange;
 import net.minecraft.loot.LootTables;
+import net.minecraft.loot.entry.EmptyEntry;
 import net.minecraft.loot.entry.ItemEntry;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.command.CommandManager;
@@ -137,7 +137,7 @@ public class ToaruKagakuNoMod implements ModInitializer {
 			if (LootTables.STRONGHOLD_CROSSING_CHEST.equals(id)) {
 				FabricLootPoolBuilder custom = FabricLootPoolBuilder.builder()
 						.rolls(ConstantLootTableRange.create(1))
-						.withEntry(ItemEntry.builder(Items.AIR)
+						.withEntry(EmptyEntry.Serializer()
 								.weight(100 - abilityThingChance)
 								.build())
 						.withEntry(ItemEntry.builder(CertainItems.ABILITY_THING)
@@ -147,6 +147,7 @@ public class ToaruKagakuNoMod implements ModInitializer {
 				table.withPool(custom.build());
 			}
 		});
+
 		// packets
 		ServerSidePacketRegistry.INSTANCE.register(USE_ABILITY_PACKET_ID, (context, dataManager) -> {
 			byte usage = dataManager.readByte();
