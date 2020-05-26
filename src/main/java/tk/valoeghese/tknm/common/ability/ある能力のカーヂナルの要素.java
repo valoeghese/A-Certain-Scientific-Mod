@@ -15,6 +15,8 @@ import tk.valoeghese.tknm.api.ACertainComponent;
 import tk.valoeghese.tknm.api.ability.Ability;
 import tk.valoeghese.tknm.api.ability.AbilityRegistry;
 import tk.valoeghese.tknm.api.ability.AbilityUserData;
+import tk.valoeghese.tknm.common.InnateAbilityManager;
+import tk.valoeghese.tknm.common.InnateAbilityManager.InnateAbilityComponent;
 import tk.valoeghese.tknm.common.ToaruKagakuNoMod;
 import tk.valoeghese.tknm.util.FloatRandom;
 import tk.valoeghese.tknm.util.RandomUtils;
@@ -27,7 +29,15 @@ public final class ある能力のカーヂナルの要素 implements ACertainCo
 		this.じりき = 0.2f + ABILITY_RANDOM.nextFloat();
 		this.能力者 = player;
 		World world = player.getEntityWorld();
-		this.setAbility(world.isClient ? null : AbilityRegistry.pickAbility(new Random(player.getUuid().getLeastSignificantBits() + 31L * ((ServerWorld) world).getSeed())));
+		InnateAbilityComponent innate = InnateAbilityManager.INNATE_ABILITY_COMPONENT.get(world.getLevelProperties());
+		Ability<?> ability = innate.provideInnateAbility(player.getUuid(), world.getRandom()); // innate abilities are truly decided at random, unlike the other abilities.
+
+		if (ability != null) {
+			this.setAbility(ability);
+		} else {
+			this.setAbility(world.isClient ? null : AbilityRegistry.pickAbility(new Random(player.getUuid().getLeastSignificantBits() + 31L * ((ServerWorld) world).getSeed())));
+		}
+
 		this.レブルわりたす();
 	}
 
@@ -148,6 +158,10 @@ public final class ある能力のカーヂナルの要素 implements ACertainCo
 
 	@Override
 	public void setAbility(Ability<?> ability) {
+		if (this.能力 != null) {
+			this.能力.onRemovedFrom(this.能力者);
+		}
+
 		this.能力 = ability;
 
 		if (ability != null) {
@@ -169,7 +183,7 @@ public final class ある能力のカーヂナルの要素 implements ACertainCo
 
 	@Override
 	public boolean isAbilityUser() {
-		return this.能力者です;
+		return this.能力者です || InnateAbilityManager.INNATE_ABILITIES.contains(this.能力);
 	}
 
 	private static final FloatRandom ABILITY_RANDOM = RandomUtils.naturalDistribution(0.5f, 0.5f);

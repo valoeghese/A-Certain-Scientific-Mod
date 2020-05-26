@@ -35,6 +35,13 @@ public abstract class Ability<T extends AbilityUserData> {
 	}
 
 	/**
+	 * Called when the ability is removed from the specified player. i.e. the ability of the player changes.
+	 * This includes when the ability changes due to NBT sync or loading data from a save.
+	 */
+	public void onRemovedFrom(PlayerEntity player) {
+	}
+
+	/**
 	 * Adds to the ability user's exhaustion.
 	 * @param user the ability user.
 	 * @param multiplier the multiplier of the default exhaust.
