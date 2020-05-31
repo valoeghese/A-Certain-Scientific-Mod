@@ -126,6 +126,9 @@ public class ToaruKagakuNoMod implements ModInitializer {
 								))
 				));
 
+		// config
+		ToaruConfig.instance.hashCode(); // force the static initialiser to run
+
 		// items
 		// force it to initialise
 		CertainItems.ABILITY_THING.hashCode();

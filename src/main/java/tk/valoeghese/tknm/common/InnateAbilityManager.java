@@ -32,14 +32,16 @@ public class InnateAbilityManager {
 
 		@Override
 		public void fromTag(CompoundTag tag) {
-			this.imagineBreaker = tag.getUuidNew("imagine_breaker");
+			this.imagineBreaker = tag.getUuid("imagine_breaker");
 		}
 
 		@Nullable
 		public Ability<?> provideInnateAbility(UUID uuid, Random rand) {
-			if (this.imagineBreaker == null && rand.nextInt(60) == 0) {
-				this.imagineBreaker = uuid;
-				return Abilities.IMAGINE_BREAKER;
+			if (ToaruConfig.instance.imagineBreakerRarity > 0) {
+				if (this.imagineBreaker == null && rand.nextInt(ToaruConfig.instance.imagineBreakerRarity) == 0) {
+					this.imagineBreaker = uuid;
+					return Abilities.IMAGINE_BREAKER;
+				}
 			}
 
 			return null;
@@ -47,7 +49,7 @@ public class InnateAbilityManager {
 
 		@Override
 		public CompoundTag toTag(CompoundTag tag) {
-			tag.putUuidNew("imagine_breaker", imagineBreaker);
+			tag.putUuid("imagine_breaker", imagineBreaker);
 			return tag;
 		}
 
