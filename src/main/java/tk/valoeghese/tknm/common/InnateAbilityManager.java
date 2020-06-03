@@ -32,7 +32,11 @@ public class InnateAbilityManager {
 
 		@Override
 		public void fromTag(CompoundTag tag) {
-			this.imagineBreaker = tag.getUuid("imagine_breaker");
+			try {
+				this.imagineBreaker = tag.getUuid("imagine_breaker");
+			} catch (Throwable t) {
+				this.imagineBreaker = null;
+			}
 		}
 
 		@Nullable
@@ -49,7 +53,9 @@ public class InnateAbilityManager {
 
 		@Override
 		public CompoundTag toTag(CompoundTag tag) {
-			tag.putUuid("imagine_breaker", imagineBreaker);
+			if (this.imagineBreaker != null) {
+				tag.putUuid("imagine_breaker", this.imagineBreaker);
+			}
 			return tag;
 		}
 

@@ -15,11 +15,11 @@ import nerdhub.cardinal.components.api.event.EntityComponentCallback;
 import nerdhub.cardinal.components.api.util.EntityComponents;
 import nerdhub.cardinal.components.api.util.RespawnCopyStrategy;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.server.ServerTickCallback;
 import net.fabricmc.fabric.api.loot.v1.FabricLootPoolBuilder;
 import net.fabricmc.fabric.api.loot.v1.event.LootTableLoadingCallback;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
-import net.fabricmc.fabric.api.registry.CommandRegistry;
 import net.fabricmc.fabric.api.server.PlayerStream;
 import net.minecraft.command.arguments.EntityArgumentType;
 import net.minecraft.command.arguments.IdentifierArgumentType;
@@ -44,13 +44,11 @@ import tk.valoeghese.tknm.common.ability.Abilities;
 import tk.valoeghese.tknm.common.ability.ある能力のカーヂナルの要素;
 import tk.valoeghese.tknm.common.tech.CertainItems;
 
-@SuppressWarnings("deprecation")
 public class ToaruKagakuNoMod implements ModInitializer {
 	public static final Logger LOGGER = LogManager.getLogger("A Certain Scientific Mod");
 	// component
 	public static final ComponentType<ACertainComponent> A_CERTAIN_COMPONENT =
-			ComponentRegistry.INSTANCE.registerIfAbsent(from("a_certain"), ACertainComponent.class)
-			.attach(EntityComponentCallback.event(PlayerEntity.class), ある能力のカーヂナルの要素::new);
+			ComponentRegistry.INSTANCE.registerIfAbsent(from("a_certain"), ACertainComponent.class);
 
 	// packets
 	public static final Identifier USE_ABILITY_PACKET_ID = from("nouryokutsukau");
@@ -68,63 +66,71 @@ public class ToaruKagakuNoMod implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
+		LOGGER.info("Setting up \"A Certain Scientific Mod!\"");
+		long time = System.currentTimeMillis();
+
 		// abilities
 		Abilities.ensureInit();
 		// components
 		EntityComponents.setRespawnCopyStrategy(A_CERTAIN_COMPONENT, RespawnCopyStrategy.ALWAYS_COPY);
+		InnateAbilityManager.init();
+		EntityComponentCallback.event(PlayerEntity.class).register((player, components) -> components.put(A_CERTAIN_COMPONENT, new ある能力のカーヂナルの要素(player)));
 
 		// commands
-		CommandRegistry.INSTANCE.register(false, thing -> thing.register(
-				CommandManager.literal("とある")
-				.then(CommandManager.literal("デバッグ")
-						.requires(src -> src.hasPermissionLevel(2))
-						.then(CommandManager.literal("能力者")
-								.then(CommandManager.argument("能力者", EntityArgumentType.player())
-										.executes(context -> {
-											PlayerEntity entity = EntityArgumentType.getPlayer(context, "能力者");
-											context.getSource().sendFeedback(
-													A_CERTAIN_COMPONENT.get(entity).stats(),
-													false);
-											return 1;
-										})))
-						.then(CommandManager.literal("能力")
-								.then(CommandManager.argument("能力者", EntityArgumentType.player())
-										.then(CommandManager.argument("能力", IdentifierArgumentType.identifier())
-												.executes(context -> {
-													PlayerEntity entity = EntityArgumentType.getPlayer(context, "能力者");
-													A_CERTAIN_COMPONENT.get(entity).setAbility(AbilityRegistry.getAbility(IdentifierArgumentType.getIdentifier(context, "能力")));
-													return 1;
-												}))))
-						.then(CommandManager.literal("けいけんち足す")
-								.then(CommandManager.argument("能力者", EntityArgumentType.player())
-										.then(CommandManager.argument("すう", FloatArgumentType.floatArg())
-												.executes(context -> {
-													PlayerEntity entity = EntityArgumentType.getPlayer(context, "能力者");
-													context.getSource().sendFeedback(
-															new LiteralText(String.valueOf(A_CERTAIN_COMPONENT.get(entity).addXp(FloatArgumentType.getFloat(context, "すう")))),
-															false);
-													return 1;
-												})))
-								)
-						.then(CommandManager.literal("能力者です")
-								.then(CommandManager.argument("能力者です", BoolArgumentType.bool())
-										.then(CommandManager.argument("能力者", EntityArgumentType.player())
-												.executes(context -> {
-													PlayerEntity entity = EntityArgumentType.getPlayer(context, "能力者");
-													A_CERTAIN_COMPONENT.get(entity).setAbilityUser(BoolArgumentType.getBool(context, "能力者です"));
-													return 1;
-												}))
-										.executes(context -> {
-											Entity entity = context.getSource().getEntity();
-											if (entity instanceof PlayerEntity) {
-												A_CERTAIN_COMPONENT.get((PlayerEntity) entity).setAbilityUser(BoolArgumentType.getBool(context, "能力者です"));
+		CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
+			System.out.println("debug haha");
+			dispatcher.register(
+					CommandManager.literal("とある")
+					.then(CommandManager.literal("デバッグ")
+							.requires(src -> src.hasPermissionLevel(2))
+							.then(CommandManager.literal("能力者")
+									.then(CommandManager.argument("能力者", EntityArgumentType.player())
+											.executes(context -> {
+												PlayerEntity entity = EntityArgumentType.getPlayer(context, "能力者");
+												context.getSource().sendFeedback(
+														A_CERTAIN_COMPONENT.get(entity).stats(),
+														false);
 												return 1;
-											} else {
-												return 0;
-											}
-										}))
-								))
-				));
+											})))
+							.then(CommandManager.literal("能力")
+									.then(CommandManager.argument("能力者", EntityArgumentType.player())
+											.then(CommandManager.argument("能力", IdentifierArgumentType.identifier())
+													.executes(context -> {
+														PlayerEntity entity = EntityArgumentType.getPlayer(context, "能力者");
+														A_CERTAIN_COMPONENT.get(entity).setAbility(AbilityRegistry.getAbility(IdentifierArgumentType.getIdentifier(context, "能力")));
+														return 1;
+													}))))
+							.then(CommandManager.literal("けいけんち足す")
+									.then(CommandManager.argument("能力者", EntityArgumentType.player())
+											.then(CommandManager.argument("すう", FloatArgumentType.floatArg())
+													.executes(context -> {
+														PlayerEntity entity = EntityArgumentType.getPlayer(context, "能力者");
+														context.getSource().sendFeedback(
+																new LiteralText(String.valueOf(A_CERTAIN_COMPONENT.get(entity).addXp(FloatArgumentType.getFloat(context, "すう")))),
+																false);
+														return 1;
+													})))
+									)
+							.then(CommandManager.literal("能力者です")
+									.then(CommandManager.argument("能力者です", BoolArgumentType.bool())
+											.then(CommandManager.argument("能力者", EntityArgumentType.player())
+													.executes(context -> {
+														PlayerEntity entity = EntityArgumentType.getPlayer(context, "能力者");
+														A_CERTAIN_COMPONENT.get(entity).setAbilityUser(BoolArgumentType.getBool(context, "能力者です"));
+														return 1;
+													}))
+											.executes(context -> {
+												Entity entity = context.getSource().getEntity();
+												if (entity instanceof PlayerEntity) {
+													A_CERTAIN_COMPONENT.get((PlayerEntity) entity).setAbilityUser(BoolArgumentType.getBool(context, "能力者です"));
+													return 1;
+												} else {
+													return 0;
+												}
+											}))
+									)
+							));
+		});
 
 		// config
 		ToaruConfig.instance.hashCode(); // force the static initialiser to run
@@ -237,6 +243,8 @@ public class ToaruKagakuNoMod implements ModInitializer {
 				}
 			}
 		});
+
+		LOGGER.info("Set up \"A Certain Scientific Mod\" in " + (System.currentTimeMillis() - time) + "ms.");
 	}
 
 	public static Identifier from(String name) {
