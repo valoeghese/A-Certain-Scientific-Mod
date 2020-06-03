@@ -32,7 +32,7 @@ public class ToaruConfig {
 				.addContainer("specialAbilities", c -> c
 						.addComment(new Comment(" Controls the rate of imagine breaker being provided as an ability."))
 						.addComment(new Comment(" 0 disables imagine breaker. For other, positive, numbers, it is a 1/n chance to a player to be the imagine breaker."))
-						.addDataEntry("imagineBreakerRarity", "1")
+						.addDataEntry("imagineBreakerRarity", "69")
 						)
 				.build();
 	}
