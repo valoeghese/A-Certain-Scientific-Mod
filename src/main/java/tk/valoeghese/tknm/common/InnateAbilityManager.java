@@ -33,7 +33,11 @@ public class InnateAbilityManager {
 		@Override
 		public void fromTag(CompoundTag tag) {
 			try {
-				this.imagineBreaker = tag.getUuid("imagine_breaker");
+				if (tag.getBoolean("imagine_breaker_exists")) {
+					this.imagineBreaker = tag.getUuid("imagine_breaker");
+				} else {
+					this.imagineBreaker = null;
+				}
 			} catch (Throwable t) {
 				t.printStackTrace();
 				this.imagineBreaker = null;
@@ -60,6 +64,9 @@ public class InnateAbilityManager {
 
 			if (this.imagineBreaker != null) {
 				tag.putUuid("imagine_breaker", this.imagineBreaker);
+				tag.putBoolean("imagine_breaker_exists", true);
+			} else {
+				tag.putBoolean("imagine_breaker_exists", false);
 			}
 
 			return tag;
