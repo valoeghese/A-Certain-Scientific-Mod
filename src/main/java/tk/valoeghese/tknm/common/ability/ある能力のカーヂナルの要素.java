@@ -29,13 +29,17 @@ public final class ある能力のカーヂナルの要素 implements ACertainCo
 		this.じりき = 0.2f + ABILITY_RANDOM.nextFloat();
 		this.能力者 = player;
 		World world = player.getEntityWorld();
-		InnateAbilityComponent innate = InnateAbilityManager.INNATE_ABILITY_COMPONENT.get(world.getLevelProperties());
-		Ability<?> ability = innate.provideInnateAbility(player.getUuid(), world.getRandom()); // innate abilities are truly decided at random, unlike the other abilities.
 
-		if (ability != null) {
-			this.setAbility(ability);
-		} else {
-			this.setAbility(world.isClient ? null : AbilityRegistry.pickAbility(new Random(player.getUuid().getLeastSignificantBits() + 31L * ((ServerWorld) world).getSeed())));
+		if (!world.isClient) {
+			InnateAbilityComponent innate = InnateAbilityManager.INNATE_ABILITY_COMPONENT.get(world.getLevelProperties());
+			Ability<?> ability = world.isClient ? null : innate.provideInnateAbility(player.getUuid(), world.getRandom()); // innate abilities are truly decided at random, unlike the other abilities.
+
+			if (ability != null) {
+				this.setAbility(ability);
+				this.setAbilityUser(true);
+			} else {
+				this.setAbility(AbilityRegistry.pickAbility(new Random(player.getUuid().getLeastSignificantBits() + 31L * ((ServerWorld) world).getSeed())));
+			}
 		}
 
 		this.レブルわりたす();

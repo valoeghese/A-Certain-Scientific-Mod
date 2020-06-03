@@ -35,12 +35,15 @@ public class InnateAbilityManager {
 			try {
 				this.imagineBreaker = tag.getUuid("imagine_breaker");
 			} catch (Throwable t) {
+				t.printStackTrace();
 				this.imagineBreaker = null;
 			}
 		}
 
 		@Nullable
 		public Ability<?> provideInnateAbility(UUID uuid, Random rand) {
+			this.sync();
+
 			if (ToaruConfig.instance.imagineBreakerRarity > 0) {
 				if (this.imagineBreaker == null && rand.nextInt(ToaruConfig.instance.imagineBreakerRarity) == 0) {
 					this.imagineBreaker = uuid;
@@ -53,9 +56,12 @@ public class InnateAbilityManager {
 
 		@Override
 		public CompoundTag toTag(CompoundTag tag) {
+			tag = new CompoundTag();
+
 			if (this.imagineBreaker != null) {
 				tag.putUuid("imagine_breaker", this.imagineBreaker);
 			}
+
 			return tag;
 		}
 
