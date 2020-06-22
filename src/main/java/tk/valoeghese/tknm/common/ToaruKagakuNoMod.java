@@ -78,7 +78,6 @@ public class ToaruKagakuNoMod implements ModInitializer {
 
 		// commands
 		CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
-			System.out.println("debug haha");
 			dispatcher.register(
 					CommandManager.literal("とある")
 					.then(CommandManager.literal("デバッグ")
@@ -140,17 +139,22 @@ public class ToaruKagakuNoMod implements ModInitializer {
 		CertainItems.ABILITY_THING.hashCode();
 
 		// loot
-		final int abilityThingChance = 12;
+		final int storeroomChance = 47;
+		final int altarChance = 39;
 
 		LootTableLoadingCallback.EVENT.register((resources, loot, id, table, setter) -> {
-			if (LootTables.STRONGHOLD_CROSSING_CHEST.equals(id)) {
+			boolean b = LootTables.STRONGHOLD_CORRIDOR_CHEST.equals(id);
+
+			if (b || LootTables.STRONGHOLD_CROSSING_CHEST.equals(id)) {
+				int chance = b ? altarChance : storeroomChance;
+
 				FabricLootPoolBuilder custom = FabricLootPoolBuilder.builder()
 						.rolls(ConstantLootTableRange.create(1))
 						.withEntry(EmptyEntry.Serializer()
-								.weight(100 - abilityThingChance)
+								.weight(100 - chance)
 								.build())
 						.withEntry(ItemEntry.builder(CertainItems.ABILITY_THING)
-								.weight(abilityThingChance)
+								.weight(chance)
 								.build());
 
 				table.withPool(custom.build());

@@ -59,7 +59,6 @@ public class OrderedList<E> extends ArrayList<E> {
 		}
 		i++; // because
 
-		//System.out.println(i + "\t" + value);
 		super.add(i, e);
 		return true;
 	}

@@ -11,7 +11,7 @@ import tk.valoeghese.tknm.common.ToaruKagakuNoMod;
 public class CertainItems {
 	public static final Item ABILITY_THING = Registry.register(
 			Registry.ITEM,
-			ToaruKagakuNoMod.from("ability_thing"),
+			ToaruKagakuNoMod.from("unusual_helmet"),
 			new ArmorItem(
 					GakuenToshiTechMaterial.INSTANCE,
 					HEAD,

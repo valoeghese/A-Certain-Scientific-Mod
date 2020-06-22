@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "tknm:item/ability_thing"
+    "layer0": "tknm:item/unusual_helmet"
   }
 }

@@ -85,8 +85,10 @@ public class ElectromasterAbility extends Ability<ElectromasterAbility.Data> {
 			return this.performRailgun(world, player, level, levelProgress, MAGNETISABLE_ITEMS.getFloat(itemInHand));
 		} else if (stackInHand.isEmpty() && !TO_CHARGE.containsKey(uuid) && !TO_DISCHARGE.containsKey(uuid)) {
 			if (player.isSneaking()) {
-				if (level > 1) {
-					return this.performShockBeam(world, player, level, levelProgress, charged);
+				if (level > 1 || charged) {
+					// TODO level 1 has other abilities, not this
+					// when should I add climbing on magnetic objects?
+					return this.performShockBeam(world, player, level, levelProgress, charged && (level > 1));
 				}
 			} else {
 				return performAlterCharge(time, player, charged ? CHARGE_OFF : CHARGE_ON);
@@ -119,7 +121,7 @@ public class ElectromasterAbility extends Ability<ElectromasterAbility.Data> {
 			}
 		});
 
-		if (strong) {
+		if (strong || level == 1) { // TODO this will also change
 			CHARGED.put(player.getUuid(), false);
 		}
 
