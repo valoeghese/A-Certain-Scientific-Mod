@@ -74,11 +74,11 @@ public class TeleporterAbility extends BasicAbility {
 	}
 
 	protected static List<PlayerEntity> anyPlayertargets(World world, PlayerEntity target, Predicate<PlayerEntity> pred) {
-		return world.getEntities(PlayerEntity.class, target.getBoundingBox().expand(0.5f), pred);
+		return world.getEntitiesByClass(PlayerEntity.class, target.getBoundingBox().expand(0.5f), pred);
 	}
 
 	protected static List<LivingEntity> anyLivingTargets(World world, LivingEntity target, Predicate<LivingEntity> pred) {
-		return world.getEntities(LivingEntity.class, target.getBoundingBox().expand(0.5f), pred);
+		return world.getEntitiesByClass(LivingEntity.class, target.getBoundingBox().expand(0.5f), pred);
 	}
 
 	@Nullable

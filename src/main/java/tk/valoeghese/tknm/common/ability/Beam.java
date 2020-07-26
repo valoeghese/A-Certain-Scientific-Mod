@@ -70,7 +70,7 @@ final class Beam {
 		OrderedList<LivingEntity> entities = new OrderedList<>(distanceLookup::getFloat);
 
 		// iterate over possible targeted entities within the said distance
-		for (LivingEntity le : world.getEntities(
+		for (LivingEntity le : world.getEntitiesByClass(
 				LivingEntity.class,
 				new Box(sourcePos, sourcePos.add(1, 1, 1)).expand(maxDistance),
 				le -> le != sender

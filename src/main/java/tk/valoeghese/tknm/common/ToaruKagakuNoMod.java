@@ -16,13 +16,13 @@ import nerdhub.cardinal.components.api.util.EntityComponents;
 import nerdhub.cardinal.components.api.util.RespawnCopyStrategy;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
-import net.fabricmc.fabric.api.event.server.ServerTickCallback;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.loot.v1.FabricLootPoolBuilder;
 import net.fabricmc.fabric.api.loot.v1.event.LootTableLoadingCallback;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.fabricmc.fabric.api.server.PlayerStream;
-import net.minecraft.command.arguments.EntityArgumentType;
-import net.minecraft.command.arguments.IdentifierArgumentType;
+import net.minecraft.command.argument.EntityArgumentType;
+import net.minecraft.command.argument.IdentifierArgumentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
@@ -208,7 +208,7 @@ public class ToaruKagakuNoMod implements ModInitializer {
 		Registry.register(Registry.SOUND_EVENT, IMAGINE_BREAKER_SOUND_ID, IMAGINE_BREAKER_SOUND_EVENT);
 
 		// tick event
-		ServerTickCallback.EVENT.register(server -> {
+		ServerTickEvents.END_SERVER_TICK.register(server -> {
 			for (PlayerEntity player : server.getPlayerManager().getPlayerList()) {
 				ACertainComponent component = A_CERTAIN_COMPONENT.get(player);
 
