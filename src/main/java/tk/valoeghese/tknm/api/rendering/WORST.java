@@ -427,12 +427,45 @@ public interface WORST {
 
 	/**
 	 * Renders all the quads in the currently bound mesh without flushing the quad buffer.
+	 */
+	static void renderMesh() {
+		WORSTImpl.renderMesh();
+	}
+
+	/**
+	 * Renders all the quads in the currently bound mesh without flushing the quad buffer.
 	 * @param translate the vector translating this mesh.
 	 * @param rotation if null, no rotation is performed. Otherwise, provides the rotation of the mesh.
 	 * @param scale if null, the mesh is not scaled. Otherwise, provides the scale of the mesh.
+	 * @deprecated use the matrix stack and {@link WORST#renderMesh()}
 	 */
+	@Deprecated
 	static void renderMesh(Vector3f translate, @Nullable Quaternion rotation, @Nullable Vector3f scale) {
-		WORSTImpl.renderMesh(translate, rotation, scale == null ? WORSTImpl.ONE : scale);
+		scale = scale == null ? WORSTImpl.ONE : scale;
+
+		// offset position from camera and translate
+		Vec3d pos = WORSTImpl.getOffsetPos();
+		MatrixStack currentStack = WORSTImpl.getCurrentStack();
+
+		// translate
+		currentStack.translate(-pos.x + translate.getX(), -pos.y + translate.getY(), -pos.z + translate.getZ());
+
+		// rotate
+		if (rotation != null) {
+			currentStack.multiply(rotation);
+		}
+
+		// scale
+		currentStack.scale(scale.getX(), scale.getY(), scale.getZ());
+		WORSTImpl.renderMesh();
+	}
+
+	/**
+	 * Renders all the quads in the currently bound mesh.
+	 */
+	static void flushAndRenderMesh(int uSize, int vSize) {
+		nextQuad(uSize, vSize);
+		WORSTImpl.renderMesh();
 	}
 
 	/**
@@ -440,10 +473,12 @@ public interface WORST {
 	 * @param translate the vector translating this mesh.
 	 * @param rotation if null, no rotation is performed. Otherwise, provides the rotation of the mesh.
 	 * @param scale if null, the mesh is not scaled. Otherwise, provides the scale of the mesh.
+	 * @deprecated use the matrix stack and {@link WORST#flushAndRenderMesh()}
 	 */
+	@Deprecated
 	static void flushAndRenderMesh(Vector3f translate, @Nullable Quaternion rotation, @Nullable Vector3f scale, int uSize, int vSize) {
 		nextQuad(uSize, vSize);
-		WORSTImpl.renderMesh(translate, rotation, scale == null ? WORSTImpl.ONE : scale);
+		renderMesh(translate, rotation, scale == null ? WORSTImpl.ONE : scale);
 	}
 
 	/**
