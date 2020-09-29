@@ -25,9 +25,9 @@ public class KillPointAbility extends TeleporterAbility {
 		if (lookingAt != null) {
 			Vec3d dir = lookingAt.getRotationVec(0.0f).rotateY((float) Math.PI);
 			Vec3d targetPos = lookingAt.getPos().add(dir);
-			Predicate<PlayerEntity> pred = level >= 3 ? (pe -> true) : (pe -> pe != player);
+			Predicate<LivingEntity> pred = level >= 3 ? (pe -> true) : (pe -> pe != player);
 
-			return teleportTo(world, targetPos.x, targetPos.y, targetPos.z, getMaxCount(level, abilityProgress), player, anyPlayertargets(world, player, pred));
+			return teleportTo(world, targetPos.x, targetPos.y, targetPos.z, getMaxCount(level, abilityProgress), player, anyLivingTargets(world, player, pred));
 		}
 
 		return null;

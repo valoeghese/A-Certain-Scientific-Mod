@@ -98,6 +98,7 @@ public class TeleporterAbility extends BasicAbility {
 	}
 
 	// TODO ability to teleport npcs as well
+	// Me 30/09 - wtf do I mean
 	protected static <T extends LivingEntity> int[] teleportTo(World world, double x, double y, double z, int maxCount, PlayerEntity user, List<T> entities) {
 		if (entities.isEmpty()) {
 			return null;
