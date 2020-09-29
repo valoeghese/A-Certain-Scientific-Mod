@@ -132,7 +132,7 @@ public interface WORST {
 	 * @param identifier the texture identifier.
 	 */
 	static void bindBlockTexture(Identifier identifier) {
-		bindSprite(WORSTImpl.getSprite(SpriteAtlasTexture.BLOCK_ATLAS_TEX, identifier));
+		bindSprite(WORSTImpl.getSprite(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE, identifier));
 	}
 
 	/**

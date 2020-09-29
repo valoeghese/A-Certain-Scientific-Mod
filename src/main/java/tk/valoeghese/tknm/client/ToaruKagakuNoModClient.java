@@ -23,7 +23,7 @@ public class ToaruKagakuNoModClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		// textures
-		ClientSpriteRegistryCallback.event(SpriteAtlasTexture.BLOCK_ATLAS_TEX).register((atlasTexture, registry) -> {
+		ClientSpriteRegistryCallback.event(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE).register((atlasTexture, registry) -> {
 			registry.register(TEXTURE_BIRIBIRI);
 			registry.register(TEXTURE_MELTDOWNER_BEAM);
 			registry.register(TEXTURE_BIRIBIRI_BEAM);

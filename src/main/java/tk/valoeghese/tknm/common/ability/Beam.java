@@ -12,8 +12,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.RayTraceContext;
-import net.minecraft.world.RayTraceContext.FluidHandling;
+import net.minecraft.world.RaycastContext;
+import net.minecraft.world.RaycastContext.FluidHandling;
 import net.minecraft.world.World;
 import tk.valoeghese.tknm.api.OrderedList;
 import tk.valoeghese.tknm.api.ability.AbilityUserAttack;
@@ -108,13 +108,13 @@ final class Beam {
 	public static BlockHitResult rayTraceBlock(World world, Vec3d start, PlayerEntity sender, double distance) {
 		Vec3d rotationVec = sender.getRotationVec(0.0f);
 		Vec3d end = start.add(rotationVec.x * distance, rotationVec.y * distance, rotationVec.z * distance);
-		return world.rayTrace(new RayTraceContext(start, end, RayTraceContext.ShapeType.OUTLINE, FluidHandling.NONE, sender));
+		return world.raycast(new RaycastContext(start, end, RaycastContext.ShapeType.OUTLINE, FluidHandling.NONE, sender));
 	}
 
 	public static BlockHitResult rayTraceBlock(World world, Vec3d start, PlayerEntity sender, double distance, float yawRot) {
 		Vec3d rotationVec = sender.getRotationVec(0.0f);
 		rotationVec = rotationVec.rotateY(yawRot);
 		Vec3d end = start.add(rotationVec.x * distance, rotationVec.y * distance, rotationVec.z * distance);
-		return world.rayTrace(new RayTraceContext(start, end, RayTraceContext.ShapeType.OUTLINE, FluidHandling.NONE, sender));
+		return world.raycast(new RaycastContext(start, end, RaycastContext.ShapeType.OUTLINE, FluidHandling.NONE, sender));
 	}
 }
