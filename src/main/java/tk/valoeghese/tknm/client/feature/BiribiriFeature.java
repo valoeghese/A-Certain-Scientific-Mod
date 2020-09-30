@@ -44,7 +44,10 @@ public class BiribiriFeature extends FeatureRenderer<AbstractClientPlayerEntity,
 			WORST.mesh(RenderLayer.getCutout());
 			WORST.bindBlockTexture(ToaruKagakuNoModClient.TEXTURE_BIRIBIRI);
 			WORST.basicDoubleCube();
-			WORST.renderMesh(new Vector3f(0.0f, 0.5f, 0.0f), new Quaternion(0.0f, 0.0f, 180f, true), new Vector3f(1.0f, entity.isSneaking() ? 1.5f : 2.0f, 1.0f));
+			matrices.translate(0.0f, 0.5f, 0.0f);
+			matrices.multiply(new Quaternion(0.0f, 0.0f, 180f, true));
+			matrices.scale(1.0f, entity.isSneaking() ? 1.5f : 2.0f, 1.0f);
+			WORST.renderMesh();
 			WORST.end();
 		}
 
