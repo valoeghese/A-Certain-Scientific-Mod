@@ -17,4 +17,9 @@ public class CertainItems {
 					HEAD,
 					new Item.Settings().group(ItemGroup.TOOLS)
 					));
+
+	public static final Item COIN = Registry.register(
+			Registry.ITEM,
+			ToaruKagakuNoMod.from("coin"),
+			new Item(new Item.Settings()));
 }

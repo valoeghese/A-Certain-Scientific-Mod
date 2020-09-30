@@ -1,26 +1,17 @@
 package tk.valoeghese.tknm.common.ability;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
-import it.unimi.dsi.fastutil.objects.Object2BooleanArrayMap;
-import it.unimi.dsi.fastutil.objects.Object2FloatArrayMap;
-import it.unimi.dsi.fastutil.objects.Object2FloatMap;
-import it.unimi.dsi.fastutil.objects.Object2LongArrayMap;
-import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.mob.CreeperEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -29,42 +20,31 @@ import net.minecraft.world.World;
 import net.minecraft.world.explosion.Explosion.DestructionType;
 import tk.valoeghese.tknm.api.ACertainComponent;
 import tk.valoeghese.tknm.api.ability.Ability;
-import tk.valoeghese.tknm.api.ability.AbilityRenderer;
-import tk.valoeghese.tknm.api.ability.AbilityUserData;
-import tk.valoeghese.tknm.client.abilityrenderer.ElectromasterAbilityRenderer;
+import tk.valoeghese.tknm.api.ability.AbilityRegistry;
 import tk.valoeghese.tknm.common.ToaruKagakuNoMod;
+import tk.valoeghese.tknm.common.tech.CertainItems;
 import tk.valoeghese.tknm.mixin.AccessorCreeperEntity;
 import tk.valoeghese.tknm.mixin.AccessorEntity;
 
-public class ElectromasterAbility extends Ability<ElectromasterAbility.Data> {
-	@Override
-	public AbilityRenderer createAbilityRenderer() {
-		return new ElectromasterAbilityRenderer();
-	}
-
+public class ElectromasterAbility extends AbstractElectromasterAbility implements UltimateAbility {
 	@Override
 	public void tick(MinecraftServer server, PlayerEntity user, ACertainComponent component) {
+		super.tick(server, user, component);
+
 		UUID uuid = user.getUuid();
-		World world = user.getEntityWorld();
-		updateCharge(world.getTime());
 
-		if (CHARGED.getBoolean(uuid)) {
-			long thisTime = System.currentTimeMillis();
-			long lastTime = LAST_BIRI_SOUND_TIME.applyAsLong(uuid);
+		if (COINS.containsKey(uuid)) {
+			Coin coin = COINS.get(uuid);
 
-			if (thisTime - lastTime > biriDelay) { // I need better biribiri sound effects. Like, not ripped from clips of the anime.
-				biriDelay = 1800 + 200 * user.getRandom().nextInt(10); // 0ms - 1800ms, in 200ms gaps 
-				LAST_BIRI_SOUND_TIME.put(uuid, thisTime);
-
-				SoundEvent event = ToaruKagakuNoMod.biribiriSound(user.getRandom());
-
-				world.playSound(
-						null,
-						user.getBlockPos().up(),
-						event,
-						SoundCategory.MASTER,
-						0.9f + user.getRandom().nextFloat() * 0.1f,
-						user.getRandom().nextFloat() * 0.16f + 1f - 0.08f);
+			if (coin.isEnded(user.world.getTime())) {
+				ToaruKagakuNoMod.sendClientData(AbilityRegistry.getRegistryId(this),
+						user,
+						performRailgun(
+								user.world,
+								user,
+								component.getLevel(),
+								component.getLevelProgress(),
+								MAGNETISABLE_ITEMS.getFloat(CertainItems.COIN) * coin.remove() + 0.67f));
 			}
 		}
 	}
@@ -81,26 +61,32 @@ public class ElectromasterAbility extends Ability<ElectromasterAbility.Data> {
 		boolean charged = CHARGED.getBoolean(uuid);
 		Item itemInHand = stackInHand.getItem();
 
-		if (charged && level > 3 && MAGNETISABLE_ITEMS.containsKey(itemInHand)) {
-			return this.performRailgun(world, player, level, levelProgress, MAGNETISABLE_ITEMS.getFloat(itemInHand));
-		} else if (stackInHand.isEmpty() && !TO_CHARGE.containsKey(uuid) && !TO_DISCHARGE.containsKey(uuid)) {
-			if (player.isSneaking()) {
-				if (level > 1 || charged) {
-					// TODO level 1 has other abilities, not this
-					// when should I add climbing on magnetic objects?
-					return this.performShockBeam(world, player, level, levelProgress, charged && (level > 1));
+		switch (usage) {
+		case 1:
+			if (charged && level > 3 && MAGNETISABLE_ITEMS.containsKey(itemInHand)) {
+				return this.performRailgun(world, player, level, levelProgress, MAGNETISABLE_ITEMS.getFloat(itemInHand));
+			} else if (stackInHand.isEmpty() && !TO_CHARGE.containsKey(uuid) && !TO_DISCHARGE.containsKey(uuid)) {
+				if (player.isSneaking()) {
+					if (level > 1 || charged) {
+						// TODO level 1 has other abilities, not this
+						// when should I add climbing on magnetic objects?
+						return this.performShockBeam(world, player, level, levelProgress, charged && (level > 1));
+					}
+				} else {
+					return performAlterCharge(time, player, charged ? CHARGE_OFF : CHARGE_ON);
 				}
-			} else {
-				return performAlterCharge(time, player, charged ? CHARGE_OFF : CHARGE_ON);
 			}
+			break;
+		case 2: // ultimate
+			if (level > 3 && stackInHand.getItem() == CertainItems.COIN) {
+				int count = stackInHand.getCount();
+				stackInHand.decrement(count);
+				return performUltimateRailgun(time, uuid, charged, count);
+			}
+			break;
 		}
 
 		return null;
-	}
-
-	@Override
-	public Data createUserData(PlayerEntity user) {
-		return new Data(user);
 	}
 
 	private int[] performShockBeam(World world, PlayerEntity player, int level, float levelProgress, boolean strong) {
@@ -217,107 +203,41 @@ public class ElectromasterAbility extends Ability<ElectromasterAbility.Data> {
 		};
 	}
 
-	static int[] performAlterCharge(long time, PlayerEntity user, int altering) {
-		switch (altering) {
-		case CHARGE_OFF:
-			CHARGED.put(user.getUuid(), false);
-			TO_DISCHARGE.put(user.getUuid(), time + (CHARGE_DELAY_CONSTANT / DISCHARGE_PROPORTION));
-			break;
-		case CHARGE_ON:
-			Ability.grantXP(user, 0.0005f);
-			TO_CHARGE.put(user.getUuid(), time + CHARGE_DELAY_CONSTANT);
-			break;
-		}
+	private static int[] performUltimateRailgun(long time, UUID user, boolean charged, int count) {
+		new Coin(time, count).linkWith(user);
 
 		return new int[] {
-				(USAGE_NONE << 2) | altering
+				(USAGE_ULTIMATE << 2) | (charged ? CHARGE_EQUAL : CHARGE_ON)
 		};
 	}
 
-	private static void updateCharge(long time) {
-		// Charge
-		if (!TO_CHARGE.isEmpty()) {
-			Set<Map.Entry<UUID, Long>> currentSet = new HashSet<>(TO_CHARGE.entrySet());
+	private static final Map<UUID, Coin> COINS = new HashMap<>();
 
-			for (Map.Entry<UUID, Long> entry : currentSet) {
-				if (entry.getValue() < time) {
-					CHARGED.put(entry.getKey(), true);
-					TO_CHARGE.remove(entry.getKey());
-				}
-			}
+	private static class Coin {
+		public Coin(long time, int count) {
+			this.start = time;
+			this.end = this.start + 80;
+			this.count = count;
 		}
 
-		// Disharge
-		if (!TO_DISCHARGE.isEmpty()) {
-			Set<Map.Entry<UUID, Long>> currentSet = new HashSet<>(TO_DISCHARGE.entrySet());
+		private final long start;
+		private final long end;
+		private final int count;
+		private UUID uuid;
 
-			for (Map.Entry<UUID, Long> entry : currentSet) {
-				if (entry.getValue() < time) {
-					TO_DISCHARGE.remove(entry.getKey());
-				}
-			}
-		}
-	}
-
-	public static final long CHARGE_DELAY_CONSTANT = (long) (1.25 * 20); // TODO based on ability level
-	public static final int DISCHARGE_PROPORTION = 2;
-	private static final Map<UUID, Long> TO_CHARGE = new HashMap<>();
-	private static final Map<UUID, Long> TO_DISCHARGE = new HashMap<>();
-	static final Object2BooleanArrayMap<UUID> CHARGED = new Object2BooleanArrayMap<>();
-	private static final Object2LongMap<UUID> LAST_BIRI_SOUND_TIME = new Object2LongArrayMap<>();
-	public static final Object2FloatMap<Item> MAGNETISABLE_ITEMS = new Object2FloatArrayMap<>();
-
-	public static final int USAGE_NONE = 0;
-	public static final int USAGE_RAILGUN = 1;
-	public static final int USAGE_SHOCK = 2;
-
-	public static final int CHARGE_EQUAL = 0b00;
-	public static final int CHARGE_OFF = 0b01;
-	public static final int CHARGE_ON = 0b10;
-
-	// TODO per player
-	private static long biriDelay = 0;
-
-	static {
-		MAGNETISABLE_ITEMS.put(Items.IRON_BARS, 0.9f);
-		MAGNETISABLE_ITEMS.put(Items.IRON_BLOCK, 1.25f);
-		MAGNETISABLE_ITEMS.put(Items.IRON_BOOTS, 1.0f);
-		MAGNETISABLE_ITEMS.put(Items.IRON_CHESTPLATE, 1.0f);
-		MAGNETISABLE_ITEMS.put(Items.IRON_DOOR, 1.0f);
-		MAGNETISABLE_ITEMS.put(Items.IRON_HELMET, 1.0f);
-		MAGNETISABLE_ITEMS.put(Items.IRON_HORSE_ARMOR, 1.0f);
-		MAGNETISABLE_ITEMS.put(Items.IRON_INGOT, 0.67f);
-		MAGNETISABLE_ITEMS.put(Items.IRON_LEGGINGS, 1.0f);
-		MAGNETISABLE_ITEMS.put(Items.IRON_NUGGET, 0.33f);
-
-
-		MAGNETISABLE_ITEMS.put(Items.IRON_ORE, 1.0f);
-		MAGNETISABLE_ITEMS.put(Items.IRON_TRAPDOOR, 1.0f);
-		MAGNETISABLE_ITEMS.put(Items.LODESTONE, 1.3f);
-	}
-
-	// TODO do charge related stuff in data instead of maps
-	static class Data implements AbilityUserData {
-		public Data(PlayerEntity user) {
-			this.uuid = user.getUuid();
+		public boolean isEnded(long time) {
+			return time > this.end;
 		}
 
-		private final UUID uuid;
-
-		@Override
-		public CompoundTag toTag() {
-			CompoundTag result = new CompoundTag();
-			result.putBoolean("charged", CHARGED.getBoolean(this.uuid));
-			return result;
+		public Coin linkWith(UUID uuid) {
+			COINS.put(uuid, this);
+			this.uuid = uuid;
+			return this;
 		}
 
-		@Override
-		public void fromTag(CompoundTag tag) {
-			if (tag != null) {
-				if (tag.getBoolean("charged")) {
-					TO_CHARGE.put(this.uuid, 0L);
-				}
-			}
+		public int remove() {
+			COINS.remove(this.uuid);
+			return this.count;
 		}
 	}
 }

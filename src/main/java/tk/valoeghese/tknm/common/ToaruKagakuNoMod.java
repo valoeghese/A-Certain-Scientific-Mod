@@ -45,36 +45,8 @@ import tk.valoeghese.tknm.common.ability.ある能力のカーヂナルの要素
 import tk.valoeghese.tknm.common.tech.CertainItems;
 
 public class ToaruKagakuNoMod implements ModInitializer {
-	public static final Logger LOGGER = LogManager.getLogger("A Certain Scientific Mod");
-	// component
-	public static final ComponentType<ACertainComponent> A_CERTAIN_COMPONENT =
-			ComponentRegistry.INSTANCE.registerIfAbsent(from("a_certain"), ACertainComponent.class);
-
-	// packets
-	public static final Identifier USE_ABILITY_PACKET_ID = from("nouryokutsukau");
-	public static final Identifier RENDER_ABILITY_PACKET_ID = from("render");
-
-	// sounds
-	public static final Identifier IMAGINE_BREAKER_SOUND_ID = from("imagine_breaker");
-	public static final Identifier BIRIBIRI_0_SOUND_ID = from("biribiri_0");
-	public static final Identifier BIRIBIRI_1_SOUND_ID = from("biribiri_1");
-	public static final Identifier BIRIBIRI_2_SOUND_ID = from("biribiri_2");
-	public static final SoundEvent IMAGINE_BREAKER_SOUND_EVENT = new SoundEvent(IMAGINE_BREAKER_SOUND_ID);
-	public static final SoundEvent BIRIBIRI_0_SOUND_EVENT = new SoundEvent(BIRIBIRI_0_SOUND_ID);
-	public static final SoundEvent BIRIBIRI_1_SOUND_EVENT = new SoundEvent(BIRIBIRI_1_SOUND_ID);
-	public static final SoundEvent BIRIBIRI_2_SOUND_EVENT = new SoundEvent(BIRIBIRI_2_SOUND_ID);
-
-	@Override
-	public void onInitialize() {
-		LOGGER.info("Setting up \"A Certain Scientific Mod!\"");
-		long time = System.currentTimeMillis();
-
-		// abilities
-		Abilities.ensureInit();
-		// components
-		EntityComponents.setRespawnCopyStrategy(A_CERTAIN_COMPONENT, RespawnCopyStrategy.ALWAYS_COPY);
-		InnateAbilityManager.init();
-		EntityComponentCallback.event(PlayerEntity.class).register((player, components) -> components.put(A_CERTAIN_COMPONENT, new ある能力のカーヂナルの要素(player)));
+	private void initialiseAPI() {
+		LOGGER.info("Setting up \"A Certain Scientific Mod: API!\"");
 
 		// commands
 		CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
@@ -131,6 +103,71 @@ public class ToaruKagakuNoMod implements ModInitializer {
 							));
 		});
 
+		// components
+		EntityComponents.setRespawnCopyStrategy(A_CERTAIN_COMPONENT, RespawnCopyStrategy.ALWAYS_COPY);
+		InnateAbilityManager.init();
+		EntityComponentCallback.event(PlayerEntity.class).register((player, components) -> components.put(A_CERTAIN_COMPONENT, new ある能力のカーヂナルの要素(player)));
+
+		// packets
+		ServerSidePacketRegistry.INSTANCE.register(USE_ABILITY_PACKET_ID, (context, dataManager) -> {
+			byte usage = dataManager.readByte();
+			PlayerEntity player = context.getPlayer();
+
+			// main thread task queue
+			context.getTaskQueue().execute(() -> useAbility(usage, player));
+		});
+	}
+
+	private static void useAbility(byte usage, PlayerEntity player) {
+		ACertainComponent component = A_CERTAIN_COMPONENT.get(player);
+		@SuppressWarnings("rawtypes")
+		Ability ability = component.getAbility();
+
+		if (ability != null) {
+			Identifier abilityId = AbilityRegistry.getRegistryId(ability);
+
+			// slight xp by default for level 0s. Perhaps one day they'll level up.
+			if (component.getLevel() == 0) {
+				component.addXp(0.002f);
+			}
+
+			// do ability logic here
+			@SuppressWarnings("unchecked")
+			int[] データ = ability.performAbility(player.world, player, component.getLevel(), component.getLevelProgress(), usage, component.getData());
+
+			if (データ != null) {
+				sendClientData(abilityId, player, データ);
+			}
+		}
+	}
+
+	public static void sendClientData(Identifier abilityId, PlayerEntity player, int[] データ) {
+		// send packets
+		PacketByteBuf パッキト = new PacketByteBuf(Unpooled.buffer());
+		パッキト.writeDoubleLE(player.getX());
+		パッキト.writeDoubleLE(player.getY());
+		パッキト.writeDoubleLE(player.getZ());
+		パッキト.writeFloatLE(player.yaw);
+		パッキト.writeFloatLE(player.pitch);
+		パッキト.writeIdentifier(abilityId);
+		パッキト.writeUuid(player.getUuid());
+		パッキト.writeIntArray(データ);
+
+		PlayerStream.around(player.world, player.getPos(), 420.0).forEach(pe -> {
+			ServerSidePacketRegistry.INSTANCE.sendToPlayer(pe, RENDER_ABILITY_PACKET_ID, パッキト);
+		});
+	}
+
+	@Override
+	public void onInitialize() {
+		long time = System.currentTimeMillis();
+		this.initialiseAPI();
+
+		LOGGER.info("Setting up \"A Certain Scientific Mod: Mod!\"");
+
+		// abilities
+		Abilities.ensureInit();
+
 		// config
 		ToaruConfig.instance.hashCode(); // force the static initialiser to run
 
@@ -159,49 +196,6 @@ public class ToaruKagakuNoMod implements ModInitializer {
 
 				table.withPool(custom.build());
 			}
-		});
-
-		// packets
-		ServerSidePacketRegistry.INSTANCE.register(USE_ABILITY_PACKET_ID, (context, dataManager) -> {
-			byte usage = dataManager.readByte();
-			PlayerEntity player = context.getPlayer();
-
-			// main thread task queue
-			context.getTaskQueue().execute(() -> {
-				ACertainComponent component = A_CERTAIN_COMPONENT.get(player);
-				@SuppressWarnings("rawtypes")
-				Ability ability = component.getAbility();
-
-				if (ability != null) {
-					Identifier abilityId = AbilityRegistry.getRegistryId(ability);
-
-					// slight xp by default for level 0s. Perhaps one day they'll level up.
-					if (component.getLevel() == 0) {
-						component.addXp(0.002f);
-					}
-
-					// do ability logic here
-					@SuppressWarnings("unchecked")
-					int[] データ = ability.performAbility(player.world, player, component.getLevel(), component.getLevelProgress(), usage, component.getData());
-
-					if (データ != null) {
-						// send packets
-						PacketByteBuf パッキト = new PacketByteBuf(Unpooled.buffer());
-						パッキト.writeDoubleLE(player.getX());
-						パッキト.writeDoubleLE(player.getY());
-						パッキト.writeDoubleLE(player.getZ());
-						パッキト.writeFloatLE(player.yaw);
-						パッキト.writeFloatLE(player.pitch);
-						パッキト.writeIdentifier(abilityId);
-						パッキト.writeUuid(player.getUuid());
-						パッキト.writeIntArray(データ);
-
-						PlayerStream.around(player.world, player.getPos(), 420.0).forEach(pe -> {
-							ServerSidePacketRegistry.INSTANCE.sendToPlayer(pe, RENDER_ABILITY_PACKET_ID, パッキト);
-						});
-					}
-				}
-			});
 		});
 
 		// sounds
@@ -263,4 +257,23 @@ public class ToaruKagakuNoMod implements ModInitializer {
 			return BIRIBIRI_1_SOUND_EVENT;
 		}
 	}
+
+	public static final Logger LOGGER = LogManager.getLogger("A Certain Scientific Mod");
+	// component
+	public static final ComponentType<ACertainComponent> A_CERTAIN_COMPONENT =
+			ComponentRegistry.INSTANCE.registerIfAbsent(from("a_certain"), ACertainComponent.class);
+
+	// packets
+	public static final Identifier USE_ABILITY_PACKET_ID = from("nouryokutsukau");
+	public static final Identifier RENDER_ABILITY_PACKET_ID = from("render");
+
+	// sounds
+	public static final Identifier IMAGINE_BREAKER_SOUND_ID = from("imagine_breaker");
+	public static final Identifier BIRIBIRI_0_SOUND_ID = from("biribiri_0");
+	public static final Identifier BIRIBIRI_1_SOUND_ID = from("biribiri_1");
+	public static final Identifier BIRIBIRI_2_SOUND_ID = from("biribiri_2");
+	public static final SoundEvent IMAGINE_BREAKER_SOUND_EVENT = new SoundEvent(IMAGINE_BREAKER_SOUND_ID);
+	public static final SoundEvent BIRIBIRI_0_SOUND_EVENT = new SoundEvent(BIRIBIRI_0_SOUND_ID);
+	public static final SoundEvent BIRIBIRI_1_SOUND_EVENT = new SoundEvent(BIRIBIRI_1_SOUND_ID);
+	public static final SoundEvent BIRIBIRI_2_SOUND_EVENT = new SoundEvent(BIRIBIRI_2_SOUND_ID);
 }
