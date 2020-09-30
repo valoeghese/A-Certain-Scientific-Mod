@@ -9,7 +9,6 @@ import net.minecraft.entity.mob.CreeperEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Hand;
@@ -24,7 +23,7 @@ import tk.valoeghese.tknm.api.ability.AbilityRegistry;
 import tk.valoeghese.tknm.common.ToaruKagakuNoMod;
 import tk.valoeghese.tknm.common.tech.CertainItems;
 import tk.valoeghese.tknm.mixin.AccessorCreeperEntity;
-import tk.valoeghese.tknm.mixin.AccessorEntity;
+import tk.valoeghese.tknm.mixin.AccessorEntity;;
 
 public class ElectromasterAbility extends AbstractElectromasterAbility implements UltimateAbility {
 	@Override
@@ -64,6 +63,7 @@ public class ElectromasterAbility extends AbstractElectromasterAbility implement
 		switch (usage) {
 		case 1:
 			if (charged && level > 3 && MAGNETISABLE_ITEMS.containsKey(itemInHand)) {
+				// TODO do something else and let railgun just be the special ability - some form of non-railgun projectile?
 				return this.performRailgun(world, player, level, levelProgress, MAGNETISABLE_ITEMS.getFloat(itemInHand));
 			} else if (stackInHand.isEmpty() && !TO_CHARGE.containsKey(uuid) && !TO_DISCHARGE.containsKey(uuid)) {
 				if (player.isSneaking()) {
@@ -205,6 +205,7 @@ public class ElectromasterAbility extends AbstractElectromasterAbility implement
 
 	private static int[] performUltimateRailgun(long time, UUID user, boolean charged, int count) {
 		new Coin(time, count).linkWith(user);
+		TO_CHARGE.put(user, time + 300);
 
 		return new int[] {
 				(USAGE_ULTIMATE << 2) | (charged ? CHARGE_EQUAL : CHARGE_ON)
@@ -212,11 +213,12 @@ public class ElectromasterAbility extends AbstractElectromasterAbility implement
 	}
 
 	private static final Map<UUID, Coin> COINS = new HashMap<>();
+	public static final int ANIM_HALF_TICKS = 15;
 
 	private static class Coin {
 		public Coin(long time, int count) {
 			this.start = time;
-			this.end = this.start + 80;
+			this.end = this.start + 2 * ANIM_HALF_TICKS;
 			this.count = count;
 		}
 

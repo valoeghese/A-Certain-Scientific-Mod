@@ -1,5 +1,7 @@
 package tk.valoeghese.tknm.client.abilityrenderer;
 
+import static tk.valoeghese.tknm.common.ability.ElectromasterAbility.ANIM_HALF_TICKS;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -12,7 +14,6 @@ import it.unimi.dsi.fastutil.objects.Object2BooleanArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.MathHelper;
@@ -56,7 +57,7 @@ public class ElectromasterAbilityRenderer implements AbilityRenderer {
 			TO_DISCHARGE.put(user, new Pair<>(world.getTime(), world.getTime() + (AbstractElectromasterAbility.CHARGE_DELAY_CONSTANT / AbstractElectromasterAbility.DISCHARGE_PROPORTION)));
 			break;
 		case AbstractElectromasterAbility.CHARGE_ON:
-			TO_CHARGE.put(user, new Pair<>(world.getTime(), world.getTime() + AbstractElectromasterAbility.CHARGE_DELAY_CONSTANT));
+			TO_CHARGE.put(user, new Pair<>(world.getTime(), world.getTime() + mode == AbstractElectromasterAbility.USAGE_ULTIMATE ? 300 : AbstractElectromasterAbility.CHARGE_DELAY_CONSTANT));
 			break;
 		}
 	}
@@ -94,14 +95,14 @@ public class ElectromasterAbilityRenderer implements AbilityRenderer {
 		this.railgunBeamManager.renderUpdate(world);
 		this.shockBeamManager.renderUpdate(world);
 
-		CHARGED.forEach((uuid, charged) -> {
+		/*CHARGED.forEach((uuid, charged) -> {
 			if (charged) {
 				PlayerEntity player = world.getPlayerByUuid(uuid);
 
 				if (player != null) {
 				}
 			}
-		});
+		});*/ //What was I doing here?
 	}
 
 	public static double getOverlayStrength(UUID player, long time) {
@@ -142,8 +143,8 @@ public class ElectromasterAbilityRenderer implements AbilityRenderer {
 	public static class Coin {
 		public Coin(long time) {
 			this.start = time;
-			this.peak = this.start + 40;
-			this.end = this.peak + 40;
+			this.peak = this.start + ANIM_HALF_TICKS;
+			this.end = this.peak + ANIM_HALF_TICKS;
 		}
 
 		private final long start;
@@ -159,7 +160,7 @@ public class ElectromasterAbilityRenderer implements AbilityRenderer {
 			if (time < this.peak) {
 				return MathsUtils.progress(this.start, time, this.peak);
 			} else {
-				return MathsUtils.progress(this.peak, time, this.end);
+				return 1.0 - MathsUtils.progress(this.peak, time, this.end);
 			}
 		}
 

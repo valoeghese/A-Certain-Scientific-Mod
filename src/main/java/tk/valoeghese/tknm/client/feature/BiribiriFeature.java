@@ -11,6 +11,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.util.Arm;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Quaternion;
 import net.minecraft.util.math.Vec3d;
 import tk.valoeghese.tknm.api.rendering.WORST;
@@ -73,6 +74,7 @@ public class BiribiriFeature extends FeatureRenderer<AbstractClientPlayerEntity,
 			WORST.bindBlockTexture(BLOCK_IRON_BLOCK);
 			WORST.flatSquare();
 			matrices.translate(0, 0.05, 0);
+			matrices.multiply(new Quaternion((float) Math.PI * MathHelper.sin((float) ticks / 2.0f), 0.0f, 0.0f, false));
 			matrices.scale(0.2f, 1.0f, 0.2f);
 			WORST.renderMesh();
 			WORST.end();
