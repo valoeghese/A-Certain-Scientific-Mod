@@ -48,6 +48,7 @@ public class ElectromasterAbilityRenderer implements AbilityRenderer {
 			break;
 		case AbstractElectromasterAbility.USAGE_ULTIMATE:
 			new Coin(world.getTime()).linkWith(user);
+			CHARGED.put(user, true);
 			break;
 		}
 
@@ -139,17 +140,20 @@ public class ElectromasterAbilityRenderer implements AbilityRenderer {
 	private static final Map<UUID, Pair<Long, Long>> TO_DISCHARGE = new HashMap<>();
 	private static final Object2BooleanMap<UUID> CHARGED = new Object2BooleanArrayMap<>();
 	private static final Map<UUID, Coin> COINS = new HashMap<>();
+	private static final float GRAVITY = -9.81f;
 
 	public static class Coin {
 		public Coin(long time) {
 			this.start = time;
-			this.peak = this.start + ANIM_HALF_TICKS;
-			this.end = this.peak + ANIM_HALF_TICKS;
+			long fullTicks = ANIM_HALF_TICKS * 2;
+			float halfATSquared = 0.5f * GRAVITY * (fullTicks * fullTicks);
+			this.initialVelocity = (1.0f - halfATSquared) / (float) ANIM_HALF_TICKS;
+			this.end = this.start + fullTicks;
 		}
 
 		private final long start;
-		private final long peak;
 		private final long end;
+		private final float initialVelocity;
 		private UUID uuid;
 
 		public boolean isEnded(long time) {
@@ -157,11 +161,8 @@ public class ElectromasterAbilityRenderer implements AbilityRenderer {
 		}
 
 		public double heightProg(long time) {
-			if (time < this.peak) {
-				return MathsUtils.progress(this.start, time, this.peak);
-			} else {
-				return 1.0 - MathsUtils.progress(this.peak, time, this.end);
-			}
+			time -= this.start;
+			return MathHelper.clamp(this.initialVelocity * time + 0.5f * GRAVITY * (time * time), 0.0f, 1.0f);
 		}
 
 		public Coin linkWith(UUID uuid) {

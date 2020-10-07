@@ -64,6 +64,11 @@ public class ElectromasterAbility extends AbstractElectromasterAbility implement
 		case 1:
 			if (charged && level > 3 && MAGNETISABLE_ITEMS.containsKey(itemInHand)) {
 				// TODO do something else and let railgun just be the special ability - some form of non-railgun projectile?
+				// uses up item
+				if (!player.isCreative()) {
+					player.getStackInHand(Hand.MAIN_HAND).decrement(1);
+				}
+
 				return this.performRailgun(world, player, level, levelProgress, MAGNETISABLE_ITEMS.getFloat(itemInHand));
 			} else if (stackInHand.isEmpty() && !TO_CHARGE.containsKey(uuid) && !TO_DISCHARGE.containsKey(uuid)) {
 				if (player.isSneaking()) {
@@ -189,12 +194,7 @@ public class ElectromasterAbility extends AbstractElectromasterAbility implement
 
 		// uses up charge
 		CHARGED.put(player.getUuid(), false);
-		TO_DISCHARGE.put(player.getUuid(), world.getTime() + (long) (CHARGE_DELAY_CONSTANT / 1.5));
-
-		// uses up item
-		if (!player.isCreative()) {
-			player.getStackInHand(Hand.MAIN_HAND).decrement(1);
-		}
+		TO_DISCHARGE.put(player.getUuid(), world.getTime() + (CHARGE_DELAY_CONSTANT / DISCHARGE_PROPORTION)); // was /1.5f
 
 		// pass distance (i.e. length of ray) on to the renderer
 		return new int[] {
@@ -205,10 +205,10 @@ public class ElectromasterAbility extends AbstractElectromasterAbility implement
 
 	private static int[] performUltimateRailgun(long time, UUID user, boolean charged, int count) {
 		new Coin(time, count).linkWith(user);
-		TO_CHARGE.put(user, time + 300);
+		CHARGED.put(user, true);
 
 		return new int[] {
-				(USAGE_ULTIMATE << 2) | (charged ? CHARGE_EQUAL : CHARGE_ON)
+				(USAGE_ULTIMATE << 2) | CHARGE_EQUAL
 		};
 	}
 

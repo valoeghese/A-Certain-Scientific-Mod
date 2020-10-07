@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "iron_ingot"
+    }
+  ],
+  "result": {
+    "item": "tknm:coin",
+    "count": 3
+  }
+}
