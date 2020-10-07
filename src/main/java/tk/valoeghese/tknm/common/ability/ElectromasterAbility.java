@@ -130,7 +130,7 @@ public class ElectromasterAbility extends AbstractElectromasterAbility implement
 				player.getRandom().nextFloat() * 0.08f + 1f);
 
 		return new int[] {
-				(USAGE_SHOCK << 2) | (strong ? CHARGE_OFF : CHARGE_EQUAL),
+				(USAGE_SHOCK << 2) | ((strong || level == 1) ? CHARGE_OFF : CHARGE_EQUAL),
 				Float.floatToIntBits((float) distance)
 		};
 	}
@@ -193,8 +193,7 @@ public class ElectromasterAbility extends AbstractElectromasterAbility implement
 		distance = Beam.launch(playerPos, addPos, player, distance, true, null, target -> strength * (level > 4 ? 27 : 24) + (int) 3 * levelProgress, null);
 
 		// uses up charge
-		CHARGED.put(player.getUuid(), false);
-		TO_DISCHARGE.put(player.getUuid(), world.getTime() + (CHARGE_DELAY_CONSTANT / DISCHARGE_PROPORTION)); // was /1.5f
+		discharge(world.getTime(), player);
 
 		// pass distance (i.e. length of ray) on to the renderer
 		return new int[] {

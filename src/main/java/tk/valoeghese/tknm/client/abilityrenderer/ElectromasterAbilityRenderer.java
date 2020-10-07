@@ -29,6 +29,7 @@ public class ElectromasterAbilityRenderer implements AbilityRenderer {
 	public void renderInfo(ClientWorld world, Vec3d pos, float yaw, float pitch, UUID user, int[] data) {
 		final int chargeInfo = data[0] & 0b11;
 		final int mode = data[0] >> 2;
+		long time = world.getTime();
 
 		switch (mode) {
 		case AbstractElectromasterAbility.USAGE_RAILGUN:
@@ -36,29 +37,33 @@ public class ElectromasterAbilityRenderer implements AbilityRenderer {
 					new Vector3f((float)pos.getX(), (float)pos.getY() + 1.25f, (float)pos.getZ()),
 					new Vector3f(0, 270 - yaw, 360 - pitch),
 					Float.intBitsToFloat(data[1]),
-					world.getTime() + 25));
+					time + 25));
 			break;
 		case AbstractElectromasterAbility.USAGE_SHOCK:
 			this.shockBeamManager.add(new ShockBeam(
 					new Vector3f((float)pos.getX(), (float)pos.getY() + 1.25f, (float)pos.getZ()),
 					new Vector3f(0, 270 - yaw, 360 - pitch),
 					Float.intBitsToFloat(data[1]),
-					world.getTime() + 10
+					time + 10
 					));
 			break;
 		case AbstractElectromasterAbility.USAGE_ULTIMATE:
 			new Coin(world.getTime()).linkWith(user);
 			CHARGED.put(user, true);
 			break;
+		default:
+			break;
 		}
 
 		switch (chargeInfo) {
 		case AbstractElectromasterAbility.CHARGE_OFF:
 			CHARGED.put(user, false);
-			TO_DISCHARGE.put(user, new Pair<>(world.getTime(), world.getTime() + (AbstractElectromasterAbility.CHARGE_DELAY_CONSTANT / AbstractElectromasterAbility.DISCHARGE_PROPORTION)));
+			TO_DISCHARGE.put(user, new Pair<>(time, time + (AbstractElectromasterAbility.CHARGE_DELAY_CONSTANT / AbstractElectromasterAbility.DISCHARGE_PROPORTION)));
 			break;
 		case AbstractElectromasterAbility.CHARGE_ON:
-			TO_CHARGE.put(user, new Pair<>(world.getTime(), world.getTime() + mode == AbstractElectromasterAbility.USAGE_ULTIMATE ? 300 : AbstractElectromasterAbility.CHARGE_DELAY_CONSTANT));
+			TO_CHARGE.put(user, new Pair<>(time, time + mode == AbstractElectromasterAbility.USAGE_ULTIMATE ? 300 : AbstractElectromasterAbility.CHARGE_DELAY_CONSTANT));
+			break;
+		default:
 			break;
 		}
 	}

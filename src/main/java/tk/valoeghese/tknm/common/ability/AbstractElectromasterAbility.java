@@ -68,8 +68,7 @@ public abstract class AbstractElectromasterAbility extends Ability<AbstractElect
 	protected static int[] performAlterCharge(long time, PlayerEntity user, int altering) {
 		switch (altering) {
 		case CHARGE_OFF:
-			CHARGED.put(user.getUuid(), false);
-			TO_DISCHARGE.put(user.getUuid(), time + (CHARGE_DELAY_CONSTANT / DISCHARGE_PROPORTION));
+			discharge(time, user);
 			break;
 		case CHARGE_ON:
 			Ability.grantXP(user, 0.0005f);
@@ -80,6 +79,11 @@ public abstract class AbstractElectromasterAbility extends Ability<AbstractElect
 		return new int[] {
 				(USAGE_NONE << 2) | altering
 		};
+	}
+
+	protected static void discharge(long time, PlayerEntity user) {
+		CHARGED.put(user.getUuid(), false);
+		TO_DISCHARGE.put(user.getUuid(), time + (CHARGE_DELAY_CONSTANT / DISCHARGE_PROPORTION));
 	}
 
 	private static void updateCharge(long time) {
