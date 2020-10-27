@@ -47,8 +47,6 @@ public class InnateAbilityManager implements LevelComponentInitializer {
 
 		@Nullable
 		public Ability<?> provideInnateAbility(UUID uuid, Random rand) {
-			// FIXME sync requires a MinecraftServer, but is it really needed?
-//			LevelComponents.sync(INNATE_ABILITY_COMPONENT, server);
 
 			if (ToaruConfig.instance.imagineBreakerRarity > 0) {
 				if (this.imagineBreaker == null && rand.nextInt(ToaruConfig.instance.imagineBreakerRarity) == 0) {
