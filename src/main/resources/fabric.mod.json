@@ -13,6 +13,12 @@
     ],
     "client": [
       "tk.valoeghese.tknm.client.ToaruKagakuNoModClient"
+    ],
+    "cardinal-components-entity": [
+      "tk.valoeghese.tknm.common.ToaruKagakuNoMod"
+    ],
+    "cardinal-components-level": [
+      "tk.valoeghese.tknm.common.InnateAbilityManager"
     ]
   },
   "mixins": [
@@ -21,5 +27,11 @@
   "depends": {
     "fabricloader": ">=0.4.0",
     "fabric": "*"
+  },
+  "custom": {
+    "cardinal-components": [
+      "tknm:innate_ability",
+      "tknm:a_certain"
+    ]
   }
 }

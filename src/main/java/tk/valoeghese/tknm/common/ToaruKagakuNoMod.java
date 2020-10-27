@@ -2,6 +2,10 @@ package tk.valoeghese.tknm.common;
 
 import java.util.Random;
 
+import dev.onyxstudios.cca.api.v3.component.ComponentKey;
+import dev.onyxstudios.cca.api.v3.component.ComponentRegistry;
+import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry;
+import dev.onyxstudios.cca.api.v3.entity.EntityComponentInitializer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -9,7 +13,6 @@ import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 
 import io.netty.buffer.Unpooled;
-import nerdhub.cardinal.components.api.ComponentRegistry;
 import nerdhub.cardinal.components.api.ComponentType;
 import nerdhub.cardinal.components.api.event.EntityComponentCallback;
 import nerdhub.cardinal.components.api.util.EntityComponents;
@@ -44,7 +47,7 @@ import tk.valoeghese.tknm.common.ability.Abilities;
 import tk.valoeghese.tknm.common.ability.ある能力のカーヂナルの要素;
 import tk.valoeghese.tknm.common.tech.CertainItems;
 
-public class ToaruKagakuNoMod implements ModInitializer {
+public class ToaruKagakuNoMod implements ModInitializer, EntityComponentInitializer {
 	private void initialiseAPI() {
 		LOGGER.info("Setting up \"A Certain Scientific Mod: API!\"");
 
@@ -102,11 +105,6 @@ public class ToaruKagakuNoMod implements ModInitializer {
 									)
 							));
 		});
-
-		// components
-		EntityComponents.setRespawnCopyStrategy(A_CERTAIN_COMPONENT, RespawnCopyStrategy.ALWAYS_COPY);
-		InnateAbilityManager.init();
-		EntityComponentCallback.event(PlayerEntity.class).register((player, components) -> components.put(A_CERTAIN_COMPONENT, new ある能力のカーヂナルの要素(player)));
 
 		// packets
 		ServerSidePacketRegistry.INSTANCE.register(USE_ABILITY_PACKET_ID, (context, dataManager) -> {
@@ -245,6 +243,11 @@ public class ToaruKagakuNoMod implements ModInitializer {
 		LOGGER.info("Set up \"A Certain Scientific Mod\" in " + (System.currentTimeMillis() - time) + "ms.");
 	}
 
+	@Override
+	public void registerEntityComponentFactories(EntityComponentFactoryRegistry registry) {
+		registry.registerForPlayers(ToaruKagakuNoMod.A_CERTAIN_COMPONENT, ある能力のカーヂナルの要素::new, RespawnCopyStrategy.ALWAYS_COPY);
+	}
+
 	public static Identifier from(String name) {
 		return new Identifier("tknm", name);
 	}
@@ -260,8 +263,8 @@ public class ToaruKagakuNoMod implements ModInitializer {
 
 	public static final Logger LOGGER = LogManager.getLogger("A Certain Scientific Mod");
 	// component
-	public static final ComponentType<ACertainComponent> A_CERTAIN_COMPONENT =
-			ComponentRegistry.INSTANCE.registerIfAbsent(from("a_certain"), ACertainComponent.class);
+	public static final ComponentKey<ACertainComponent> A_CERTAIN_COMPONENT =
+			ComponentRegistry.getOrCreate(from("a_certain"), ACertainComponent.class);
 
 	// packets
 	public static final Identifier USE_ABILITY_PACKET_ID = from("nouryokutsukau");
