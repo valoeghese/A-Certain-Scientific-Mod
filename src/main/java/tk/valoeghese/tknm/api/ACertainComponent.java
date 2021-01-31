@@ -1,14 +1,13 @@
 package tk.valoeghese.tknm.api;
 
-import javax.annotation.Nullable;
-
-import nerdhub.cardinal.components.api.util.sync.EntitySyncedComponent;
-import net.minecraft.entity.player.PlayerEntity;
+import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 import net.minecraft.text.Text;
 import tk.valoeghese.tknm.api.ability.Ability;
 import tk.valoeghese.tknm.api.ability.AbilityUserData;
 
-public interface ACertainComponent extends EntitySyncedComponent {
+import javax.annotation.Nullable;
+
+public interface ACertainComponent extends AutoSyncedComponent {
 	/**
 	 * @return the stats of this component as Text.
 	 */
@@ -38,11 +37,6 @@ public interface ACertainComponent extends EntitySyncedComponent {
 	 * @param abilityUser whether the player is an ability user.
 	 */
 	void setAbilityUser(boolean abilityUser);
-	/**
-	 * @return the player to which this component is attached.
-	 */
-	@Override
-	PlayerEntity getEntity();
 	/**
 	 * Sets the ability to the specified ability.
 	 */

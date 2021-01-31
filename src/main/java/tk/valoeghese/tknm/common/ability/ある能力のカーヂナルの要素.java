@@ -83,14 +83,15 @@ public final class ある能力のカーヂナルの要素 implements ACertainCo
 	public Text stats() {
 		CompoundTag タッグ = new CompoundTag();
 		タッグ.putInt("reburu", this.レブル);
-		return this.toTag(タッグ).toText();
+		this.writeToNbt(タッグ);
+		return タッグ.toText();
 	}
 
 	@Override
 	public float addXp(float xp) {
 		this.能力けいけんち += xp;
 		this.レブルわりたす();
-		this.sync();
+		ToaruKagakuNoMod.A_CERTAIN_COMPONENT.sync(this.能力者);
 		return this.能力けいけんち;
 	}
 
@@ -112,11 +113,11 @@ public final class ある能力のカーヂナルの要素 implements ACertainCo
 	@Override
 	public void setAbilityUser(boolean abilityUser) {
 		this.能力者です = abilityUser;
-		this.sync();
+		ToaruKagakuNoMod.A_CERTAIN_COMPONENT.sync(this.能力者);
 	}
 
 	@Override
-	public void fromTag(CompoundTag タッグ) {
+	public void readFromNbt(CompoundTag タッグ) {
 		if (タッグ.contains("nouryoku", 10)) {
 			CompoundTag 能力タッグ = タッグ.getCompound("nouryoku");
 			this.能力 = AbilityRegistry.getAbility(new Identifier(能力タッグ.getString("shurui")));
@@ -132,7 +133,7 @@ public final class ある能力のカーヂナルの要素 implements ACertainCo
 	}
 
 	@Override
-	public CompoundTag toTag(CompoundTag タッグ) {
+	public void writeToNbt(CompoundTag タッグ) {
 		CompoundTag 能力タッグ = new CompoundTag();
 		{
 			能力タッグ.putString("shurui", AbilityRegistry.getRegistryId(this.能力).toString());
@@ -147,17 +148,6 @@ public final class ある能力のカーヂナルの要素 implements ACertainCo
 			}
 		}
 		タッグ.put("nouryoku", 能力タッグ);
-		return タッグ;
-	}
-
-	@Override
-	public ComponentType<?> getComponentType() {
-		return ToaruKagakuNoMod.A_CERTAIN_COMPONENT;
-	}
-
-	@Override
-	public PlayerEntity getEntity() {
-		return this.能力者;
 	}
 
 	@Override
